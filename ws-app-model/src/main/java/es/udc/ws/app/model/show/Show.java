@@ -3,7 +3,7 @@ package es.udc.ws.app.model.show;
 import java.util.Calendar;
 import java.util.Objects;
 
-class Show
+public class Show
 {
     private long id;
     private String name;
@@ -17,8 +17,7 @@ class Show
     private float discountedPrice;
     private float salesCommission;
 
-
-    public long getId() {
+	public long getId() {
         return id;
     }
 
