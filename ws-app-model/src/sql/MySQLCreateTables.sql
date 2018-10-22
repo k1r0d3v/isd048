@@ -40,5 +40,7 @@ CREATE TABLE Reservation (
     price FLOAT NOT NULL,
 
     CONSTRAINT ReservationPK PRIMARY KEY(id),
+    CONSTRAINT ReservationCodePK PRIMARY KEY(code),
+
     CONSTRAINT ReservationShowIdFK FOREIGN KEY(showId)
         REFERENCES Show(id) ON DELETE CASCADE ) ENGINE = InnoDB;
