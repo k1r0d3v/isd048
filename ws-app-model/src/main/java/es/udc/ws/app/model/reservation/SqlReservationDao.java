@@ -11,7 +11,7 @@ public interface SqlReservationDao
 
     public void update(Connection c, Reservation reservation) throws InstanceNotFoundException;
 
-    public List<Reservation> find(Connection c, String email);
+    public List<Reservation> findByEmail(Connection c, String email);
 
-    public Reservation find (Connection c, long code) throws InstanceNotFoundException;
+    public Reservation findByCode(Connection c, String code) throws InstanceNotFoundException;
 }
