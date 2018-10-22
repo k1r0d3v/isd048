@@ -55,7 +55,7 @@ public abstract class AbstractSqlShowDao implements SqlShowDao
 	public Show find(Connection c, Long id) throws InstanceNotFoundException
 	{
 		String query = "SELECT name, description, startDate, duration, limitDate, maxTickets, soldTickets"
-                + " realPrice, discountedPrice, salesCommission, creationDate FROM Show WHERE id = ?";
+				+ " realPrice, discountedPrice, salesCommission, creationDate FROM Show WHERE id = ?";
 
 		try (PreparedStatement preparedStatement = c.prepareStatement(query))
 		{
@@ -85,9 +85,9 @@ public abstract class AbstractSqlShowDao implements SqlShowDao
 			return new Show();
 
 		} catch (SQLException e) {
-			
+
 			throw new RuntimeException(e);
-			
+
 		}
 
 	}
@@ -95,52 +95,52 @@ public abstract class AbstractSqlShowDao implements SqlShowDao
 	@Override
 	public List<Show> find(Connection c, String words, Calendar startDate, Calendar endDate)
 	{
-        String[] keyWords = words != null ? words.split(" ") : null;
-        String query = "SELECT id, name, duration, " + " description, realPrice, startDate, endDate FROM Show";
-        
-        if (words != null && keyWords.length > 0) {
-            query += " WHERE";
-            for (int i = 0; i < keyWords.length; i++) {
-                if (i > 0) {
-                    query += " AND";
-                }
-                query += " LOWER(title) LIKE LOWER(?)";
-            }
-        }
-        query += " ORDER BY name";
+		String[] keyWords = words != null ? words.split(" ") : null;
+		String query = "SELECT id, name, duration, " + " description, realPrice, startDate, endDate FROM Show";
 
-        try (PreparedStatement preparedStatement = c.prepareStatement(query)) {
+		if (words != null && keyWords.length > 0) {
+			query += " WHERE";
+			for (int i = 0; i < keyWords.length; i++) {
+				if (i > 0) {
+					query += " AND";
+				}
+				query += " LOWER(title) LIKE LOWER(?)";
+			}
+		}
+		query += " ORDER BY name";
 
-            if (words != null) {
-                
-                for (int i = 0; i < keyWords.length; i++) {
-                    preparedStatement.setString(i + 1, "%" + keyWords[i] + "%");
-                }
-            }
+		try (PreparedStatement preparedStatement = c.prepareStatement(query)) {
 
-            ResultSet resultSet = preparedStatement.executeQuery();
-            List<Show> shows = new ArrayList<Show>();
+			if (words != null) {
 
-            while (resultSet.next()) {
+				for (int i = 0; i < keyWords.length; i++) {
+					preparedStatement.setString(i + 1, "%" + keyWords[i] + "%");
+				}
+			}
 
-                int i = 1;
-                Long movieId = new Long(resultSet.getLong(i++));
-                String title = resultSet.getString(i++);
-                short runtime = resultSet.getShort(i++);
-                String description = resultSet.getString(i++);
-                float price = resultSet.getFloat(i++);
-                Calendar creationDate = Calendar.getInstance();
-                creationDate.setTime(resultSet.getTimestamp(i++));
+			ResultSet resultSet = preparedStatement.executeQuery();
+			List<Show> shows = new ArrayList<Show>();
 
-                shows.add(new Show());
+			while (resultSet.next()) {
 
-            }
+				int i = 1;
+				Long showId = new Long(resultSet.getLong(i++));
+				String title = resultSet.getString(i++);
+				short runtime = resultSet.getShort(i++);
+				String description = resultSet.getString(i++);
+				float price = resultSet.getFloat(i++);
+				Calendar creationDate = Calendar.getInstance();
+				creationDate.setTime(resultSet.getTimestamp(i++));
 
-            return shows;
+				shows.add(new Show());
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+			}
+
+			return shows;
+
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
 
 	}
 

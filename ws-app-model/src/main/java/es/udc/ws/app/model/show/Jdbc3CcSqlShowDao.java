@@ -4,30 +4,44 @@ import java.sql.*;
 
 public class Jdbc3CcSqlShowDao extends AbstractSqlShowDao
 {
-    @Override
-    public Show create(Connection c, Show show)
-    {
-        String query =
-                "INSERT INTO " +
-                "TABLE(field1, field2, field3, ...) " +
-                "VALUES (?, ?, ?, ...)";
+	@Override
+	public Show create(Connection c, Show show)
+	{
+		String query = "INSERT INTO Show" + " (name, description, startDate, startDate, duration, limitDate, maxTickets, soldTickets, realPrice, discountedPrice)" + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";		
+		try (PreparedStatement preparedStatement = c.prepareStatement(
+				query, Statement.RETURN_GENERATED_KEYS)) {
 
-        try (PreparedStatement ps = c.prepareStatement(query, Statement.RETURN_GENERATED_KEYS))
-        {
-            ps.executeUpdate();
 
-            ResultSet keysResultSet = ps.getGeneratedKeys();
+			int index = 1;
+			preparedStatement.setString(index++, show.getName());
+			preparedStatement.setString(index++, show.getDescription());
+			preparedStatement.setTimestamp(index++, new Timestamp(show.getStartDate().getTimeInMillis()));
+			preparedStatement.setLong(index++, show.getDuration());
+			preparedStatement.setTimestamp(index++, new Timestamp(show.getLimitDate().getTimeInMillis()));
+			preparedStatement.setLong(index++, show.getMaxTickets());           
+			preparedStatement.setLong(index++, show.getSoldTickets());
+			preparedStatement.setFloat(index++, show.getRealPrice());
+			preparedStatement.setFloat(index++, show.getDiscountedPrice());
+			preparedStatement.setFloat(index++, show.getSalesCommission());
 
-            if (!keysResultSet.next())
-                throw new SQLException("JDBC driver did not return generated key.");
+			Timestamp date = show.getStartDate() != null ? new Timestamp(show.getStartDate().getTime().getTime()) : null;
+			preparedStatement.setTimestamp(index++, date);
 
-            long id = keysResultSet.getLong(1);
+			preparedStatement.executeUpdate();
 
-            //
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
 
-        return null;
-    }
+			ResultSet resultSet = preparedStatement.getGeneratedKeys();
+
+			if (!resultSet.next()) {
+				throw new SQLException(
+						"JDBC driver did not return generated key.");
+			}
+			Long showId = resultSet.getLong(1);
+
+			return new Show();
+
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
 }
