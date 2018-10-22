@@ -82,7 +82,6 @@ public abstract class AbstractSqlShowDao implements SqlShowDao
 			s.setDiscountedPrice(resultSet.getFloat(index++));
 			s.setSalesCommission(resultSet.getFloat(index++));
 
-
 			return new Show();
 
 		} catch (SQLException e) {
