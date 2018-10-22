@@ -85,7 +85,9 @@ public abstract class AbstractSqlShowDao implements SqlShowDao
 			return new Show();
 
 		} catch (SQLException e) {
+			
 			throw new RuntimeException(e);
+			
 		}
 
 	}
