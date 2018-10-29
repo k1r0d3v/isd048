@@ -11,7 +11,7 @@ import java.util.Calendar;
 import java.util.List;
 
 
-public interface Service
+public interface TicketSellerService
 {
     public Show createShow(Show show) throws InputValidationException;
 
