@@ -13,6 +13,9 @@ import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import es.udc.ws.util.sql.DataSourceLocator;
 
 import javax.sql.DataSource;
+
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.List;
 
@@ -33,14 +36,25 @@ public class TicketSellerImpl implements TicketSellerService
         return null;
     }
 
-    @Override
+    @Override/*R*/
     public Show findShow(String code) throws InstanceNotFoundException {
-        return null;
+     
+    	try (Connection connection = dataSource.getConnection()) {
+			return showDao.find(connection, code);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+
     }
 
-    @Override
+    @Override/*R*/
     public List<Show> findShows(String words, Calendar start, Calendar end) {
-        return null;
+    	
+    	try (Connection connection = dataSource.getConnection()) {
+			return showDao.find(connection, words, start, end);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
     }
 
     @Override
