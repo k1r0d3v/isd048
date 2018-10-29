@@ -8,12 +8,12 @@ import es.udc.ws.app.model.service.exceptions.ReservationAlreadyChecked;
 import es.udc.ws.app.model.show.Show;
 import es.udc.ws.app.model.show.SqlShowDao;
 import es.udc.ws.app.model.show.SqlShowDaoFactory;
+import es.udc.ws.app.model.util.validation.PropertyValidator;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import es.udc.ws.util.sql.DataSourceLocator;
 
 import javax.sql.DataSource;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Calendar;
@@ -33,7 +33,34 @@ public class TicketSellerImpl implements TicketSellerService
 
     @Override
     public Show createShow(Show show) throws InputValidationException {
-        return null;
+
+        try (Connection connection = dataSource.getConnection()) {
+
+            try {
+
+                /* Prepare connection. */
+                connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+                connection.setAutoCommit(false);
+
+                /* Do work. */
+                Show createdShow = showDao.create(connection, show);
+
+                /* Commit. */
+                connection.commit();
+
+                return createdShow;
+
+            } catch (SQLException e) {
+                connection.rollback();
+                throw new RuntimeException(e);
+            } catch (RuntimeException | Error e) {
+                connection.rollback();
+                throw e;
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override/*R*/
