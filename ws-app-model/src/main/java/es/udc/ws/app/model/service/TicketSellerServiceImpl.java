@@ -63,14 +63,25 @@ public class TicketSellerServiceImpl implements TicketSellerService
         }
     }
 
-    @Override
+    @Override/*R*/
     public Show findShow(String code) throws InstanceNotFoundException {
-        return null;
+     
+    	try (Connection connection = dataSource.getConnection()) {
+			return showDao.find(connection, code);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+
     }
 
-    @Override
+    @Override/*R*/
     public List<Show> findShows(String words, Calendar start, Calendar end) {
-        return null;
+    	
+    	try (Connection connection = dataSource.getConnection()) {
+			return showDao.find(connection, words, start, end);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
     }
 
     @Override

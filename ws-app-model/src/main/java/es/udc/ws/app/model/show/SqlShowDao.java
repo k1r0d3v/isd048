@@ -13,7 +13,7 @@ public interface SqlShowDao
 
     public void update(Connection c, Show show) throws InstanceNotFoundException;
 
-    public Show find(Connection c, Long id) throws InstanceNotFoundException;
+    public Show find(Connection c, String code) throws InstanceNotFoundException;
 
     public List<Show> find(Connection c, String words, Calendar startDate, Calendar endDate);
 }
