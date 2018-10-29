@@ -19,13 +19,13 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.List;
 
-public class TicketSellerImpl implements TicketSellerService
+public class TicketSellerServiceImpl implements TicketSellerService
 {
     private final DataSource dataSource;
     private SqlReservationDao reservationDao;
     private SqlShowDao showDao;
 
-    public TicketSellerImpl() {
+    public TicketSellerServiceImpl() {
         dataSource = DataSourceLocator.getDataSource("ws-javaexamples-ds");
         reservationDao = SqlReservationDaoFactory.getDao();
         showDao = SqlShowDaoFactory.getDao();
