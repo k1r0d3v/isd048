@@ -8,11 +8,11 @@
 -- must be dropped first (otherwise, the corresponding checks on those tables
 -- could not be done).
 
-DROP TABLE Reservation;
-DROP TABLE Show;
+DROP TABLE ReservationTable;
+DROP TABLE ShowTable;
 
 -- --------------------------------- Show -------------------------------------
-CREATE TABLE Show (
+CREATE TABLE ShowTable (
     id BIGINT NOT NULL AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     description VARCHAR(255) NOT NULL,
@@ -28,7 +28,7 @@ CREATE TABLE Show (
     CONSTRAINT ShowPK PRIMARY KEY(id) ) ENGINE = InnoDB;
 
 -- --------------------------------- Reservation ------------------------------
-CREATE TABLE Reservation (
+CREATE TABLE ReservationTable (
     id BIGINT NOT NULL AUTO_INCREMENT,
     showId BIGINT NOT NULL,
     email VARCHAR(255) NOT NULL,
@@ -40,7 +40,6 @@ CREATE TABLE Reservation (
     price FLOAT NOT NULL,
 
     CONSTRAINT ReservationPK PRIMARY KEY(id),
-    CONSTRAINT ReservationCodePK PRIMARY KEY(code),
 
     CONSTRAINT ReservationShowIdFK FOREIGN KEY(showId)
-        REFERENCES Show(id) ON DELETE CASCADE ) ENGINE = InnoDB;
+        REFERENCES ShowTable(id) ON DELETE CASCADE ) ENGINE = InnoDB;

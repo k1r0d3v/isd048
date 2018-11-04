@@ -2,10 +2,7 @@ package es.udc.ws.app.model.reservation;
 
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -21,13 +18,29 @@ public abstract class AbstractSqlReservationDao implements SqlReservationDao
     @Override
     public void update(Connection c, Reservation reservation) throws InstanceNotFoundException
     {
-        String query = "update Reservation set isValid=? where id=?";
+        String query = "UPDATE ReservationTable SET " +
+                "showId = ?, " +
+                "email = ?, " +
+                "cardNumber = ?, " +
+                "tickets = ?, " +
+                "isValid = ?, " +
+                "code = ?, " +
+                "reservationDate = ?, " +
+                "price = ? " +
+                "WHERE id=?";
 
         try (PreparedStatement ps = c.prepareStatement(query))
         {
-            int i = 1;
-            ps.setBoolean(i++, reservation.isValid());
-            ps.setLong(i, reservation.getId());
+            int index = 1;
+
+            ps.setLong(index++, reservation.getShowId());
+            ps.setString(index++, reservation.getEmail());
+            ps.setString(index++, reservation.getCardNumber());
+            ps.setInt(index++, reservation.getTickets());
+            ps.setBoolean(index++, reservation.isValid());
+            ps.setString(index++, reservation.getCode());
+            ps.setTimestamp(index++, new Timestamp(reservation.getReservationDate().getTimeInMillis()));
+            ps.setFloat(index, reservation.getPrice());
             int updatedRows = ps.executeUpdate();
 
             if (updatedRows == 0)
@@ -42,7 +55,18 @@ public abstract class AbstractSqlReservationDao implements SqlReservationDao
     @Override
     public List<Reservation> findByEmail(Connection c, String email)
     {
-        String query = "select * from Reservation where email=?";
+        String query = "SELECT " +
+                "id," +
+                "showId, " +
+                "email, " +
+                "cardNumber, " +
+                "tickets, " +
+                "isValid, " +
+                "code, " +
+                "reservationDate, " +
+                "price " +
+                "FROM ReservationTable " +                
+                "WHERE email=?";
 
         try (PreparedStatement ps = c.prepareStatement(query))
         {
@@ -50,24 +74,24 @@ public abstract class AbstractSqlReservationDao implements SqlReservationDao
             ResultSet rs = ps.executeQuery();
 
             List<Reservation> reservations = new ArrayList<>();
+            Calendar calendar = Calendar.getInstance();
 
             while (rs.next()) {
                 Reservation r = new Reservation();
-                int i = 1;
+                int index = 1;
 
-                r.setId(rs.getLong(i++));
-                r.setShowId(rs.getLong(i++));
-                r.setEmail(rs.getString(i++));
-                r.setCardNumber(rs.getString(i++));
-                r.setTickets(rs.getInt(i++));
-                r.setValid(rs.getBoolean(i++));
-                r.setCode(rs.getString(i++));
+                r.setId(rs.getLong(index++));
+                r.setShowId(rs.getLong(index++));
+                r.setEmail(rs.getString(index++));
+                r.setCardNumber(rs.getString(index++));
+                r.setTickets(rs.getInt(index++));
+                r.setValid(rs.getBoolean(index++));
+                r.setCode(rs.getString(index++));
 
-                Calendar rd = Calendar.getInstance();
-                rd.setTime(rs.getTimestamp(i++));
-                r.setReservationDate(rd);
+                calendar.setTime(rs.getTimestamp(index++));
+                r.setReservationDate(calendar);
 
-                r.setPrice(rs.getFloat(i));
+                r.setPrice(rs.getFloat(index));
 
                 reservations.add(r);
             }
@@ -81,7 +105,18 @@ public abstract class AbstractSqlReservationDao implements SqlReservationDao
     @Override
     public Reservation findByCode(Connection c, String code) throws InstanceNotFoundException
     {
-        String query = "select * from Reservation where code=?";
+        String query = "SELECT " +
+                "id," +
+                "showId, " +
+                "email, " +
+                "cardNumber, " +
+                "tickets, " +
+                "isValid, " +
+                "code, " +
+                "reservationDate, " +
+                "price " +
+                "FROM ReservationTable " +
+                "WHERE code=?";
 
         try (PreparedStatement ps = c.prepareStatement(query))
         {
@@ -93,24 +128,24 @@ public abstract class AbstractSqlReservationDao implements SqlReservationDao
                 throw new InstanceNotFoundException(code, Reservation.class.getName());
 
             Reservation r = new Reservation();
-            int i = 1;
+            Calendar calendar = Calendar.getInstance();
+            int index = 1;
 
-            r.setId(rs.getLong(i++));
-            r.setShowId(rs.getLong(i++));
-            r.setEmail(rs.getString(i++));
-            r.setCardNumber(rs.getString(i++));
-            r.setTickets(rs.getInt(i++));
-            r.setValid(rs.getBoolean(i++));
-            r.setCode(rs.getString(i++));
+            r.setId(rs.getLong(index++));
+            r.setShowId(rs.getLong(index++));
+            r.setEmail(rs.getString(index++));
+            r.setCardNumber(rs.getString(index++));
+            r.setTickets(rs.getInt(index++));
+            r.setValid(rs.getBoolean(index++));
+            r.setCode(rs.getString(index++));
 
-            Calendar rd = Calendar.getInstance();
-            rd.setTime(rs.getTimestamp(i++));
-            r.setReservationDate(rd);
+            calendar.setTime(rs.getTimestamp(index++));
+            r.setReservationDate(calendar);
 
-            r.setPrice(rs.getFloat(i));
+            r.setPrice(rs.getFloat(index));
+
 
             return r;
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

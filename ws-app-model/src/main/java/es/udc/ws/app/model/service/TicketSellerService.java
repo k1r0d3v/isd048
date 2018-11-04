@@ -15,7 +15,7 @@ public interface TicketSellerService
 {
     public Show createShow(Show show) throws InputValidationException;
 
-    public Show findShow(String code) throws InstanceNotFoundException;
+    public Show findShow(Long code) throws InstanceNotFoundException;
 
     public List<Show> findShows(String words, Calendar start, Calendar end);
 

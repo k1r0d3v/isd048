@@ -19,9 +19,22 @@ import java.util.List;
 public abstract class AbstractSqlShowDao implements SqlShowDao
 {
 	@Override
-	public void update(Connection c, Show show) throws InstanceNotFoundException
+	public void update(Connection c, Show show)
+            throws InstanceNotFoundException
 	{
-		String query = "UPDATE Show" + " SET name = ?, description = ?, startDate = ?, startDate = ?, duration = ?, limitDate = ?, maxTickets = ?, soldTickets = ? " + "realPrice = ?, discountedPrice = ? WHERE id = ?";
+		String query = "UPDATE ShowTable SET " +
+				"name = ?, " +
+				"description = ?, " +
+				"startDate = ?, " +
+				"duration = ?, " +
+				"limitDate = ?, " +
+				"maxTickets = ?, " +
+				"soldTickets = ?, " +
+				"realPrice = ?, " +
+				"discountedPrice = ?, " +
+                "salesCommission = ?" +
+				"WHERE id = ?";
+
 
 		try (PreparedStatement preparedStatement = c.prepareStatement(query)) {
 
@@ -29,21 +42,22 @@ public abstract class AbstractSqlShowDao implements SqlShowDao
 
 			preparedStatement.setString(index++, show.getName());
 			preparedStatement.setString(index++, show.getDescription());
-			preparedStatement.setTimestamp(index++, new Timestamp(show.getStartDate().getTimeInMillis()));////
+			preparedStatement.setTimestamp(index++, new Timestamp(show.getStartDate().getTimeInMillis()));
 			preparedStatement.setLong(index++, show.getDuration());
-			preparedStatement.setTimestamp(index++, new Timestamp(show.getLimitDate().getTimeInMillis()));////
-			preparedStatement.setLong(index++, show.getMaxTickets());           
+			preparedStatement.setTimestamp(index++, new Timestamp(show.getLimitDate().getTimeInMillis()));
+			preparedStatement.setLong(index++, show.getMaxTickets());
 			preparedStatement.setLong(index++, show.getSoldTickets());
 			preparedStatement.setFloat(index++, show.getRealPrice());
 			preparedStatement.setFloat(index++, show.getDiscountedPrice());
 			preparedStatement.setFloat(index++, show.getSalesCommission());
 
+            preparedStatement.setLong(index, show.getId());
+
 			int updatedRows = preparedStatement.executeUpdate();
 
-			if (updatedRows == 0) {
+			if (updatedRows == 0)
 				throw new InstanceNotFoundException(show.getId(),
 						Show.class.getName());
-			}
 
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -51,89 +65,146 @@ public abstract class AbstractSqlShowDao implements SqlShowDao
 
 	}
 
-	@Override
-	public Show find(Connection c, Long id) throws InstanceNotFoundException
+    @Override
+    public void remove(Connection c, Long id)
+            throws InstanceNotFoundException {
+        String query = "DELETE FROM ShowTable WHERE id = ?";
+
+        try (PreparedStatement preparedStatement = c.prepareStatement(query))
+        {
+            preparedStatement.setLong(1, id);
+
+            if (preparedStatement.executeUpdate() == 0)
+                throw new InstanceNotFoundException(id, Show.class.getName());
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+	public Show find(Connection c, Long id)
+            throws InstanceNotFoundException
 	{
-		String query = "SELECT name, description, startDate, duration, limitDate, maxTickets, soldTickets"
-				+ " realPrice, discountedPrice, salesCommission, creationDate FROM Show WHERE id = ?";
+		String query = "SELECT " +
+                "id, " +
+                "name, " +
+                "description, " +
+                "startDate, " +
+                "duration, " +
+                "limitDate, " +
+                "maxTickets, " +
+                "soldTickets, " +
+                "realPrice, " +
+                "discountedPrice, " +
+                "salesCommission " +
+                "FROM ShowTable " +
+                "WHERE id = ?";
 
 		try (PreparedStatement preparedStatement = c.prepareStatement(query))
 		{
 			int index = 1;
-			preparedStatement.setLong(index, id.longValue());
-			ResultSet resultSet = preparedStatement.executeQuery();
+			preparedStatement.setLong(index, id);
+			ResultSet rs = preparedStatement.executeQuery();
 
-			if (!resultSet.next()) {
-				throw new InstanceNotFoundException(id,
-						Show.class.getName());
+			if (!rs.next()) {
+				throw new InstanceNotFoundException(id, Show.class.getName());
 			}
 
 			index = 1;
 			Show s = new Show();
+            Calendar calendar = Calendar.getInstance();
 
-			s.setName(resultSet.getString(index++));
-			s.setDescription(resultSet.getString(index++));
-			s.setStartDate(Calendar.getInstance());
-			s.setDuration(resultSet.getLong(index++));
-			s.setLimitDate(Calendar.getInstance());
-			s.setMaxTickets(resultSet.getLong(index++));           
-			s.setSoldTickets(resultSet.getLong(index++));
-			s.setRealPrice(resultSet.getFloat(index++));
-			s.setDiscountedPrice(resultSet.getFloat(index++));
-			s.setSalesCommission(resultSet.getFloat(index++));
+            s.setId(rs.getLong(index++));
+			s.setName(rs.getString(index++));
+			s.setDescription(rs.getString(index++));
 
-			return new Show();
+            calendar.setTimeInMillis(rs.getTimestamp(index++).getTime());
+			s.setStartDate(calendar);
+
+			s.setDuration(rs.getLong(index++));
+
+            calendar.setTimeInMillis(rs.getTimestamp(index++).getTime());
+			s.setLimitDate(calendar);
+
+			s.setMaxTickets(rs.getLong(index++));
+			s.setSoldTickets(rs.getLong(index++));
+			s.setRealPrice(rs.getFloat(index++));
+			s.setDiscountedPrice(rs.getFloat(index++));
+			s.setSalesCommission(rs.getFloat(index));
+
+			return s;
 
 		} catch (SQLException e) {
-
 			throw new RuntimeException(e);
-
 		}
-
 	}
 
 	@Override
 	public List<Show> find(Connection c, String words, Calendar startDate, Calendar endDate)
 	{
-		String[] keyWords = words != null ? words.split(" ") : null;
-		String query = "SELECT id, name, duration, " + " description, realPrice, startDate, endDate FROM Show";
+		String[] keywords = words.split(" ");
 
-		if (words != null && keyWords.length > 0) {
-			query += " WHERE";
-			for (int i = 0; i < keyWords.length; i++) {
-				if (i > 0) {
-					query += " AND";
-				}
-				query += " LOWER(title) LIKE LOWER(?)";
-			}
-		}
+		String query = "SELECT " +
+                "id, " +
+                "name, " +
+                "description, " +
+                "startDate, " +
+                "duration, " +
+                "limitDate, " +
+                "maxTickets, " +
+                "soldTickets, " +
+                "realPrice, " +
+                "discountedPrice, " +
+                "salesCommission " +
+                "FROM ShowTable";
+
+		if (keywords.length > 0)
+		{
+		    StringBuilder tmp = new StringBuilder();
+		    tmp.append(" WHERE");
+
+			for (int i = 0; i < (keywords.length - 1); i++)
+				tmp.append(" LOWER(title) LIKE LOWER(?) AND");
+
+            tmp.append(" LOWER(title) LIKE LOWER(?)");
+            query += tmp.toString();
+        }
 		query += " ORDER BY name";
 
 		try (PreparedStatement preparedStatement = c.prepareStatement(query)) {
 
-			if (words != null) {
+            for (int i = 0; i < keywords.length; i++)
+                preparedStatement.setString(i + 1, String.format("%%%s%%", keywords[i]));
 
-				for (int i = 0; i < keyWords.length; i++) {
-					preparedStatement.setString(i + 1, "%" + keyWords[i] + "%");
-				}
-			}
+			ResultSet rs = preparedStatement.executeQuery();
+			List<Show> shows = new ArrayList<>();
+            Calendar calendar = Calendar.getInstance();
 
-			ResultSet resultSet = preparedStatement.executeQuery();
-			List<Show> shows = new ArrayList<Show>();
+			while (rs.next())
+			{
+				int index = 1;
+                Show s = new Show();
 
-			while (resultSet.next()) {
+                s.setId(rs.getLong(index++));
+                s.setName(rs.getString(index++));
+                s.setDescription(rs.getString(index++));
 
-				int i = 1;
-				Long showId = new Long(resultSet.getLong(i++));
-				String title = resultSet.getString(i++);
-				short runtime = resultSet.getShort(i++);
-				String description = resultSet.getString(i++);
-				float price = resultSet.getFloat(i++);
-				Calendar creationDate = Calendar.getInstance();
-				creationDate.setTime(resultSet.getTimestamp(i++));
+                calendar.setTimeInMillis(rs.getTimestamp(index++).getTime());
+                s.setStartDate(calendar);
 
-				shows.add(new Show());
+                s.setDuration(rs.getLong(index++));
 
+                calendar.setTimeInMillis(rs.getTimestamp(index++).getTime());
+                s.setLimitDate(calendar);
+
+                s.setMaxTickets(rs.getLong(index++));
+                s.setSoldTickets(rs.getLong(index++));
+                s.setRealPrice(rs.getFloat(index++));
+                s.setDiscountedPrice(rs.getFloat(index++));
+                s.setSalesCommission(rs.getFloat(index));
+
+				shows.add(s);
 			}
 
 			return shows;
@@ -141,7 +212,5 @@ public abstract class AbstractSqlShowDao implements SqlShowDao
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
-
 	}
-
 }

@@ -1,7 +1,6 @@
 package es.udc.ws.app.model.reservation;
 
 import java.sql.*;
-import java.util.Calendar;
 
 public class Jdbc3CcSqlReservationDao extends AbstractSqlReservationDao
 {
@@ -10,22 +9,29 @@ public class Jdbc3CcSqlReservationDao extends AbstractSqlReservationDao
     {
         String query =
                 "INSERT INTO " +
-                "Reservation(id, showId, email, cardNumber, tickets, isValid, code, reservationDate, price) " +
+                "ReservationTable(" +
+                        "showId, " +
+                        "email, " +
+                        "cardNumber, " +
+                        "tickets, " +
+                        "isValid, " +
+                        "code, " +
+                        "reservationDate, " +
+                        "price) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement ps = c.prepareStatement(query, Statement.RETURN_GENERATED_KEYS))
         {
-            int i = 1;
+            int index = 1;
 
-            ps.setLong(i++, reservation.getId());
-            ps.setLong(i++, reservation.getShowId());
-            ps.setString(i++, reservation.getEmail());
-            ps.setString(i++, reservation.getCardNumber());
-            ps.setInt(i++, reservation.getTickets());
-            ps.setBoolean(i++, reservation.isValid());
-            ps.setString(i++, reservation.getCode());
-            ps.setTimestamp(i++, new Timestamp(reservation.getReservationDate().getTimeInMillis()));
-            ps.setFloat(i, reservation.getPrice());
+            ps.setLong(index++, reservation.getShowId());
+            ps.setString(index++, reservation.getEmail());
+            ps.setString(index++, reservation.getCardNumber());
+            ps.setInt(index++, reservation.getTickets());
+            ps.setBoolean(index++, reservation.isValid());
+            ps.setString(index++, reservation.getCode());
+            ps.setTimestamp(index++, new Timestamp(reservation.getReservationDate().getTimeInMillis()));
+            ps.setFloat(index, reservation.getPrice());
             ps.executeUpdate();
 
             ResultSet keysResultSet = ps.getGeneratedKeys();
@@ -33,11 +39,9 @@ public class Jdbc3CcSqlReservationDao extends AbstractSqlReservationDao
             if (!keysResultSet.next())
                 throw new SQLException("JDBC driver did not return generated key.");
 
-            long id = keysResultSet.getLong(1);
-
-            reservation.setId(id);
+            reservation.setId(keysResultSet.getLong(1));
             
-            return reservation;            
+            return reservation;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

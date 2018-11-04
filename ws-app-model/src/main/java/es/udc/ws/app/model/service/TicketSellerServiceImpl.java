@@ -8,6 +8,7 @@ import es.udc.ws.app.model.service.exceptions.ReservationAlreadyChecked;
 import es.udc.ws.app.model.show.Show;
 import es.udc.ws.app.model.show.SqlShowDao;
 import es.udc.ws.app.model.show.SqlShowDaoFactory;
+import es.udc.ws.app.model.util.Constants;
 import es.udc.ws.app.model.util.validation.PropertyValidator;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
@@ -26,7 +27,7 @@ public class TicketSellerServiceImpl implements TicketSellerService
     private SqlShowDao showDao;
 
     public TicketSellerServiceImpl() {
-        dataSource = DataSourceLocator.getDataSource("ws-javaexamples-ds");
+        dataSource = DataSourceLocator.getDataSource(Constants.DATA_SOURCE);
         reservationDao = SqlReservationDaoFactory.getDao();
         showDao = SqlShowDaoFactory.getDao();
     }
@@ -64,7 +65,7 @@ public class TicketSellerServiceImpl implements TicketSellerService
     }
 
     @Override/*R*/
-    public Show findShow(String code) throws InstanceNotFoundException {
+    public Show findShow(Long code) throws InstanceNotFoundException {
      
     	try (Connection connection = dataSource.getConnection()) {
 			return showDao.find(connection, code);
