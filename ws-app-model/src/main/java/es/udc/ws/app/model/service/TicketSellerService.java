@@ -19,7 +19,7 @@ public interface TicketSellerService
 
     public List<Show> findShows(String words, Calendar start, Calendar end);
 
-    public Reservation bookTickets(Long showId, String email, String cardNumber, int count) throws LimitDateExceeded;
+    public Reservation buyTickets(Long showId, String email, String cardNumber, int count) throws LimitDateExceeded, InstanceNotFoundException, InputValidationException;
 
     public List<Reservation> getUserReservations(String email);
 
