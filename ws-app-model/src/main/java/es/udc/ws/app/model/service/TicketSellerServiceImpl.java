@@ -18,6 +18,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Random;
 
 public class TicketSellerServiceImpl implements TicketSellerService
 {
@@ -144,62 +145,67 @@ public class TicketSellerServiceImpl implements TicketSellerService
 			throw new RuntimeException(e);
 		}
 	}
-
+/* En  caso  de  ejecutarse  con  éxito, devuelve  un  código  que  será  necesario  para  recoger  las  entradas  en  taquilla,
+  y  se  almacena la reserva, quedando registrada la fecha y hora a la que se hizo.*/
 	@Override/*Probar*/
-	public Reservation buyTickets(Long showId, String email, String cardNumber, int count)
-            throws InstanceNotFoundException, InputValidationException
-    {
-        PropertyValidator.validateCreditCard(cardNumber);
+	public Reservation buyTickets(Long showId, String email, String cardNumber, int count) throws LimitDateExceeded, InstanceNotFoundException, InputValidationException {
 
-        try (Connection c = dataSource.getConnection()) {
+		PropertyValidator.validateCreditCard(cardNumber);
 
-            try {
-                c.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
-                c.setAutoCommit(false);
+		try (Connection c = dataSource.getConnection()) {
 
-                /* Do work. */
-                Show show = showDao.find(c, showId);
-                Calendar expirationDate = Calendar.getInstance();
+			try {
+				c.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+				c.setAutoCommit(false);
 
-                Reservation res = new Reservation();
-                res.setShowId(showId);
-                res.setEmail(email);
-                res.setCardNumber(cardNumber);
-                res.setTickets(count);
+				/* Do work. */
+				Show show = showDao.find(c, showId);
+				Calendar expirationDate = Calendar.getInstance();
 
-                long availableTickets = show.getMaxTickets() - show.getSoldTickets();
+				Reservation res = new Reservation();
+				res.setShowId(showId);
+				res.setEmail(email);
+				res.setCardNumber(cardNumber);
+				res.setTickets(count);
 
-                if ((show.getLimitDate().before(expirationDate)) && (availableTickets <= count)) {
-                    reservationDao.create(c, res);
+				long availableTickets = show.getMaxTickets() - show.getSoldTickets();
 
-                    showDao.update(c, show);
-                    reservationDao.update(c, res);
+				if( (show.getLimitDate().before(expirationDate)) && (availableTickets <= count) ) {
+					reservationDao.create(c, res);
 
-                    /* Commit. */
-                    c.commit();
+					Random codeGenerated = new Random();
+					
+					showDao.update(c, show);
+					reservationDao.update(c, res);
+					
+					
+					
+					/* Commit. */ 
+					c.commit();
+					
+					return res;
+					
+				} else {
+					throw new InputValidationException("Show cannot be bought."); 
+				}
 
-                    return res;
 
-                } else {
-                    throw new InputValidationException("Show cannot be bought.");
-                }
+			} catch (InstanceNotFoundException e) {
+				c.commit();
+				throw e;
+			} catch (SQLException e) {
+				c.rollback();
+				throw new RuntimeException(e);
+			} catch (RuntimeException | Error e) {
+				c.rollback();
+				throw e;
+			}
 
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
 
-            } catch (InstanceNotFoundException e) {
-                c.commit();
-                throw e;
-            } catch (SQLException e) {
-                c.rollback();
-                throw new RuntimeException(e);
-            } catch (RuntimeException | Error e) {
-                c.rollback();
-                throw e;
-            }
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
+	}
 
     @Override
     public List<Reservation> getUserReservations(String email) {
