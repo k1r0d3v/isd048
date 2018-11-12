@@ -107,23 +107,24 @@ public abstract class AbstractSqlShowDao implements SqlShowDao
 			preparedStatement.setLong(index, id);
 			ResultSet rs = preparedStatement.executeQuery();
 
-			if (!rs.next()) {
+			if (!rs.next())
 				throw new InstanceNotFoundException(id, Show.class.getName());
-			}
 
 			index = 1;
 			Show s = new Show();
-            Calendar calendar = Calendar.getInstance();
+
 
             s.setId(rs.getLong(index++));
 			s.setName(rs.getString(index++));
 			s.setDescription(rs.getString(index++));
 
+            Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(rs.getTimestamp(index++).getTime());
 			s.setStartDate(calendar);
 
 			s.setDuration(rs.getLong(index++));
 
+            calendar = Calendar.getInstance();
             calendar.setTimeInMillis(rs.getTimestamp(index++).getTime());
 			s.setLimitDate(calendar);
 
@@ -179,7 +180,6 @@ public abstract class AbstractSqlShowDao implements SqlShowDao
 
 			ResultSet rs = preparedStatement.executeQuery();
 			List<Show> shows = new ArrayList<>();
-            Calendar calendar = Calendar.getInstance();
 
 			while (rs.next())
 			{
@@ -190,11 +190,13 @@ public abstract class AbstractSqlShowDao implements SqlShowDao
                 s.setName(rs.getString(index++));
                 s.setDescription(rs.getString(index++));
 
+				Calendar calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(rs.getTimestamp(index++).getTime());
                 s.setStartDate(calendar);
 
                 s.setDuration(rs.getLong(index++));
 
+				calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(rs.getTimestamp(index++).getTime());
                 s.setLimitDate(calendar);
 

@@ -12,6 +12,7 @@ import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import es.udc.ws.util.sql.DataSourceLocator;
 import es.udc.ws.util.sql.SimpleDataSource;
 import org.junit.*;
+import static org.junit.Assert.*;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -107,25 +108,152 @@ public class TicketSellerServiceTest
             throw new RuntimeException(e);
         }
     }
+    
+    private Show createValidShow() {
+        Show s = new Show();
+
+        s.setName("Test");
+        s.setDescription("Test description");
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.YEAR, 1);
+        s.setStartDate(calendar);
+
+        s.setDuration(120);
+
+        calendar = Calendar.getInstance();
+        calendar.add(Calendar.YEAR, 1);
+        calendar.add(Calendar.DAY_OF_WEEK, -1);
+        s.setLimitDate(calendar);
+
+        s.setMaxTickets(10000);
+        s.setSoldTickets(0);
+        s.setRealPrice(60.0f);
+        s.setDiscountedPrice(50.0f);
+        s.setSalesCommission(20.0f);
+        
+        return s;
+    }
 
     @Test
     public void testCreateShow()
-            throws InputValidationException
     {
+        boolean exceptionCatched = false;
         Show show = new Show();
-        show.setName("Foo");
-        show.setDescription("Foo");
-        show.setDuration(10);
-        show.setStartDate(Calendar.getInstance());
-        show.setLimitDate(Calendar.getInstance());
-        show.setMaxTickets(100);
-        show.setRealPrice(100.0f);
-        show.setDiscountedPrice(80.0f);
-        show.setSalesCommission(20.0f);
-        show = ticketService.createShow(show);
+        Calendar start = Calendar.getInstance();
+        Calendar limit = Calendar.getInstance();
 
-        show.setName("Hello world update!!");
-        updateShow(show);
-        removeShow(show.getId());
+        try
+        {
+            show.setName(null);
+            show = ticketService.createShow(show);
+        } catch (InputValidationException e) {
+            exceptionCatched = true;
+        }
+        assertTrue(exceptionCatched);
+        try { removeShow(show.getId()); } catch (Exception e) { }
+
+        try
+        {
+            show.setDescription(null);
+            show = ticketService.createShow(show);
+        } catch (InputValidationException e) {
+            exceptionCatched = true;
+        }
+        assertTrue(exceptionCatched);
+        try { removeShow(show.getId()); } catch (Exception e) { }
+
+        try
+        {
+            show.setDuration(-1);
+            show = ticketService.createShow(show);
+        } catch (InputValidationException e) {
+            exceptionCatched = true;
+        }
+        assertTrue(exceptionCatched);
+        try { removeShow(show.getId()); } catch (Exception e) { }
+
+        try
+        {
+            show.setDuration(0);
+            show = ticketService.createShow(show);
+        } catch (InputValidationException e) {
+            exceptionCatched = true;
+        }
+        assertTrue(exceptionCatched);
+        try { removeShow(show.getId()); } catch (Exception e) { }
+
+        try
+        {
+            start.add(Calendar.DAY_OF_WEEK, -1);
+            show.setStartDate(Calendar.getInstance());
+            show = ticketService.createShow(show);
+        } catch (InputValidationException e) {
+            exceptionCatched = true;
+        }
+        assertTrue(exceptionCatched);
+        try { removeShow(show.getId()); } catch (Exception e) { }
+
+        try
+        {
+            limit.add(Calendar.DAY_OF_WEEK, -2);
+            show.setLimitDate(limit);
+            show = ticketService.createShow(show);
+        } catch (InputValidationException e) {
+            exceptionCatched = true;
+        }
+        assertTrue(exceptionCatched);
+        try { removeShow(show.getId()); } catch (Exception e) { }
+
+        try
+        {
+            show.setMaxTickets(0);
+            show = ticketService.createShow(show);
+        } catch (InputValidationException e) {
+            exceptionCatched = true;
+        }
+        assertTrue(exceptionCatched);
+        try { removeShow(show.getId()); } catch (Exception e) { }
+
+        try
+        {
+            show.setRealPrice(-1.0f);
+            show = ticketService.createShow(show);
+        } catch (InputValidationException e) {
+            exceptionCatched = true;
+        }
+        assertTrue(exceptionCatched);
+        try { removeShow(show.getId()); } catch (Exception e) { }
+        
+        try
+        {
+            show.setDiscountedPrice(-1.0f);
+            show = ticketService.createShow(show);
+        } catch (InputValidationException e) {
+            exceptionCatched = true;
+        }
+        assertTrue(exceptionCatched);
+        try { removeShow(show.getId()); } catch (Exception e) { }
+
+        try
+        {
+            show.setSalesCommission(-1.0f);
+            show = ticketService.createShow(show);
+        } catch (InputValidationException e) {
+            exceptionCatched = true;
+        }
+        assertTrue(exceptionCatched);
+        try { removeShow(show.getId()); } catch (Exception e) { }
+    }
+    
+    @Test
+    public void testUpdateShow() {
+        boolean exceptionCatched = false;
+        Show show = createValidShow();
+        try {
+            ticketService.createShow(show);
+        } catch (Exception e) {
+            throw new RuntimeException("Unexpected exception");
+        }
     }
 }

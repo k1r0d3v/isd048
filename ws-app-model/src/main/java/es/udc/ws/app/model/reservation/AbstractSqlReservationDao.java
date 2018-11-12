@@ -74,7 +74,6 @@ public abstract class AbstractSqlReservationDao implements SqlReservationDao
             ResultSet rs = ps.executeQuery();
 
             List<Reservation> reservations = new ArrayList<>();
-            Calendar calendar = Calendar.getInstance();
 
             while (rs.next()) {
                 Reservation r = new Reservation();
@@ -88,6 +87,7 @@ public abstract class AbstractSqlReservationDao implements SqlReservationDao
                 r.setValid(rs.getBoolean(index++));
                 r.setCode(rs.getString(index++));
 
+                Calendar calendar = Calendar.getInstance();
                 calendar.setTime(rs.getTimestamp(index++));
                 r.setReservationDate(calendar);
 
@@ -128,7 +128,6 @@ public abstract class AbstractSqlReservationDao implements SqlReservationDao
                 throw new InstanceNotFoundException(code, Reservation.class.getName());
 
             Reservation r = new Reservation();
-            Calendar calendar = Calendar.getInstance();
             int index = 1;
 
             r.setId(rs.getLong(index++));
@@ -139,6 +138,7 @@ public abstract class AbstractSqlReservationDao implements SqlReservationDao
             r.setValid(rs.getBoolean(index++));
             r.setCode(rs.getString(index++));
 
+            Calendar calendar = Calendar.getInstance();
             calendar.setTime(rs.getTimestamp(index++));
             r.setReservationDate(calendar);
 
