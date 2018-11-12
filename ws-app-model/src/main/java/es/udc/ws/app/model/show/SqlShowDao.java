@@ -9,13 +9,13 @@ import java.util.List;
 
 public interface SqlShowDao
 {
-    public Show create(Connection c, Show show);
+    Show create(Connection c, Show show);
 
-    public void update(Connection c, Show show) throws InstanceNotFoundException;
+    void update(Connection c, Show show) throws InstanceNotFoundException;
 
-    public void remove(Connection c, Long id) throws InstanceNotFoundException;
+    void remove(Connection c, Long id) throws InstanceNotFoundException;
 
-    public Show find(Connection c, Long id) throws InstanceNotFoundException;
+    Show find(Connection c, Long id) throws InstanceNotFoundException;
 
-    public List<Show> find(Connection c, String words, Calendar startDate, Calendar endDate);
+    List<Show> find(Connection c, String words, Calendar startDate, Calendar endDate);
 }

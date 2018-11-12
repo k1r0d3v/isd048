@@ -13,6 +13,7 @@ import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import es.udc.ws.util.sql.DataSourceLocator;
 import es.udc.ws.util.sql.SimpleDataSource;
 import org.junit.*;
+import static org.junit.Assert.*;
 
 import javax.sql.DataSource;
 
@@ -24,149 +25,247 @@ import java.util.Calendar;
 
 public class TicketSellerServiceTest
 {
-	private static TicketSellerService ticketService;
-	private static SqlShowDao showDao;
+    private static TicketSellerService ticketService;
+    private static SqlShowDao showDao;
 
-	private final long id = 123456789;
-	private final String showName = "A star is born";
-	private final Calendar showStartDate = Calendar.getInstance();
-	private final long showDuration = (long) 135;
-	private Calendar showLimitDate = Calendar.getInstance();
-	private long showMaxTickets = (long) 150;
-	private long showSoldTickets = (long) 25;
-	private float showRealPrice = (float) 7.00;
-	private float showDiscountedPrice = (float) 5.90;
-	private float showSalesCommission = (float) 0.20;
+    @BeforeClass
+    public static void init() {
 
-	@BeforeClass
-	public static void init() {
+        /*
+         * Create a simple data source and add it to "DataSourceLocator" (this
+         * is needed to test "es.udc.ws.movies.model.movieservice.MovieService"
+         */
+        DataSource dataSource = new SimpleDataSource();
 
-		/*
-		 * Create a simple data source and add it to "DataSourceLocator" (this
-		 * is needed to test "es.udc.ws.movies.model.movieservice.MovieService"
-		 */
-		DataSource dataSource = new SimpleDataSource();
+        /* Add "dataSource" to "DataSourceLocator". */
+        DataSourceLocator.addDataSource(Constants.DATA_SOURCE, dataSource);
 
-		/* Add "dataSource" to "DataSourceLocator". */
-		DataSourceLocator.addDataSource(Constants.DATA_SOURCE, dataSource);
+        ticketService = TicketSellerServiceFactory.getService();
+        showDao = SqlShowDaoFactory.getDao();
+    }
 
-		ticketService = TicketSellerServiceFactory.getService();
-		showDao = SqlShowDaoFactory.getDao();
-	}
+    private void updateShow(Show show)
+    {
+        DataSource dataSource = DataSourceLocator.getDataSource(Constants.DATA_SOURCE);
 
-	private void updateShow(Show show)
-	{
-		DataSource dataSource = DataSourceLocator.getDataSource(Constants.DATA_SOURCE);
+        try (Connection connection = dataSource.getConnection()) {
 
-		try (Connection connection = dataSource.getConnection()) {
+            try {
 
-			try {
+                /* Prepare connection. */
+                connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+                connection.setAutoCommit(false);
 
-				/* Prepare connection. */
-				connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
-				connection.setAutoCommit(false);
+                /* Do work. */
+                showDao.update(connection, show);
 
-				/* Do work. */
-				showDao.update(connection, show);
+                /* Commit. */
+                connection.commit();
 
-				/* Commit. */
-				connection.commit();
+            } catch (InstanceNotFoundException e) {
+                connection.commit();
+                throw new RuntimeException(e);
+            } catch (SQLException e) {
+                connection.rollback();
+                throw new RuntimeException(e);
+            } catch (RuntimeException | Error e) {
+                connection.rollback();
+                throw e;
+            }
 
-			} catch (InstanceNotFoundException e) {
-				connection.commit();
-				throw new RuntimeException(e);
-			} catch (SQLException e) {
-				connection.rollback();
-				throw new RuntimeException(e);
-			} catch (RuntimeException | Error e) {
-				connection.rollback();
-				throw e;
-			}
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    private void removeShow(Long id)
+    {
+        DataSource dataSource = DataSourceLocator.getDataSource(Constants.DATA_SOURCE);
 
-	private void removeShow(Long id)
-	{
-		DataSource dataSource = DataSourceLocator.getDataSource(Constants.DATA_SOURCE);
+        try (Connection connection = dataSource.getConnection()) {
 
-		try (Connection connection = dataSource.getConnection()) {
+            try {
 
-			try {
+                /* Prepare connection. */
+                connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+                connection.setAutoCommit(false);
 
-				/* Prepare connection. */
-				connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
-				connection.setAutoCommit(false);
+                /* Do work. */
+                showDao.remove(connection, id);
 
-				/* Do work. */
-				showDao.remove(connection, id);
+                /* Commit. */
+                connection.commit();
 
-				/* Commit. */
-				connection.commit();
+            } catch (InstanceNotFoundException e) {
+                connection.commit();
+                throw new RuntimeException(e);
+            } catch (SQLException e) {
+                connection.rollback();
+                throw new RuntimeException(e);
+            } catch (RuntimeException | Error e) {
+                connection.rollback();
+                throw e;
+            }
 
-			} catch (InstanceNotFoundException e) {
-				connection.commit();
-				throw new RuntimeException(e);
-			} catch (SQLException e) {
-				connection.rollback();
-				throw new RuntimeException(e);
-			} catch (RuntimeException | Error e) {
-				connection.rollback();
-				throw e;
-			}
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    private Show getValidShow() {
+        Show s = new Show();
 
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-	}
+        s.setName("Test");
+        s.setDescription("Test description");
 
-	@Test
-	public void testCreateShow()
-			throws InputValidationException
-	{
-		Show show = new Show();
-		show.setName("Foo");
-		show.setDescription("Foo");
-		show.setDuration(10);
-		show.setStartDate(Calendar.getInstance());
-		show.setLimitDate(Calendar.getInstance());
-		show.setMaxTickets(100);
-		show.setRealPrice(100.0f);
-		show.setDiscountedPrice(80.0f);
-		show.setSalesCommission(20.0f);
-		show = ticketService.createShow(show);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.YEAR, 1);
+        s.setStartDate(calendar);
 
-		show.setName("Hello world update!!");
-		updateShow(show);
-		removeShow(show.getId());
-	}
+        s.setDuration(120);
 
-	private Show getValidShow() {
-		Show validShow = new Show();
-		validShow.setId(id);
-		validShow.setName(showName);
-		validShow.setStartDate(showStartDate);
-		validShow.setDuration(showDuration);
-		validShow.setLimitDate(showLimitDate);
-		validShow.setMaxTickets(showMaxTickets);
-		validShow.setSoldTickets(showSoldTickets);
-		validShow.setRealPrice(showRealPrice);
-		validShow.setDiscountedPrice(showDiscountedPrice);
-		validShow.setSalesCommission(showSalesCommission);
+        calendar = Calendar.getInstance();
+        calendar.add(Calendar.YEAR, 1);
+        calendar.add(Calendar.DAY_OF_WEEK, -1);
+        s.setLimitDate(calendar);
 
-		return validShow;
+        s.setMaxTickets(10000);
+        s.setSoldTickets(0);
+        s.setRealPrice(60.0f);
+        s.setDiscountedPrice(50.0f);
+        s.setSalesCommission(20.0f);
+        
+        return s;
+    }
 
-	}
+    @Test
+    public void testCreateShow()
+    {
+        boolean exceptionCatched = false;
+        Show show = new Show();
+        Calendar start = Calendar.getInstance();
+        Calendar limit = Calendar.getInstance();
 
-	@Test
+        try
+        {
+            show.setName(null);
+            show = ticketService.createShow(show);
+        } catch (InputValidationException e) {
+            exceptionCatched = true;
+        }
+        assertTrue(exceptionCatched);
+        try { removeShow(show.getId()); } catch (Exception e) { }
+
+        try
+        {
+            show.setDescription(null);
+            show = ticketService.createShow(show);
+        } catch (InputValidationException e) {
+            exceptionCatched = true;
+        }
+        assertTrue(exceptionCatched);
+        try { removeShow(show.getId()); } catch (Exception e) { }
+
+        try
+        {
+            show.setDuration(-1);
+            show = ticketService.createShow(show);
+        } catch (InputValidationException e) {
+            exceptionCatched = true;
+        }
+        assertTrue(exceptionCatched);
+        try { removeShow(show.getId()); } catch (Exception e) { }
+
+        try
+        {
+            show.setDuration(0);
+            show = ticketService.createShow(show);
+        } catch (InputValidationException e) {
+            exceptionCatched = true;
+        }
+        assertTrue(exceptionCatched);
+        try { removeShow(show.getId()); } catch (Exception e) { }
+
+        try
+        {
+            start.add(Calendar.DAY_OF_WEEK, -1);
+            show.setStartDate(Calendar.getInstance());
+            show = ticketService.createShow(show);
+        } catch (InputValidationException e) {
+            exceptionCatched = true;
+        }
+        assertTrue(exceptionCatched);
+        try { removeShow(show.getId()); } catch (Exception e) { }
+
+        try
+        {
+            limit.add(Calendar.DAY_OF_WEEK, -2);
+            show.setLimitDate(limit);
+            show = ticketService.createShow(show);
+        } catch (InputValidationException e) {
+            exceptionCatched = true;
+        }
+        assertTrue(exceptionCatched);
+        try { removeShow(show.getId()); } catch (Exception e) { }
+
+        try
+        {
+            show.setMaxTickets(0);
+            show = ticketService.createShow(show);
+        } catch (InputValidationException e) {
+            exceptionCatched = true;
+        }
+        assertTrue(exceptionCatched);
+        try { removeShow(show.getId()); } catch (Exception e) { }
+
+        try
+        {
+            show.setRealPrice(-1.0f);
+            show = ticketService.createShow(show);
+        } catch (InputValidationException e) {
+            exceptionCatched = true;
+        }
+        assertTrue(exceptionCatched);
+        try { removeShow(show.getId()); } catch (Exception e) { }
+        
+        try
+        {
+            show.setDiscountedPrice(-1.0f);
+            show = ticketService.createShow(show);
+        } catch (InputValidationException e) {
+            exceptionCatched = true;
+        }
+        assertTrue(exceptionCatched);
+        try { removeShow(show.getId()); } catch (Exception e) { }
+
+        try
+        {
+            show.setSalesCommission(-1.0f);
+            show = ticketService.createShow(show);
+        } catch (InputValidationException e) {
+            exceptionCatched = true;
+        }
+        assertTrue(exceptionCatched);
+        try { removeShow(show.getId()); } catch (Exception e) { }
+    }
+    
+    @Test
+    public void testUpdateShow() {
+        boolean exceptionCatched = false;
+        Show show = getValidShow();
+        try {
+            ticketService.createShow(show);
+        } catch (Exception e) {
+            throw new RuntimeException("Unexpected exception");
+        }
+    }
+
+    @Test
 	public void findAndAddShowTest() throws InputValidationException, InstanceNotFoundException {
 		Show show = getValidShow();
 		Show addedShow = null;
 
 		try {
-
 			addedShow = ticketService.createShow(show);
 			Show foundShow = ticketService.findShow(addedShow.getId());
 

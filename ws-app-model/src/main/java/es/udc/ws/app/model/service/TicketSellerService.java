@@ -3,6 +3,7 @@ package es.udc.ws.app.model.service;
 import es.udc.ws.app.model.reservation.Reservation;
 import es.udc.ws.app.model.service.exceptions.LimitDateExceeded;
 import es.udc.ws.app.model.service.exceptions.ReservationAlreadyChecked;
+import es.udc.ws.app.model.service.exceptions.ShowHasReservations;
 import es.udc.ws.app.model.show.Show;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
@@ -13,15 +14,18 @@ import java.util.List;
 
 public interface TicketSellerService
 {
-    public Show createShow(Show show) throws InputValidationException;
+    Show createShow(Show show) throws InputValidationException;
 
-    public Show findShow(Long code) throws InstanceNotFoundException;
+    void updateShow(Show show)
+            throws InstanceNotFoundException, InputValidationException;
 
-    public List<Show> findShows(String words, Calendar start, Calendar end);
+    Show findShow(Long code) throws InstanceNotFoundException;
 
-    public Reservation buyTickets(Long showId, String email, String cardNumber, int count) throws LimitDateExceeded, InstanceNotFoundException, InputValidationException;
+    List<Show> findShows(String words, Calendar start, Calendar end);
 
-    public List<Reservation> getUserReservations(String email);
+    Reservation buyTickets(Long showId, String email, String cardNumber, int count) throws InstanceNotFoundException, InputValidationException;
 
-    public void checkReservation(String code) throws InstanceNotFoundException, ReservationAlreadyChecked;
+    List<Reservation> getUserReservations(String email);
+
+    void checkReservation(String code, String cardNumber) throws InstanceNotFoundException, InputValidationException;
 }

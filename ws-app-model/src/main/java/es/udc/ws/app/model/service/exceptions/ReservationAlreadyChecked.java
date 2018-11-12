@@ -4,7 +4,7 @@ import es.udc.ws.util.exceptions.InputValidationException;
 
 public class ReservationAlreadyChecked extends InputValidationException
 {
-    public ReservationAlreadyChecked(String message) {
-        super(message);
+    public ReservationAlreadyChecked() {
+        super("Reservation already checked");
     }
 }

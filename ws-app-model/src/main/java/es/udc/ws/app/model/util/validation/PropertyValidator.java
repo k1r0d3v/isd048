@@ -30,6 +30,20 @@ public class PropertyValidator
 
     }
 
+    public static void validateFloat(String propertyName,
+                                      float doubleValue, float lowerValidLimit, float upperValidLimit)
+            throws InputValidationException {
+
+        if ((doubleValue < lowerValidLimit) ||
+                (doubleValue > upperValidLimit)) {
+            throw new InputValidationException("Invalid " + propertyName +
+                    " value (it must be gtrater than " + lowerValidLimit +
+                    " and lower than " + upperValidLimit + "): " +
+                    doubleValue);
+        }
+
+    }
+
     public static void validateDouble(String propertyName,
                                       double doubleValue, double lowerValidLimit, double upperValidLimit)
             throws InputValidationException {
@@ -55,13 +69,13 @@ public class PropertyValidator
 
     }
 
-    public static void validatePastDate(String propertyName,
+    public static void validateAfterDate(String propertyName,
+                                        Calendar after,
                                         Calendar propertyValue) throws InputValidationException {
 
-        Calendar now = Calendar.getInstance();
-        if ( (propertyValue == null) || (propertyValue.after(now)) ) {
+        if ( (propertyValue == null) || (propertyValue.after(after)) ) {
             throw new InputValidationException("Invalid " + propertyName +
-                    " value (it must be a past date): " +
+                    " value (it must be after " + after + " ): " +
                     propertyValue);
         }
 
