@@ -40,7 +40,7 @@ public class TicketSellerServiceImpl implements TicketSellerService
         PropertyValidator.validateMandatoryString("description", show.getDescription());
         PropertyValidator.validateFutureDate("start date", show.getStartDate());
         PropertyValidator.validateLong("duration", show.getDuration(), 0, Integer.MAX_VALUE);
-        PropertyValidator.validateAfterDate("limit date", show.getStartDate(), show.getLimitDate());
+        PropertyValidator.validateBeforeDate("limit date", show.getLimitDate(), show.getStartDate());
         PropertyValidator.validateLong("max number of tickets", show.getMaxTickets(), 1, Integer.MAX_VALUE);
         PropertyValidator.validateFloat("real price", show.getRealPrice(), 0.0f, Float.MAX_VALUE);
         PropertyValidator.validateFloat("discounted price", show.getDiscountedPrice(), 0.0f, Float.MAX_VALUE);
@@ -84,7 +84,7 @@ public class TicketSellerServiceImpl implements TicketSellerService
         PropertyValidator.validateMandatoryString("description", show.getDescription());
         PropertyValidator.validateFutureDate("start date", show.getStartDate());
         PropertyValidator.validateLong("duration", show.getDuration(), 0, Integer.MAX_VALUE);
-        PropertyValidator.validateAfterDate("limit date", show.getLimitDate(), show.getStartDate());
+        PropertyValidator.validateBeforeDate("limit date", show.getLimitDate(), show.getStartDate());
         PropertyValidator.validateLong("max number of tickets", show.getMaxTickets(), 1, Integer.MAX_VALUE);
         PropertyValidator.validateFloat("real price", show.getRealPrice(), 0.0f, Float.MAX_VALUE);
         PropertyValidator.validateFloat("discounted price", show.getDiscountedPrice(), 0.0f, Float.MAX_VALUE);
@@ -102,7 +102,9 @@ public class TicketSellerServiceImpl implements TicketSellerService
                 /* Do work. */
                 Show current = showDao.find(connection, show.getId());
 
-                if (current.getSoldTickets() > 0 && show.getRealPrice() > current.getRealPrice()) {
+                boolean isLessPrice = show.getRealPrice() < current.getRealPrice();
+                if (isLessPrice && current.getSoldTickets() > 0 ||
+                    isLessPrice && show.getSoldTickets() > 0) {
                     connection.rollback();
                     throw new ShowHasReservations("Cannot decrease the show price when it has sold tickets");
                 }
@@ -121,23 +123,42 @@ public class TicketSellerServiceImpl implements TicketSellerService
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-        throw new ShowHasReservations("Cannot decrease the price");
     }
 
     @Override
-    public Show findShow(Long code) throws InstanceNotFoundException {
-     
+    public Show findShow(Long id)
+            throws InstanceNotFoundException, InputValidationException
+    {
+        if (id == null)
+            throw new InputValidationException("code can not be null");
+
     	try (Connection connection = dataSource.getConnection()) {
-			return showDao.find(connection, code);
+			return showDao.find(connection, id);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
 
 	}
 
-	@Override/*Probar*/
-	public List<Show> findShows(String words, Calendar start, Calendar end) {
+	@Override
+	public List<Show> findShows(String words, Calendar start, Calendar end)
+            throws InputValidationException
+    {
+	    if (words == null)
+	        throw new InputValidationException("words can not be null");
+
+	    if (start == null && end != null)
+	        throw new InputValidationException("end must be null");
+
+	    if (start != null && end == null)
+            throw new InputValidationException("end can not be null");
+
+	    if (start != null && end != null)
+        {
+            if (!start.equals(end))
+                if (start.after(end))
+                    throw new InputValidationException("end date must be greater than or equals to start date");
+        }
 
 		try (Connection connection = dataSource.getConnection()) {
 			return showDao.find(connection, words, start, end);
@@ -145,9 +166,15 @@ public class TicketSellerServiceImpl implements TicketSellerService
 			throw new RuntimeException(e);
 		}
 	}
-	
-	@Override/*Probar*/
-	public Reservation buyTickets(Long showId, String email, String cardNumber, int count) throws InstanceNotFoundException, InputValidationException {
+
+	/*
+	Nota (Lora): UUID.randomUUID().toString() para un identificador único
+	 */
+
+	@Override
+	public Reservation buyTickets(Long showId, String email, String cardNumber, int count)
+            throws InstanceNotFoundException, InputValidationException
+    {
 
 		PropertyValidator.validateCreditCard(cardNumber);
 
@@ -157,7 +184,6 @@ public class TicketSellerServiceImpl implements TicketSellerService
 				c.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 				c.setAutoCommit(false);
 
-				/* Do work. */
 				Show show = showDao.find(c, showId);
 				Calendar expirationDate = Calendar.getInstance();
 
@@ -176,7 +202,6 @@ public class TicketSellerServiceImpl implements TicketSellerService
 					
 					showDao.update(c, show);
 					reservationDao.update(c, res);
-					
 					
 					
 					/* Commit. */ 

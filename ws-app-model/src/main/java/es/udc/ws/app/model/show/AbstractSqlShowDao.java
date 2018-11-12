@@ -166,45 +166,56 @@ public abstract class AbstractSqlShowDao implements SqlShowDao
 		    tmp.append(" WHERE");
 
 			for (int i = 0; i < (keywords.length - 1); i++)
-				tmp.append(" LOWER(title) LIKE LOWER(?) AND");
+				tmp.append(" LOWER(description) LIKE LOWER(?) AND");
 
-            tmp.append(" LOWER(title) LIKE LOWER(?)");
+            tmp.append(" LOWER(description) LIKE LOWER(?)");
             query += tmp.toString();
         }
-		query += " ORDER BY name";
+
+        if (startDate != null && endDate != null)
+            query += " OR startDate BETWEEN ? AND ?";
+
+		query += " ORDER BY startDate";
 
 		try (PreparedStatement preparedStatement = c.prepareStatement(query)) {
 
-            for (int i = 0; i < keywords.length; i++)
+            int i = 0;
+            for (; i < keywords.length; i++)
                 preparedStatement.setString(i + 1, String.format("%%%s%%", keywords[i]));
+
+            if (startDate != null && endDate != null) {
+                preparedStatement.setTimestamp(i + 1, new Timestamp(startDate.getTimeInMillis()));
+                preparedStatement.setTimestamp(i + 2, new Timestamp(endDate.getTimeInMillis()));
+            }
 
 			ResultSet rs = preparedStatement.executeQuery();
 			List<Show> shows = new ArrayList<>();
 
 			while (rs.next())
 			{
-				int index = 1;
+				i = 1;
                 Show s = new Show();
 
-                s.setId(rs.getLong(index++));
-                s.setName(rs.getString(index++));
-                s.setDescription(rs.getString(index++));
+                s.setId(rs.getLong(i++));
+                s.setName(rs.getString(i++));
+                s.setDescription(rs.getString(i++));
 
 				Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(rs.getTimestamp(index++).getTime());
+                calendar.setTimeInMillis(rs.getTimestamp(i++).getTime());
                 s.setStartDate(calendar);
 
-                s.setDuration(rs.getLong(index++));
+                s.setDuration(rs.getLong(i++));
 
 				calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(rs.getTimestamp(index++).getTime());
+                calendar.setTimeInMillis(rs.getTimestamp(i++).getTime());
+
                 s.setLimitDate(calendar);
 
-                s.setMaxTickets(rs.getLong(index++));
-                s.setSoldTickets(rs.getLong(index++));
-                s.setRealPrice(rs.getFloat(index++));
-                s.setDiscountedPrice(rs.getFloat(index++));
-                s.setSalesCommission(rs.getFloat(index));
+                s.setMaxTickets(rs.getLong(i++));
+                s.setSoldTickets(rs.getLong(i++));
+                s.setRealPrice(rs.getFloat(i++));
+                s.setDiscountedPrice(rs.getFloat(i++));
+                s.setSalesCommission(rs.getFloat(i));
 
 				shows.add(s);
 			}

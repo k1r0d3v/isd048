@@ -47,6 +47,7 @@ public class Show
 
     public void setStartDate(Calendar startDate) {
         this.startDate = startDate;
+        this.startDate.set(Calendar.MILLISECOND, 0);
     }
 
     public long getDuration() {
@@ -63,6 +64,7 @@ public class Show
 
     public void setLimitDate(Calendar limitDate) {
         this.limitDate = limitDate;
+        this.limitDate.set(Calendar.MILLISECOND, 0);
     }
 
     public long getMaxTickets() {
@@ -108,7 +110,7 @@ public class Show
     public boolean equals(Object object) {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
-        if (!super.equals(object)) return false;
+
         Show show = (Show) object;
         return id == show.id &&
                 duration == show.duration &&
@@ -125,5 +127,22 @@ public class Show
 
     public int hashCode() {
         return Objects.hash(super.hashCode(), id, name, description, startDate, duration, limitDate, maxTickets, soldTickets, realPrice, discountedPrice, salesCommission);
+    }
+
+    @Override
+    public String toString() {
+        return "Show{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", startDate=" + startDate +
+                ", duration=" + duration +
+                ", limitDate=" + limitDate +
+                ", maxTickets=" + maxTickets +
+                ", soldTickets=" + soldTickets +
+                ", realPrice=" + realPrice +
+                ", discountedPrice=" + discountedPrice +
+                ", salesCommission=" + salesCommission +
+                '}';
     }
 }

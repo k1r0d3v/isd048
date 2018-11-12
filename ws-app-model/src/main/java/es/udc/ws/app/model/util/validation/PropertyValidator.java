@@ -70,13 +70,25 @@ public class PropertyValidator
     }
 
     public static void validateAfterDate(String propertyName,
-                                        Calendar after,
-                                        Calendar propertyValue) throws InputValidationException {
+                                        Calendar date,
+                                        Calendar after) throws InputValidationException {
 
-        if ( (propertyValue == null) || (propertyValue.after(after)) ) {
+        if ( (date == null) || date.before(after) ) {
             throw new InputValidationException("Invalid " + propertyName +
                     " value (it must be after " + after + " ): " +
-                    propertyValue);
+                    date);
+        }
+
+    }
+
+    public static void validateBeforeDate(String propertyName,
+                                         Calendar date,
+                                         Calendar before) throws InputValidationException {
+
+        if ( (date == null) || date.after(before) ) {
+            throw new InputValidationException("Invalid " + propertyName +
+                    " value (it must be before " + before + " ): " +
+                    date);
         }
 
     }
