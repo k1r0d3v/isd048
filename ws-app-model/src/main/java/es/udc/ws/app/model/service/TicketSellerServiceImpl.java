@@ -1,6 +1,5 @@
 package es.udc.ws.app.model.service;
 
-import es.udc.ws.app.model.service.exceptions.LimitDateExceeded;
 import es.udc.ws.app.model.service.exceptions.ReservationAlreadyChecked;
 import es.udc.ws.app.model.service.exceptions.ShowHasReservations;
 import es.udc.ws.app.model.show.Show;
