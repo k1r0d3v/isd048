@@ -2,6 +2,7 @@ package es.udc.ws.app.test.model.service;
 
 
 import es.udc.ws.app.model.service.TicketSellerService;
+
 import es.udc.ws.app.model.service.TicketSellerServiceFactory;
 import es.udc.ws.app.model.show.Show;
 import es.udc.ws.app.model.show.SqlShowDao;
@@ -15,10 +16,12 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 import javax.sql.DataSource;
+
+import static org.junit.Assert.assertEquals;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Calendar;
-
 
 public class TicketSellerServiceTest
 {
@@ -109,7 +112,7 @@ public class TicketSellerServiceTest
         }
     }
     
-    private Show createValidShow() {
+    private Show getValidShow() {
         Show s = new Show();
 
         s.setName("Test");
@@ -249,11 +252,31 @@ public class TicketSellerServiceTest
     @Test
     public void testUpdateShow() {
         boolean exceptionCatched = false;
-        Show show = createValidShow();
+        Show show = getValidShow();
         try {
             ticketService.createShow(show);
         } catch (Exception e) {
             throw new RuntimeException("Unexpected exception");
         }
     }
+
+    @Test
+	public void findAndAddShowTest() throws InputValidationException, InstanceNotFoundException {
+		Show show = getValidShow();
+		Show addedShow = null;
+
+		try {
+			addedShow = ticketService.createShow(show);
+			Show foundShow = ticketService.findShow(addedShow.getId());
+
+			assertEquals(addedShow, foundShow);
+
+		} finally {
+			/*Clear Database.*/
+			if (addedShow!=null) {
+				removeShow(addedShow.getId());
+			}
+		}
+
+	}
 }

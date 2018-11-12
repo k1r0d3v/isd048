@@ -14,18 +14,18 @@ import java.util.List;
 
 public interface TicketSellerService
 {
-    public Show createShow(Show show) throws InputValidationException;
+    Show createShow(Show show) throws InputValidationException;
 
-    public void updateShow(Show show)
+    void updateShow(Show show)
             throws InstanceNotFoundException, InputValidationException;
 
-    public Show findShow(Long code) throws InstanceNotFoundException;
+    Show findShow(Long code) throws InstanceNotFoundException;
 
-    public List<Show> findShows(String words, Calendar start, Calendar end);
+    List<Show> findShows(String words, Calendar start, Calendar end);
 
-    public Reservation buyTickets(Long showId, String email, String cardNumber, int count) throws LimitDateExceeded;
+    Reservation buyTickets(Long showId, String email, String cardNumber, int count) throws InstanceNotFoundException, InputValidationException;
 
-    public List<Reservation> getUserReservations(String email);
+    List<Reservation> getUserReservations(String email);
 
-    public void checkReservation(String code, String cardNumber) throws InstanceNotFoundException, InputValidationException;
+    void checkReservation(String code, String cardNumber) throws InstanceNotFoundException, InputValidationException;
 }
