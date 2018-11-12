@@ -148,7 +148,7 @@ public class TicketSellerServiceImpl implements TicketSellerService
 /* En  caso  de  ejecutarse  con  éxito, devuelve  un  código  que  será  necesario  para  recoger  las  entradas  en  taquilla,
   y  se  almacena la reserva, quedando registrada la fecha y hora a la que se hizo.*/
 	@Override/*Probar*/
-	public Reservation buyTickets(Long showId, String email, String cardNumber, int count) throws LimitDateExceeded, InstanceNotFoundException, InputValidationException {
+	public Reservation buyTickets(Long showId, String email, String cardNumber, int count) throws InstanceNotFoundException, InputValidationException {
 
 		PropertyValidator.validateCreditCard(cardNumber);
 
