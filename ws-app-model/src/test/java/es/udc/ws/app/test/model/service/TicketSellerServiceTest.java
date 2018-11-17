@@ -1,6 +1,7 @@
 package es.udc.ws.app.test.model.service;
 
 
+import es.udc.ws.app.model.reservation.Reservation;
 import es.udc.ws.app.model.service.TicketSellerService;
 
 import es.udc.ws.app.model.service.TicketSellerServiceFactory;
@@ -494,4 +495,27 @@ public class TicketSellerServiceTest
         assertTrue(shows.get(0).equals(showOne) || shows.get(1).equals(showOne));
         assertTrue(shows.get(0).equals(showTwo) || shows.get(1).equals(showTwo));
     }
+    
+    @Test(expected = InstanceNotFoundException.class)
+	public void buyTicketShowDoesntExist() throws InputValidationException, InstanceNotFoundException {
+
+		Reservation res = ticketService.buyTickets((long) -1, "email@gmail.com", "5489162716279483", 1);
+		// Clear database. 
+	
+    }
+    
+
+	@Test(expected = InputValidationException.class)
+	public void testBuyMovieWithInvalidCreditCard() throws InputValidationException, InstanceNotFoundException {
+
+		Show show = getValidShow();
+		try { 
+			Reservation res = ticketService.buyTickets((long)12, "email@gmail.com", "", 4);
+			//removeSale(sale.getSaleId());
+		} finally {
+			/* Clear database. */
+			//removeMovie(show.getId());
+		}
+
+	}
 }

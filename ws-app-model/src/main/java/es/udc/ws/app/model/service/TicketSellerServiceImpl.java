@@ -197,7 +197,7 @@ public class TicketSellerServiceImpl implements TicketSellerService
 
 				if( (show.getLimitDate().before(expirationDate)) && (availableTickets <= count) ) {
 					reservationDao.create(c, res);
-
+					
 					Random codeGenerated = new Random();
 					
 					showDao.update(c, show);
