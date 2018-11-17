@@ -167,10 +167,7 @@ public class TicketSellerServiceImpl implements TicketSellerService
 		}
 	}
 
-	/*
-	Nota (Lora): UUID.randomUUID().toString() para un identificador único
-	 */
-
+	
 	@Override
 	public Reservation buyTickets(Long showId, String email, String cardNumber, int count)
             throws InstanceNotFoundException, InputValidationException
@@ -195,7 +192,9 @@ public class TicketSellerServiceImpl implements TicketSellerService
 
 				long availableTickets = show.getMaxTickets() - show.getSoldTickets();
 
-				if( (show.getLimitDate().before(expirationDate)) && (availableTickets <= count) ) {
+				if( (  (res.getReservationDate().before(show.getLimitDate()) && res.getReservationDate().after(show.getStartDate()) ) && (availableTickets <= count) )) {
+					  
+					res = 
 					reservationDao.create(c, res);
 					
 					Random codeGenerated = new Random();

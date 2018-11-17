@@ -2,6 +2,8 @@ package es.udc.ws.app.model.reservation;
 
 import java.sql.*;
 
+import es.udc.ws.util.exceptions.InstanceNotFoundException;
+
 public class Jdbc3CcSqlReservationDao extends AbstractSqlReservationDao
 {
     @Override
@@ -18,7 +20,7 @@ public class Jdbc3CcSqlReservationDao extends AbstractSqlReservationDao
                         "code, " +
                         "reservationDate, " +
                         "price) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement ps = c.prepareStatement(query, Statement.RETURN_GENERATED_KEYS))
         {
@@ -46,4 +48,10 @@ public class Jdbc3CcSqlReservationDao extends AbstractSqlReservationDao
             throw new RuntimeException(e);
         }
     }
+
+	@Override
+	public void remove(Connection c, Long id) throws InstanceNotFoundException {
+		// TODO Auto-generated method stub
+		
+	}
 }
