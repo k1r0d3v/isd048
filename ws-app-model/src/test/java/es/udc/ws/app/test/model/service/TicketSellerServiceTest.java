@@ -405,7 +405,7 @@ public class TicketSellerServiceTest
 	}
 
 	// TODO: Clean, please
-	/*@Test
+	@Test
 	public void testFindShows()
 	{
 		boolean exceptionCatched = false;
@@ -500,7 +500,7 @@ public class TicketSellerServiceTest
 		assertNotEquals(shows.get(0), shows.get(1));
 		assertTrue(shows.get(0).equals(showOne) || shows.get(1).equals(showOne));
 		assertTrue(shows.get(0).equals(showTwo) || shows.get(1).equals(showTwo));
-	}*/
+	}
 
 	private void removeReservation(Long id, Reservation reservation)
 	{
