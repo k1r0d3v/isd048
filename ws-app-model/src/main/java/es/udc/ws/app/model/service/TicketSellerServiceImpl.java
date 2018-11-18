@@ -215,46 +215,6 @@ public class TicketSellerServiceImpl implements TicketSellerService
 
                 return r;
 
-/*              //Esto es de Laura
-				c.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
-				c.setAutoCommit(false);
-
-				Show show = showDao.find(c, showId);
-				Calendar expirationDate = Calendar.getInstance();
-
-				Reservation res = new Reservation();
-				res.setShowId(showId);
-				res.setEmail(email);
-				res.setCardNumber(cardNumber);
-				res.setTickets(count);
-
-				long availableTickets = show.getMaxTickets() - show.getSoldTickets();
-
-				if( (  (res.getReservationDate().before(show.getLimitDate()) && res.getReservationDate().after(show.getStartDate()) ) && (availableTickets <= count) )) {
-					  
-					res = 
-					reservationDao.create(c, res);
-					
-					Random codeGenerated = new Random();
-					
-					showDao.update(c, show);
-					reservationDao.update(c, res);
-					
-					
-					// Commit
-					c.commit();
-					
-					return res;
-					
-				} else {
-					throw new InputValidationException("Show cannot be bought."); 
-				}
-
-
-			} catch (InstanceNotFoundException e) {
-				c.commit();
-				throw e;
-*/
 			} catch (SQLException e) {
                 connection.rollback();
                 throw new RuntimeException(e);
