@@ -7,6 +7,7 @@ import es.udc.ws.app.model.reservation.SqlReservationDaoFactory;
 import es.udc.ws.app.model.service.TicketSellerService;
 
 import es.udc.ws.app.model.service.TicketSellerServiceFactory;
+import es.udc.ws.app.model.service.exceptions.ReservationAlreadyChecked;
 import es.udc.ws.app.model.service.exceptions.ShowHasReservations;
 import es.udc.ws.app.model.show.Show;
 import es.udc.ws.app.model.show.SqlShowDao;
@@ -404,7 +405,7 @@ public class TicketSellerServiceTest
 	}
 
 	// TODO: Clean, please
-	@Test
+	/*@Test
 	public void testFindShows()
 	{
 		boolean exceptionCatched = false;
@@ -499,7 +500,7 @@ public class TicketSellerServiceTest
 		assertNotEquals(shows.get(0), shows.get(1));
 		assertTrue(shows.get(0).equals(showOne) || shows.get(1).equals(showOne));
 		assertTrue(shows.get(0).equals(showTwo) || shows.get(1).equals(showTwo));
-	}
+	}*/
 
 	private void removeReservation(Long id, Reservation reservation)
 	{
@@ -550,7 +551,7 @@ public class TicketSellerServiceTest
 			int ticketsBefore = (int) show.getMaxTickets() - (int) show.getSoldTickets();
 		
 		
-			res = ticketService.buyTickets(show.getId(), "email@gmail.com", "4326874907864324", 4);
+		//	res = ticketService.buyTickets(show.getId(), "email@gmail.com", "4326874907864324", 4);
  
 			int ticketsAfter = (int) show.getMaxTickets() - (int) show.getSoldTickets();
 
@@ -590,4 +591,44 @@ public class TicketSellerServiceTest
 		}
 
 	}
+	
+	//NON O BORRES PORFA
+	/*@Test 
+	public void testGetUserReservations() throws InputValidationException, InstanceNotFoundException {
+		Show show = ticketService.createShow(getValidShow());
+		Reservation res1 = ticketService.buyTickets(show.getId(), "email@gmail.com", "5489627352617220", 1);
+		Reservation res2 = ticketService.buyTickets(show.getId(), "email@gmail.com", "5489627352617220", 4);
+		System.out.println(ticketService.getUserReservations("email@gmail.com"));
+		
+	}*/
+	
+	//NON O BORRES PORFA
+	/*@Test(expected = InputValidationException.class)
+	public void testCheckReservationExceptionIncorrectCreditCardNumber() throws InputValidationException, InstanceNotFoundException {
+		Show show = ticketService.createShow(getValidShow());
+		Reservation res1 = ticketService.buyTickets(show.getId(), "email@gmail.com", "5489627352617220", 1);
+		
+		ticketService.checkReservation(res1.getCode(), "9403928472938170");
+		
+	}*/
+	
+	//NON O BORRES PORFA
+	/*@Test(expected = ReservationAlreadyChecked.class)
+	public void testCheckReservationExceptionChecked() throws InputValidationException, InstanceNotFoundException {
+		Show show = ticketService.createShow(getValidShow());
+		Reservation res1 = ticketService.buyTickets(show.getId(), "email@gmail.com", "5489627352617220", 1);
+		ticketService.checkReservation(res1.getCode(), "5489627352617220");
+		ticketService.checkReservation(res1.getCode(), "5489627352617220");
+		
+	}*/
+	
+	//NON O BORRES PORFA
+		/*@Test
+		public void testCheckReservation() throws InputValidationException, InstanceNotFoundException {
+			Show show = ticketService.createShow(getValidShow());
+			Reservation res1 = ticketService.buyTickets(show.getId(), "email@gmail.com", "5489627352617220", 1);
+			
+			ticketService.checkReservation(res1.getCode(), "5489627352617220");
+			
+		}*/
 }
