@@ -78,6 +78,7 @@ public class Reservation
 
     public void setReservationDate(Calendar reservationDate) {
         this.reservationDate = reservationDate;
+        this.reservationDate.set(Calendar.MILLISECOND, 0);
     }
 
     public float getPrice() {

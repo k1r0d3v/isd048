@@ -3,16 +3,17 @@ package es.udc.ws.app.model.util.validation;
 import es.udc.ws.util.exceptions.InputValidationException;
 import java.math.BigInteger;
 import java.util.Calendar;
+import java.util.regex.Pattern;
 
 public class PropertyValidator
 {
     private PropertyValidator() {}
 
     public static void validateLong(String propertyName,
-                                    long value, int lowerValidLimit, int upperValidLimit)
+                                    Long value, int lowerValidLimit, int upperValidLimit)
             throws InputValidationException {
 
-        if ( (value < lowerValidLimit) || (value > upperValidLimit) ) {
+        if ( (value == null) || (value < lowerValidLimit) || (value > upperValidLimit) ) {
             throw new InputValidationException("Invalid " + propertyName +
                     " value (it must be greater than " + lowerValidLimit +
                     " and lower than " + upperValidLimit + "): " + value);
@@ -21,9 +22,9 @@ public class PropertyValidator
     }
 
     public static void validateNotNegativeLong(String propertyName,
-                                               long longValue) throws InputValidationException {
+                                               Long longValue) throws InputValidationException {
 
-        if (longValue < 0) {
+        if (longValue == null || longValue < 0) {
             throw new InputValidationException("Invalid " + propertyName +
                     " value (it must be greater than 0): " +	longValue);
         }
@@ -31,10 +32,10 @@ public class PropertyValidator
     }
 
     public static void validateFloat(String propertyName,
-                                      float doubleValue, float lowerValidLimit, float upperValidLimit)
+                                      Float doubleValue, float lowerValidLimit, float upperValidLimit)
             throws InputValidationException {
 
-        if ((doubleValue < lowerValidLimit) ||
+        if (doubleValue == null || (doubleValue < lowerValidLimit) ||
                 (doubleValue > upperValidLimit)) {
             throw new InputValidationException("Invalid " + propertyName +
                     " value (it must be gtrater than " + lowerValidLimit +
@@ -45,10 +46,10 @@ public class PropertyValidator
     }
 
     public static void validateDouble(String propertyName,
-                                      double doubleValue, double lowerValidLimit, double upperValidLimit)
+                                      Double doubleValue, double lowerValidLimit, double upperValidLimit)
             throws InputValidationException {
 
-        if ((doubleValue < lowerValidLimit) ||
+        if (doubleValue == null || (doubleValue < lowerValidLimit) ||
                 (doubleValue > upperValidLimit)) {
             throw new InputValidationException("Invalid " + propertyName +
                     " value (it must be gtrater than " + lowerValidLimit +
@@ -124,5 +125,16 @@ public class PropertyValidator
                     propertyValue);
         }
 
+    }
+
+    public static void validateEMail(String email)
+            throws InputValidationException {
+        if (email == null)
+            throw new InputValidationException("Email should not be null");
+
+        String[] ab = email.split("@");
+        if (ab.length != 2) throw new InputValidationException("Invalid format, expected one @");
+        String[] cd = ab[1].split("\\.");
+        if (cd.length != 2) throw new InputValidationException("Invalid format, expected one domain dot");
     }
 }

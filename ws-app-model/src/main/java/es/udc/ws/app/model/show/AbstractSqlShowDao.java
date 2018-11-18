@@ -166,14 +166,14 @@ public abstract class AbstractSqlShowDao implements SqlShowDao
 		    tmp.append(" WHERE");
 
 			for (int i = 0; i < (keywords.length - 1); i++)
-				tmp.append(" LOWER(description) LIKE LOWER(?) AND");
+				tmp.append(" LOWER(description) LIKE LOWER(?) OR");
 
             tmp.append(" LOWER(description) LIKE LOWER(?)");
             query += tmp.toString();
         }
 
         if (startDate != null && endDate != null)
-            query += " OR startDate BETWEEN ? AND ?";
+            query += " AND startDate BETWEEN ? AND ?";
 
 		query += " ORDER BY startDate";
 

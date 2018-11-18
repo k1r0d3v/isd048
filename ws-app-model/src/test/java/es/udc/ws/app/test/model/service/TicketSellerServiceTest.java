@@ -1,6 +1,9 @@
 package es.udc.ws.app.test.model.service;
 
 
+import es.udc.ws.app.model.reservation.Reservation;
+import es.udc.ws.app.model.reservation.SqlReservationDao;
+import es.udc.ws.app.model.reservation.SqlReservationDaoFactory;
 import es.udc.ws.app.model.service.TicketSellerService;
 
 import es.udc.ws.app.model.service.TicketSellerServiceFactory;
@@ -30,6 +33,7 @@ public class TicketSellerServiceTest
 {
     private static TicketSellerService ticketService;
     private static SqlShowDao showDao;
+    private static SqlReservationDao reservationDao;
 
     @BeforeClass
     public static void init() {
@@ -45,9 +49,10 @@ public class TicketSellerServiceTest
 
         ticketService = TicketSellerServiceFactory.getService();
         showDao = SqlShowDaoFactory.getDao();
+        reservationDao = SqlReservationDaoFactory.getDao();
     }
 
-    private void updateShow(Show show)
+    private void updateShow(Show show) throws InstanceNotFoundException
     {
         DataSource dataSource = DataSourceLocator.getDataSource(Constants.DATA_SOURCE);
 
@@ -67,7 +72,7 @@ public class TicketSellerServiceTest
 
             } catch (InstanceNotFoundException e) {
                 connection.commit();
-                throw new RuntimeException(e);
+                throw e;
             } catch (SQLException e) {
                 connection.rollback();
                 throw new RuntimeException(e);
@@ -81,7 +86,7 @@ public class TicketSellerServiceTest
         }
     }
 
-    private void removeShow(Long id)
+    private void removeShow(Long id) throws InstanceNotFoundException
     {
         DataSource dataSource = DataSourceLocator.getDataSource(Constants.DATA_SOURCE);
 
@@ -101,7 +106,74 @@ public class TicketSellerServiceTest
 
             } catch (InstanceNotFoundException e) {
                 connection.commit();
+                throw e;
+            } catch (SQLException e) {
+                connection.rollback();
                 throw new RuntimeException(e);
+            } catch (RuntimeException | Error e) {
+                connection.rollback();
+                throw e;
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void removeReservation(Long id) throws InstanceNotFoundException
+    {
+        DataSource dataSource = DataSourceLocator.getDataSource(Constants.DATA_SOURCE);
+
+        try (Connection connection = dataSource.getConnection()) {
+
+            try {
+
+                /* Prepare connection. */
+                connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+                connection.setAutoCommit(false);
+
+                /* Do work. */
+                reservationDao.remove(connection, id);
+
+                /* Commit. */
+                connection.commit();
+
+            } catch (InstanceNotFoundException e) {
+                connection.commit();
+                throw e;
+            } catch (SQLException e) {
+                connection.rollback();
+                throw new RuntimeException(e);
+            } catch (RuntimeException | Error e) {
+                connection.rollback();
+                throw e;
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Reservation findReservation(String code) throws InstanceNotFoundException {
+        DataSource dataSource = DataSourceLocator.getDataSource(Constants.DATA_SOURCE);
+
+        try (Connection connection = dataSource.getConnection()) {
+
+            try {
+
+                /* Prepare connection. */
+                connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+                connection.setAutoCommit(false);
+
+                /* Do work. */
+                Reservation r = reservationDao.findByCode(connection, code);
+
+                /* Commit. */
+                connection.commit();
+                return r;
+            } catch (InstanceNotFoundException e) {
+                connection.commit();
+                throw e;
             } catch (SQLException e) {
                 connection.rollback();
                 throw new RuntimeException(e);
@@ -150,10 +222,6 @@ public class TicketSellerServiceTest
     {
         boolean exceptionCatched = false;
         Show show = new Show();
-        Calendar start = Calendar.getInstance();
-        Calendar limit = Calendar.getInstance();
-
-        // Validate each field
 
         try
         {
@@ -201,6 +269,7 @@ public class TicketSellerServiceTest
 
         try
         {
+            Calendar start = Calendar.getInstance();
             start.add(Calendar.DAY_OF_WEEK, -1);
             show.setStartDate(Calendar.getInstance());
             show = ticketService.createShow(show);
@@ -213,6 +282,7 @@ public class TicketSellerServiceTest
 
         try
         {
+            Calendar limit = Calendar.getInstance();
             limit.add(Calendar.DAY_OF_WEEK, -2);
             show.setLimitDate(limit);
             show = ticketService.createShow(show);
@@ -268,43 +338,45 @@ public class TicketSellerServiceTest
     }
 
     @Test
-    public void testUpdateShow() {
+    public void testUpdateShow()
+    {
         boolean exceptionCatched = false;
         Show show = getValidShow();
 
-        // Create test show
+
         try {
             show = ticketService.createShow(show);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException("Unexpected exception");
         }
 
         long tmpId = show.getId();
         float tmpRealPrice = show.getRealPrice();
 
-        // Validate id
+
         try {
             show.setId(100);
             ticketService.updateShow(show);
         } catch (InstanceNotFoundException e) {
             exceptionCatched = true;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            throw new RuntimeException("Unexpected exception");
         }
         assertTrue(exceptionCatched);
         exceptionCatched = false;
         show.setId(tmpId);
 
-        // Validate setRealPrice
+
         try {
             show.setSoldTickets(1);
             show.setRealPrice(10.0f);
             ticketService.updateShow(show);
         } catch (ShowHasReservations e) {
             exceptionCatched = true;
-        } catch (InputValidationException e) {
-            throw new RuntimeException("Unexpected exception");
-        } catch (InstanceNotFoundException e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException("Unexpected exception");
         }
         assertTrue(exceptionCatched);
@@ -315,6 +387,7 @@ public class TicketSellerServiceTest
             show.setSoldTickets(1);
             ticketService.updateShow(show);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException("Unexpected exception");
         }
 
@@ -323,27 +396,269 @@ public class TicketSellerServiceTest
             ticketService.updateShow(show);
         } catch (ShowHasReservations e) {
             exceptionCatched = true;
-        } catch (InputValidationException e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException("Unexpected exception");
-        } catch (InstanceNotFoundException e) {
+        }
+        assertTrue(exceptionCatched);
+
+        try { removeShow(show.getId()); } catch (Exception e) { }
+    }
+
+    @Test
+    public void testBuyTickets() {
+        boolean exceptionCatched = false;
+        Calendar date;
+        Reservation reservation;
+        Show show = getValidShow();
+        String mail = "foo@foo.com";
+        String creditCard = "1234567891011121";
+        int ticketCount = 10;
+
+
+        //
+        show.setMaxTickets(100);
+
+        date = Calendar.getInstance();
+        date.add(Calendar.WEEK_OF_YEAR, 1);
+        show.setStartDate(date);
+
+        date = Calendar.getInstance();
+        date.add(Calendar.DAY_OF_WEEK, 4);
+        show.setLimitDate(date);
+
+        try {
+            show = ticketService.createShow(show);
+        } catch (Exception e) { throw new RuntimeException("Unexpected exception"); }
+
+        //
+        try {
+            reservation = ticketService.buyTickets(null, mail, creditCard, ticketCount);
+        } catch (InputValidationException e) {
+            exceptionCatched = true;
+        } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException("Unexpected exception");
         }
         assertTrue(exceptionCatched);
         exceptionCatched = false;
 
-        // TODO: Validate rest of fields
+        //
+        try {
+            reservation = ticketService.buyTickets(show.getId(), "fasda", creditCard, ticketCount);
+        } catch (InputValidationException e) {
+            exceptionCatched = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Unexpected exception");
+        }
+        assertTrue(exceptionCatched);
+        exceptionCatched = false;
 
-        try { removeShow(show.getId()); } catch (Exception e) { }
+        //
+        try {
+            reservation = ticketService.buyTickets(show.getId(), "fasda@asdsad", creditCard, ticketCount);
+        } catch (InputValidationException e) {
+            exceptionCatched = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Unexpected exception");
+        }
+        assertTrue(exceptionCatched);
+        exceptionCatched = false;
+
+        //
+        try {
+            reservation = ticketService.buyTickets(show.getId(), mail, "adsa", ticketCount);
+        } catch (InputValidationException e) {
+            exceptionCatched = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Unexpected exception");
+        }
+        assertTrue(exceptionCatched);
+        exceptionCatched = false;
+
+        //
+        try {
+            reservation = ticketService.buyTickets(show.getId(), mail, creditCard, 0);
+        } catch (InputValidationException e) {
+            exceptionCatched = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Unexpected exception");
+        }
+        assertTrue(exceptionCatched);
+        exceptionCatched = false;
+
+        //
+        try {
+            reservation = ticketService.buyTickets(show.getId(), mail, creditCard, ticketCount);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Unexpected exception");
+        }
+
+        try {
+            removeReservation(reservation.getId());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Unexpected exception");
+        }
+
+        try {
+            removeShow(show.getId());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Unexpected exception");
+        }
     }
 
-    // TODO: TODO and clean
+    @Test
+    public void testGetUserReservations() {
+        Calendar date;
+        Show show = getValidShow();
+
+        //
+        show.setMaxTickets(100);
+
+        date = Calendar.getInstance();
+        date.add(Calendar.WEEK_OF_YEAR, 1);
+        show.setStartDate(date);
+
+        date = Calendar.getInstance();
+        date.add(Calendar.DAY_OF_WEEK, 4);
+        show.setLimitDate(date);
+
+        try {
+            show = ticketService.createShow(show);
+        } catch (Exception e) { throw new RuntimeException("Unexpected exception"); }
+
+        //
+        try {
+            ticketService.buyTickets(show.getId(), "foo@foo.com", "1234512345123456", 2);
+            ticketService.buyTickets(show.getId(), "laura@foo.com", "1234512345123456", 1);
+            ticketService.buyTickets(show.getId(), "foo@foo.com", "1234512345123456", 3);
+            ticketService.buyTickets(show.getId(), "pablo@foo.com", "1234512345123456", 4);
+            ticketService.buyTickets(show.getId(), "foo@foo.com", "1234512345123456", 6);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Unexpected exception");
+        }
+
+        //
+        List<Reservation> reservations;
+        try {
+            reservations = ticketService.getUserReservations("foo@foo.com");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Unexpected exception");
+        }
+        assertEquals(reservations.size(), 3);
+
+        //
+        try {
+            for (Reservation i: reservations) {
+                removeReservation(i.getId());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Unexpected exception");
+        }
+
+        try {
+            removeShow(show.getId());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Unexpected exception");
+        }
+    }
+
+    @Test
+    public void testCheckReservation() {
+        boolean exceptionCatched = false;
+        Reservation reservation;
+        Calendar date;
+        Show show = getValidShow();
+
+        //
+        show.setMaxTickets(100);
+
+        date = Calendar.getInstance();
+        date.add(Calendar.WEEK_OF_YEAR, 1);
+        show.setStartDate(date);
+
+        date = Calendar.getInstance();
+        date.add(Calendar.DAY_OF_WEEK, 4);
+        show.setLimitDate(date);
+
+        try {
+            show = ticketService.createShow(show);
+        } catch (Exception e) { throw new RuntimeException("Unexpected exception"); }
+
+        try {
+            reservation = ticketService.buyTickets(show.getId(), "foo@foo.com", "1234512345123456", 2);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Unexpected exception");
+        }
+        assertTrue(reservation.isValid());
+
+        try {
+            ticketService.checkReservation(reservation.getCode(), "1234512345123456");
+            reservation = findReservation(reservation.getCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Unexpected exception");
+        }
+        assertFalse(reservation.isValid());
+
+        //
+        try {
+            ticketService.checkReservation(reservation.getCode(), "1234512345123456");
+        } catch (InputValidationException e) {
+            exceptionCatched = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Unexpected exception");
+        }
+        assertTrue(exceptionCatched);
+        exceptionCatched = false;
+
+        //
+        try {
+            ticketService.checkReservation(reservation.getCode(), "6534512345123456");
+        } catch (InputValidationException e) {
+            exceptionCatched = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Unexpected exception");
+        }
+        assertTrue(exceptionCatched);
+
+        //
+        try {
+            removeReservation(reservation.getId());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Unexpected exception");
+        }
+
+        try {
+            removeShow(show.getId());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Unexpected exception");
+        }
+    }
+
     @Test
     public void testFindShow()
     {
         boolean exceptionCatched = false;
         Show show = getValidShow();
 
-        // Validate code field
+
         try {
             ticketService.findShow(null);
         } catch (InputValidationException e) {
@@ -355,21 +670,23 @@ public class TicketSellerServiceTest
         assertTrue(exceptionCatched);
         exceptionCatched = false;
 
-        // Validate findShow in-existent id
+
         try {
             ticketService.findShow(12357L);
         } catch (InstanceNotFoundException e) {
             exceptionCatched = true;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException("Unexpected exception");
         }
         assertTrue(exceptionCatched);
         exceptionCatched = false;
 
-        // Validate findShow existent id
+
         try {
             show = ticketService.createShow(show);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException("Unexpected exception");
         }
 
@@ -379,12 +696,13 @@ public class TicketSellerServiceTest
             e.printStackTrace();
             exceptionCatched = true;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException("Unexpected exception");
         }
         assertFalse(exceptionCatched);
         exceptionCatched = false;
 
-        // Validate findShow dirty id
+
         try { removeShow(show.getId()); } catch (Exception e) { }
 
         try {
@@ -392,23 +710,25 @@ public class TicketSellerServiceTest
         } catch (InstanceNotFoundException e) {
             exceptionCatched = true;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException("Unexpected exception");
         }
         assertTrue(exceptionCatched);
     }
 
-    // TODO: Clean, please
     @Test
     public void testFindShows()
     {
         boolean exceptionCatched = false;
-        Calendar start = Calendar.getInstance();
-        Calendar end = Calendar.getInstance();
-        end.add(Calendar.DAY_OF_WEEK, 8);
+        Calendar date;
 
-        // Validate words field
         try {
-            ticketService.findShows(null, start, end);
+            date = Calendar.getInstance();
+
+            Calendar end = Calendar.getInstance();
+            end.add(Calendar.DAY_OF_WEEK, 8);
+
+            ticketService.findShows(null, date, end);
         } catch (InputValidationException e) {
             exceptionCatched = true;
         } catch (Exception e) {
@@ -418,8 +738,11 @@ public class TicketSellerServiceTest
         assertTrue(exceptionCatched);
         exceptionCatched = false;
 
-        // Validate dates
+
         try {
+            Calendar end = Calendar.getInstance();
+            end.add(Calendar.DAY_OF_WEEK, 8);
+
             ticketService.findShows("hello", null, end);
         } catch (InputValidationException e) {
             exceptionCatched = true;
@@ -430,10 +753,10 @@ public class TicketSellerServiceTest
         assertTrue(exceptionCatched);
         exceptionCatched = false;
 
+
         try {
-            start = (Calendar)end.clone();
-            start.add(Calendar.DAY_OF_WEEK, 1);
-            ticketService.findShows("hello", start, end);
+            date = Calendar.getInstance();
+            ticketService.findShows("hello", date, null);
         } catch (InputValidationException e) {
             exceptionCatched = true;
         } catch (Exception e) {
@@ -443,11 +766,14 @@ public class TicketSellerServiceTest
         assertTrue(exceptionCatched);
         exceptionCatched = false;
 
-        // Validate end field
-        start = Calendar.getInstance();
-
         try {
-            ticketService.findShows("hello", start, null);
+
+            Calendar end = Calendar.getInstance();
+            end.add(Calendar.DAY_OF_WEEK, 8);
+
+            date = (Calendar)end.clone();
+            date.add(Calendar.DAY_OF_WEEK, 1);
+            ticketService.findShows("hello", date, end);
         } catch (InputValidationException e) {
             exceptionCatched = true;
         } catch (Exception e) {
@@ -457,23 +783,39 @@ public class TicketSellerServiceTest
         assertTrue(exceptionCatched);
         exceptionCatched = false;
 
-        // Validate results
+
         Show showOne = getValidShow("One", "One - The show");
         Show showTwo = getValidShow("Two", "Two - The show, but better");
-        start.add(Calendar.DAY_OF_WEEK, 1);
-        showOne.setStartDate((Calendar)start.clone());
+        Show showThree = getValidShow("Three", "Three - The Pepe se cayó a un rio");
 
-        Calendar limit = (Calendar)start.clone();
-        limit.add(Calendar.DAY_OF_WEEK, -4);
-        showOne.setLimitDate((Calendar)limit.clone());
+        date = Calendar.getInstance();
+        date.add(Calendar.DAY_OF_WEEK, 10);
+        showOne.setStartDate(date);
 
-        start.add(Calendar.DAY_OF_WEEK, 2);
-        showTwo.setStartDate((Calendar)start.clone());
-        showTwo.setLimitDate((Calendar)limit.clone());
+        date = Calendar.getInstance();
+        date.add(Calendar.DAY_OF_WEEK, 4);
+        showOne.setLimitDate(date);
+
+        date = Calendar.getInstance();
+        date.add(Calendar.DAY_OF_WEEK, 12);
+        showTwo.setStartDate(date);
+
+        date = Calendar.getInstance();
+        date.add(Calendar.DAY_OF_WEEK, 5);
+        showTwo.setLimitDate(date);
+
+        date = Calendar.getInstance();
+        date.add(Calendar.DAY_OF_WEEK, 14);
+        showThree.setStartDate(date);
+
+        date = Calendar.getInstance();
+        date.add(Calendar.DAY_OF_WEEK, 6);
+        showThree.setLimitDate(date);
 
         try {
             showOne = ticketService.createShow(showOne);
             showTwo = ticketService.createShow(showTwo);
+            showThree = ticketService.createShow(showThree);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Unexpected exception");
@@ -481,9 +823,11 @@ public class TicketSellerServiceTest
 
         List<Show> shows;
         try {
-            start = Calendar.getInstance();
-            start.add(Calendar.DAY_OF_WEEK, -1);
-            shows = ticketService.findShows("One better", start, end);
+            date = Calendar.getInstance();
+            Calendar end = Calendar.getInstance();
+            end.add(Calendar.DAY_OF_WEEK, 20);
+
+            shows = ticketService.findShows("One better", date, end);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Unexpected exception");
@@ -493,5 +837,31 @@ public class TicketSellerServiceTest
         assertNotEquals(shows.get(0), shows.get(1));
         assertTrue(shows.get(0).equals(showOne) || shows.get(1).equals(showOne));
         assertTrue(shows.get(0).equals(showTwo) || shows.get(1).equals(showTwo));
+
+        shows.clear();
+        try {
+            shows = ticketService.findShows("One better", null, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Unexpected exception");
+        }
+
+        assertEquals(2, shows.size());
+        assertNotEquals(shows.get(0), shows.get(1));
+        assertTrue(shows.get(0).equals(showOne) || shows.get(1).equals(showOne));
+        assertTrue(shows.get(0).equals(showTwo) || shows.get(1).equals(showTwo));
+
+        shows.clear();
+        try {
+            shows = ticketService.findShows("The", null, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Unexpected exception");
+        }
+
+        assertEquals(3, shows.size());
+
+        try { removeShow(showOne.getId()); } catch (Exception e) { }
+        try { removeShow(showTwo.getId()); } catch (Exception e) { }
     }
 }

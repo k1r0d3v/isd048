@@ -18,7 +18,7 @@ public class Jdbc3CcSqlReservationDao extends AbstractSqlReservationDao
                         "code, " +
                         "reservationDate, " +
                         "price) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement ps = c.prepareStatement(query, Statement.RETURN_GENERATED_KEYS))
         {

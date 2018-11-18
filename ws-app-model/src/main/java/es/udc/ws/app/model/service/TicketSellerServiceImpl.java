@@ -19,6 +19,7 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 public class TicketSellerServiceImpl implements TicketSellerService
 {
@@ -116,7 +117,7 @@ public class TicketSellerServiceImpl implements TicketSellerService
             } catch (SQLException e) {
                 connection.rollback();
                 throw new RuntimeException(e);
-            } catch (RuntimeException | Error e) {
+            } catch (RuntimeException | Error | InstanceNotFoundException e) {
                 connection.rollback();
                 throw e;
             }
@@ -137,7 +138,6 @@ public class TicketSellerServiceImpl implements TicketSellerService
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
-
 	}
 
 	@Override
@@ -148,12 +148,12 @@ public class TicketSellerServiceImpl implements TicketSellerService
 	        throw new InputValidationException("words can not be null");
 
 	    if (start == null && end != null)
-	        throw new InputValidationException("end must be null");
+	        throw new InputValidationException("end must be null if start is null");
 
 	    if (start != null && end == null)
-            throw new InputValidationException("end can not be null");
+            throw new InputValidationException("end can not be null if start is not null");
 
-	    if (start != null && end != null)
+	    if (start != null)
         {
             if (!start.equals(end))
                 if (start.after(end))
@@ -167,72 +167,69 @@ public class TicketSellerServiceImpl implements TicketSellerService
 		}
 	}
 
-	/*
-	Nota (Lora): UUID.randomUUID().toString() para un identificador único
-	 */
-
 	@Override
 	public Reservation buyTickets(Long showId, String email, String cardNumber, int count)
             throws InstanceNotFoundException, InputValidationException
     {
 
 		PropertyValidator.validateCreditCard(cardNumber);
+		PropertyValidator.validateEMail(email);
+		PropertyValidator.validateLong("showId", showId, Integer.MIN_VALUE, Integer.MAX_VALUE);
+		PropertyValidator.validateLong("count", (long)count, 1, Integer.MAX_VALUE);
 
-		try (Connection c = dataSource.getConnection()) {
+		try (Connection connection = dataSource.getConnection()) {
 
 			try {
-				c.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
-				c.setAutoCommit(false);
+				connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+				connection.setAutoCommit(false);
 
-				Show show = showDao.find(c, showId);
-				Calendar expirationDate = Calendar.getInstance();
+				Show show = showDao.find(connection, showId);
+				if (Calendar.getInstance().after(show.getLimitDate()))
+				    throw new InputValidationException("Limit date exceeded");
 
-				Reservation res = new Reservation();
-				res.setShowId(showId);
-				res.setEmail(email);
-				res.setCardNumber(cardNumber);
-				res.setTickets(count);
+                long restingTickets = show.getMaxTickets() - show.getSoldTickets();
+				if (restingTickets <= 0)
+				    throw new InputValidationException("There is not resting tickets");
 
-				long availableTickets = show.getMaxTickets() - show.getSoldTickets();
+				if (restingTickets < count)
+                    throw new InputValidationException("There is not enough tickets");
 
-				if( (show.getLimitDate().before(expirationDate)) && (availableTickets <= count) ) {
-					reservationDao.create(c, res);
+                show.setSoldTickets(show.getSoldTickets() - count);
+                showDao.update(connection, show);
 
-					Random codeGenerated = new Random();
-					
-					showDao.update(c, show);
-					reservationDao.update(c, res);
-					
-					
-					/* Commit. */ 
-					c.commit();
-					
-					return res;
-					
-				} else {
-					throw new InputValidationException("Show cannot be bought."); 
-				}
+                Reservation r = new Reservation();
+                r.setShowId(show.getId());
+                r.setEmail(email);
+                r.setCardNumber(cardNumber);
+                r.setTickets(count);
+                r.setValid(true);
+                r.setCode(UUID.randomUUID().toString());
+                r.setReservationDate(Calendar.getInstance());
+                r.setPrice(show.getDiscountedPrice()); // NOTE: Que poner aqui? esa es la cuestión
 
+                r = reservationDao.create(connection, r);
 
-			} catch (InstanceNotFoundException e) {
-				c.commit();
-				throw e;
+                /* Commit. */
+                connection.commit();
+
+                return r;
 			} catch (SQLException e) {
-				c.rollback();
-				throw new RuntimeException(e);
-			} catch (RuntimeException | Error e) {
-				c.rollback();
-				throw e;
-			}
+                connection.rollback();
+                throw new RuntimeException(e);
+            } catch (RuntimeException | Error | InstanceNotFoundException e) {
+                connection.rollback();
+                throw e;
+            }
 
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
-
 	}
 
     @Override
-    public List<Reservation> getUserReservations(String email) {
+    public List<Reservation> getUserReservations(String email) throws InputValidationException {
+	    PropertyValidator.validateEMail(email);
+
         try (Connection connection = dataSource.getConnection()) {
             return reservationDao.findByEmail(connection, email);
         } catch (SQLException e) {
@@ -273,7 +270,7 @@ public class TicketSellerServiceImpl implements TicketSellerService
             } catch (SQLException e) {
                 connection.rollback();
                 throw new RuntimeException(e);
-            } catch (RuntimeException | Error e) {
+            } catch (RuntimeException | Error | InstanceNotFoundException e) {
                 connection.rollback();
                 throw e;
             }

@@ -40,12 +40,31 @@ public abstract class AbstractSqlReservationDao implements SqlReservationDao
             ps.setBoolean(index++, reservation.isValid());
             ps.setString(index++, reservation.getCode());
             ps.setTimestamp(index++, new Timestamp(reservation.getReservationDate().getTimeInMillis()));
-            ps.setFloat(index, reservation.getPrice());
+            ps.setFloat(index++, reservation.getPrice());
+            ps.setLong(index, reservation.getId());
             int updatedRows = ps.executeUpdate();
 
             if (updatedRows == 0)
                 throw new InstanceNotFoundException(reservation.getId(),
                                                     Reservation.class.getName());
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void remove(Connection c, Long id)
+            throws InstanceNotFoundException
+    {
+        String query = "DELETE FROM ReservationTable WHERE id = ?";
+
+        try (PreparedStatement preparedStatement = c.prepareStatement(query))
+        {
+            preparedStatement.setLong(1, id);
+
+            if (preparedStatement.executeUpdate() == 0)
+                throw new InstanceNotFoundException(id, Reservation.class.getName());
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
