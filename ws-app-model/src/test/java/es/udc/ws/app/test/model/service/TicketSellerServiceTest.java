@@ -206,7 +206,7 @@ public class TicketSellerServiceTest
 		s.setLimitDate(calendar);
 
 		s.setMaxTickets(10000);
-		s.setSoldTickets(0);
+		s.setAvailableTickets(s.getAvailableTickets());
 		s.setRealPrice(60.0f);
 		s.setDiscountedPrice(50.0f);
 		s.setSalesCommission(20.0f);
@@ -371,7 +371,7 @@ public class TicketSellerServiceTest
 
 
 		try {
-			show.setSoldTickets(1);
+			show.setAvailableTickets(-show.getAvailableTickets()-1);
 			show.setRealPrice(10.0f);
 			ticketService.updateShow(show);
 		} catch (ShowHasReservations e) {
@@ -385,7 +385,7 @@ public class TicketSellerServiceTest
 		exceptionCatched = false;
 
 		try {
-			show.setSoldTickets(1);
+			show.setAvailableTickets(show.getAvailableTickets()-1);
 			ticketService.updateShow(show);
 		} catch (Exception e) {
 			e.printStackTrace();

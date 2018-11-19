@@ -77,9 +77,9 @@ public class TicketSellerServiceImpl implements TicketSellerService
 		}
 	}
 
-    @Override
+  /*  @Override
     public void updateShow(Show show)
-        throws InstanceNotFoundException, InputValidationException
+        throws InstanceNotFoundException
     {
         PropertyValidator.validateMandatoryString("name", show.getName());
         PropertyValidator.validateMandatoryString("description", show.getDescription());
@@ -94,37 +94,40 @@ public class TicketSellerServiceImpl implements TicketSellerService
 
         try (Connection connection = dataSource.getConnection()) {
 
-            try {
+            try {*/
 
                 /* Prepare connection. */
-                connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
-                connection.setAutoCommit(false);
+               /* connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+                connection.setAutoCommit(false);*/
 
                 /* Do work. */
-                Show current = showDao.find(connection, show.getId());
+               /* Show current = showDao.find(connection, show.getId());
+                
+                int soldTicketsCurrent = (int) current.getMaxTickets() - (int) current.getAvailableTickets();
+                int soldTicketsShow = (int) show.getMaxTickets() - (int) show.getAvailableTickets();
 
                 boolean isLessPrice = show.getRealPrice() < current.getRealPrice();
-                if (isLessPrice && current.getSoldTickets() > 0 ||
-                    isLessPrice && show.getSoldTickets() > 0) {
-                    connection.rollback();
-                    throw new ShowHasReservations("Cannot decrease the show price when it has sold tickets");
-                }
+                
+                if ( (isLessPrice && soldTicketsCurrent > 0) || (isLessPrice && soldTicketsShow > 0) ) {
+                    connection.commit();*/
+                    /*throw new ShowHasReservations("Cannot decrease the show price when it has sold tickets");
+                }*/
 
-                showDao.update(connection, show);
+            //    showDao.update(connection, show);
 
                 /* Commit. */
-                connection.commit();
+            /*    connection.commit();
             } catch (SQLException e) {
                 connection.rollback();
                 throw new RuntimeException(e);
-            } catch (RuntimeException | Error | InstanceNotFoundException e) {
+            } catch (RuntimeException | Error | InstanceNotFoundException | ShowHasReservations e) {
                 connection.rollback();
                 throw e;
-            }
+            }  
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-    }
+    }*/
 
     @Override
     public Show findShow(Long id)
@@ -167,7 +170,7 @@ public class TicketSellerServiceImpl implements TicketSellerService
 		}
 	}
 
-	@Override
+/*	@Override
 	public Reservation buyTickets(Long showId, String email, String cardNumber, int count)
             throws InstanceNotFoundException, InputValidationException
     {
@@ -209,9 +212,9 @@ public class TicketSellerServiceImpl implements TicketSellerService
                 r.setPrice(show.getDiscountedPrice()); // NOTE: Que poner aqui? esa es la cuestión
 
                 r = reservationDao.create(connection, r);
-
+*/
                 /* Commit. */
-                connection.commit();
+               /* connection.commit();
 
                 return r;
 
@@ -226,7 +229,7 @@ public class TicketSellerServiceImpl implements TicketSellerService
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
-	}
+	}*/
 
     @Override
     public List<Reservation> getUserReservations(String email) throws InputValidationException {
@@ -259,10 +262,10 @@ public class TicketSellerServiceImpl implements TicketSellerService
                     throw new InputValidationException("Credit card not coincident");
                 }
 
-                if (!reservation.isValid()) {
+               /* if (!reservation.isValid()) {
                     connection.rollback();
                     throw new ReservationAlreadyChecked();
-                }
+                }*/
 
                 reservation.setValid(false);
                 reservationDao.update(connection, reservation);
