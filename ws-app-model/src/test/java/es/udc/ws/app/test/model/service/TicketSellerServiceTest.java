@@ -374,8 +374,8 @@ public class TicketSellerServiceTest
 			show.setAvailableTickets(-show.getAvailableTickets()-1);
 			show.setRealPrice(10.0f);
 			ticketService.updateShow(show);
-		} catch (ShowHasReservations e) {
-			exceptionCatched = true;
+		/*} catch (ShowHasReservations e) {
+			exceptionCatched = true;*/
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("Unexpected exception");
@@ -395,8 +395,8 @@ public class TicketSellerServiceTest
 		try {
 			show.setRealPrice(10.0f);
 			ticketService.updateShow(show);
-		} catch (ShowHasReservations e) {
-			exceptionCatched = true;
+		/*} catch (ShowHasReservations e) {
+			exceptionCatched = true;*/
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("Unexpected exception");
