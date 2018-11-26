@@ -14,13 +14,12 @@ public class Reservation
     private String code;
     private Calendar reservationDate;
     private float price;
-    
+
+    public Reservation() { }
+
 	public Reservation(long id, long showId, String email, 
 			String cardNumber, int tickets, boolean isValid, String code, 
 			Calendar reservationDate, float price) {
-		
-		super();
-		
 		this.id = id;
 		this.showId = showId;
 		this.email = email;

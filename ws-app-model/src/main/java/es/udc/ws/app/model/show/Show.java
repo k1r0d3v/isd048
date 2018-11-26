@@ -16,13 +16,12 @@ public class Show
 	private float realPrice;
 	private float discountedPrice;
 	private float salesCommission;
-	
+
+	public Show() { }
+
 	public Show(long id, String name, String description, Calendar startDate,
 			long duration, Calendar limitDate, long maxTickets, long availableTickets, 
 			float realPrice, float discountedPrice, float salesCommission) {
-		
-		super();
-		
 		this.id = id;
 		this.name = name;
 		this.description = description;

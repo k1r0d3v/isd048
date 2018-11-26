@@ -20,7 +20,7 @@ CREATE TABLE ShowTable (
     duration BIGINT NOT NULL,
     limitDate DATETIME NOT NULL,
     maxTickets BIGINT NOT NULL,
-    soldTickets BIGINT NOT NULL,
+    availableTickets BIGINT NOT NULL,
     realPrice FLOAT NOT NULL,
     discountedPrice FLOAT NOT NULL,
     salesCommission FLOAT NOT NULL,

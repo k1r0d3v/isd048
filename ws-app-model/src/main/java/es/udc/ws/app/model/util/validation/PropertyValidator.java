@@ -9,6 +9,13 @@ public class PropertyValidator
 {
     private PropertyValidator() {}
 
+    public static void validateMajorEqualsThan(String first, String second, double major, double that)
+            throws InputValidationException {
+        if (major < that)
+            throw new InputValidationException("Invalid " + first +
+                    " value (it must be greater or equals than " + second + "): " + first + ">=" + second);
+    }
+
     public static void validateLong(String propertyName,
                                     Long value, int lowerValidLimit, int upperValidLimit)
             throws InputValidationException {

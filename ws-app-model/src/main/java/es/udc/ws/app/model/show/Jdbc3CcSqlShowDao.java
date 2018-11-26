@@ -14,7 +14,7 @@ public class Jdbc3CcSqlShowDao extends AbstractSqlShowDao
 				"duration, " +
 				"limitDate, " +
 				"maxTickets, " +
-				"soldTickets, " +
+				"availableTickets, " +
 				"realPrice, " +
 				"discountedPrice, " +
 				"salesCommission) " +
@@ -30,7 +30,7 @@ public class Jdbc3CcSqlShowDao extends AbstractSqlShowDao
 			preparedStatement.setLong(i++, show.getDuration());
 			preparedStatement.setTimestamp(i++, new Timestamp(show.getLimitDate().getTimeInMillis()));
 			preparedStatement.setLong(i++, show.getMaxTickets());
-			preparedStatement.setLong(i++, show.getSoldTickets());
+			preparedStatement.setLong(i++, show.getAvailableTickets());
 			preparedStatement.setFloat(i++, show.getRealPrice());
 			preparedStatement.setFloat(i++, show.getDiscountedPrice());
 			preparedStatement.setFloat(i, show.getSalesCommission());
