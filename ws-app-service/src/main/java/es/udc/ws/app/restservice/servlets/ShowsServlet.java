@@ -1,14 +1,17 @@
 package es.udc.ws.app.restservice.servlets;
 
+import es.udc.ws.app.dto.ServiceShowAdminDto;
 import es.udc.ws.app.dto.ServiceShowDto;
 import es.udc.ws.app.model.service.TicketSellerServiceFactory;
 import es.udc.ws.app.model.show.Show;
-import es.udc.ws.app.service.restservice.ShowToShowDto;
+import es.udc.ws.app.service.restservice.ShowToDto;
 import es.udc.ws.app.serviceutil.XmlServiceExceptionConversor;
+import es.udc.ws.app.serviceutil.XmlServiceShowAdminDtoConversor;
 import es.udc.ws.app.serviceutil.XmlServiceShowDtoConversor;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import es.udc.ws.util.servlet.ServletUtils;
+import es.udc.ws.util.xml.exceptions.ParsingException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -48,7 +51,7 @@ public class ShowsServlet extends HttpServlet {
             return;
         }
 
-        ServiceShowDto saleDto = ShowToShowDto.toShowDto(show);
+        ServiceShowDto saleDto = ShowToDto.toShowDto(show);
 
         ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK,
                 XmlServiceShowDtoConversor.toXml(saleDto), null);
@@ -56,7 +59,42 @@ public class ShowsServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doPost(req, resp);
+        String path = ServletUtils.normalizePath(req.getPathInfo());
+        if (path != null && path.length() > 0) {
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                    XmlServiceExceptionConversor.toInputValidationExceptionXml(
+                            new InputValidationException("Invalid Request: " + "invalid path " + path)),
+                    null);
+            return;
+        }
+        ServiceShowAdminDto xmlshow;
+        try {
+            xmlshow = XmlServiceShowAdminDtoConversor.toServiceShowDto(req.getInputStream());
+        } catch (ParsingException ex) {
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST, XmlServiceExceptionConversor
+                    .toInputValidationExceptionXml(new InputValidationException(ex.getMessage())), null);
+
+            return;
+
+        }
+
+        System.out.println(xmlshow);
+        Show show = ShowToDto.toShow(xmlshow);
+        try {
+            show = TicketSellerServiceFactory.getService().createShow(show);
+        } catch (InputValidationException ex) {
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                    XmlServiceExceptionConversor.toInputValidationExceptionXml(ex), null);
+            return;
+        }
+        ServiceShowDto showDto = ShowToDto.toShowDto(show);
+
+        //String movieURL = ServletUtils.normalizePath(req.getRequestURL().toString()) + "/" + show.getId();
+        //Map<String, String> headers = new HashMap<>(1);
+        //headers.put("Location", movieURL);
+
+        ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_CREATED,
+                XmlServiceShowDtoConversor.toXml(showDto), null);
     }
 
     @Override

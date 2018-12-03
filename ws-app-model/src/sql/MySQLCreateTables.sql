@@ -8,8 +8,8 @@
 -- must be dropped first (otherwise, the corresponding checks on those tables
 -- could not be done).
 
-DROP TABLE ReservationTable;
-DROP TABLE ShowTable;
+DROP TABLE IF EXISTS ReservationTable;
+DROP TABLE IF EXISTS ShowTable;
 
 -- --------------------------------- Show -------------------------------------
 CREATE TABLE ShowTable (

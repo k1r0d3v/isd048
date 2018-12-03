@@ -3,7 +3,7 @@ package es.udc.ws.app.dto;
 import java.util.Calendar;
 import java.util.Objects;
 
-public class ServiceShowDto
+public class ServiceShowAdminDto
 {
     private Long id;
     private String name;
@@ -11,30 +11,33 @@ public class ServiceShowDto
     private Calendar startDate;
     private long duration;
     private Calendar limitDate;
+    private long maxTickets;
     private long availableTickets;
     private float realPrice;
     private float discountedPrice;
+    private float salesCommission;
 
+    public ServiceShowAdminDto() { }
 
-    public ServiceShowDto() { }
-
-    public ServiceShowDto(Long id, String name, String description, Calendar startDate, long duration, Calendar limitDate, long availableTickets, float realPrice, float discountedPrice) {
+    public ServiceShowAdminDto(Long id, String name, String description, Calendar startDate, long duration, Calendar limitDate, long maxTickets, long availableTickets, float realPrice, float discountedPrice, float salesCommission) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.startDate = startDate;
         this.duration = duration;
         this.limitDate = limitDate;
+        this.maxTickets = maxTickets;
         this.availableTickets = availableTickets;
         this.realPrice = realPrice;
         this.discountedPrice = discountedPrice;
+        this.salesCommission = salesCommission;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -78,6 +81,14 @@ public class ServiceShowDto
         this.limitDate = limitDate;
     }
 
+    public long getMaxTickets() {
+        return maxTickets;
+    }
+
+    public void setMaxTickets(long maxTickets) {
+        this.maxTickets = maxTickets;
+    }
+
     public long getAvailableTickets() {
         return availableTickets;
     }
@@ -102,16 +113,26 @@ public class ServiceShowDto
         this.discountedPrice = discountedPrice;
     }
 
+    public float getSalesCommission() {
+        return salesCommission;
+    }
+
+    public void setSalesCommission(float salesCommission) {
+        this.salesCommission = salesCommission;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ServiceShowDto that = (ServiceShowDto) o;
-        return id == that.id &&
-                duration == that.duration &&
+        ServiceShowAdminDto that = (ServiceShowAdminDto) o;
+        return duration == that.duration &&
+                maxTickets == that.maxTickets &&
                 availableTickets == that.availableTickets &&
                 Float.compare(that.realPrice, realPrice) == 0 &&
                 Float.compare(that.discountedPrice, discountedPrice) == 0 &&
+                Float.compare(that.salesCommission, salesCommission) == 0 &&
+                Objects.equals(id, that.id) &&
                 Objects.equals(name, that.name) &&
                 Objects.equals(description, that.description) &&
                 Objects.equals(startDate, that.startDate) &&
@@ -120,7 +141,7 @@ public class ServiceShowDto
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, startDate, duration, limitDate, availableTickets, realPrice, discountedPrice);
+        return Objects.hash(id, name, description, startDate, duration, limitDate, maxTickets, availableTickets, realPrice, discountedPrice, salesCommission);
     }
 
     @Override
@@ -132,9 +153,11 @@ public class ServiceShowDto
                 ", startDate=" + startDate +
                 ", duration=" + duration +
                 ", limitDate=" + limitDate +
+                ", maxTickets=" + maxTickets +
                 ", availableTickets=" + availableTickets +
                 ", realPrice=" + realPrice +
                 ", discountedPrice=" + discountedPrice +
+                ", salesCommission=" + salesCommission +
                 '}';
     }
 }

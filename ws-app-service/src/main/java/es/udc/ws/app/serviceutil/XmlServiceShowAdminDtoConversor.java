@@ -1,6 +1,6 @@
 package es.udc.ws.app.serviceutil;
 
-import es.udc.ws.app.dto.ServiceShowDto;
+import es.udc.ws.app.dto.ServiceShowAdminDto;
 import es.udc.ws.util.xml.exceptions.ParsingException;
 import org.jdom2.DataConversionException;
 import org.jdom2.Document;
@@ -18,25 +18,25 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class XmlServiceShowDtoConversor {
+public class XmlServiceShowAdminDtoConversor {
 
     public final static Namespace XML_NS = Namespace.getNamespace("http://ws.udc.es/shows/xml");
 
-    public static Document toXml(ServiceShowDto show) throws IOException {
+    public static Document toXml(ServiceShowAdminDto show) throws IOException {
         Element movieElement = toJDOMElement(show);
         return new Document(movieElement);
     }
 
-    public static Document toXml(List<ServiceShowDto> shows) throws IOException {
+    public static Document toXml(List<ServiceShowAdminDto> shows) throws IOException {
 
         Element showElements = new Element("shows", XML_NS);
-        for (ServiceShowDto i : shows)
+        for (ServiceShowAdminDto i : shows)
             showElements.addContent(toJDOMElement(i));
 
         return new Document(showElements);
     }
 
-    public static Element toJDOMElement(ServiceShowDto show) {
+    public static Element toJDOMElement(ServiceShowAdminDto show) {
 
         Element showElement = new Element("show", XML_NS);
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ"){
@@ -68,8 +68,12 @@ public class XmlServiceShowDtoConversor {
         showElement.addContent(priceElement);
 
         Element limitDateElement = new Element("limitDate", XML_NS);
-        limitDateElement.setText(format.format(show.getLimitDate().getTime()));
+        limitDateElement.setText(format.format(show.getLimitDate()));
         showElement.addContent(limitDateElement);
+
+        Element maxTicketsElement = new Element("maxTickets", XML_NS);
+        maxTicketsElement.setText(format.format(show.getLimitDate()));
+        showElement.addContent(maxTicketsElement);
 
         Element avalilableTicketsElement = new Element("availableTickets", XML_NS);
         avalilableTicketsElement.setText(Long.toString(show.getAvailableTickets()));
@@ -83,10 +87,14 @@ public class XmlServiceShowDtoConversor {
         discountedPriceElement.setText(Float.toString(show.getDiscountedPrice()));
         showElement.addContent(discountedPriceElement);
 
+        Element salesCommissionElement = new Element("salesCommission", XML_NS);
+        salesCommissionElement.setText(Float.toString(show.getDiscountedPrice()));
+        showElement.addContent(salesCommissionElement);
+
         return showElement;
     }
 
-    public static ServiceShowDto toServiceShowDto(InputStream movieXml) throws ParsingException {
+    public static ServiceShowAdminDto toServiceShowDto(InputStream movieXml) throws ParsingException {
         try {
 
             SAXBuilder builder = new SAXBuilder();
@@ -101,7 +109,7 @@ public class XmlServiceShowDtoConversor {
         }
     }
 
-    private static ServiceShowDto toServiceShowDto(Element showElement)
+    private static ServiceShowAdminDto toServiceShowDto(Element showElement)
             throws ParsingException, DataConversionException {
 
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ"){
@@ -129,11 +137,15 @@ public class XmlServiceShowDtoConversor {
 
         String limitDate = showElement.getChildTextNormalize("limitDate", XML_NS);
 
+        String maxTickets = showElement.getChildTextNormalize("maxTickets", XML_NS);
+
         String availableTickets = showElement.getChildTextNormalize("availableTickets", XML_NS);
 
         String realPrice = showElement.getChildTextNormalize("realPrice", XML_NS);
 
         String discountedPrice = showElement.getChildTextNormalize("discountedPrice", XML_NS);
+
+        String salesCommission = showElement.getChildTextNormalize("salesCommission", XML_NS);
 
 
         Calendar startCalendar = Calendar.getInstance();
@@ -150,6 +162,6 @@ public class XmlServiceShowDtoConversor {
             throw new DataConversionException(startDate, "Calendar");
         }
 
-        return new ServiceShowDto(identifier, name, description, startCalendar, Long.parseLong(duration), limitCalendar, Integer.parseInt(availableTickets), Float.parseFloat(realPrice), Float.parseFloat(discountedPrice));
+        return new ServiceShowAdminDto(identifier, name, description, startCalendar, Long.parseLong(duration), limitCalendar, Integer.parseInt(maxTickets), Integer.parseInt(availableTickets), Float.parseFloat(realPrice), Float.parseFloat(discountedPrice), Float.parseFloat(salesCommission));
     }
 }

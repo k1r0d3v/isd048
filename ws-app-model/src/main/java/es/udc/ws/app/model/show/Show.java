@@ -19,7 +19,7 @@ public class Show
 
 	public Show() { }
 
-	public Show(long id, String name, String description, Calendar startDate,
+	public Show(Long id, String name, String description, Calendar startDate,
 			long duration, Calendar limitDate, long maxTickets, long availableTickets,
 			float realPrice, float discountedPrice, float salesCommission) {
 		this.id = id;

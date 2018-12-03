@@ -166,7 +166,7 @@ public class TicketSellerServiceTest
 		otherCalendar.add(Calendar.YEAR, 1);
 		otherCalendar.add(Calendar.DAY_OF_WEEK, -1);
 
-		Show s = new Show(754883452, name, description, calendar, 120, otherCalendar, 10000, 100000, 
+		Show s = new Show(754883452L, name, description, calendar, 120, otherCalendar, 10000, 100000,
 				60.0f, 50.0f, 20.0f);
 
 		return s;
@@ -314,7 +314,7 @@ public class TicketSellerServiceTest
 		float tmpRealPrice = show.getRealPrice();
 
 		try {
-			show.setId(100);
+			show.setId(100L);
 			ticketService.updateShow(show);
 		} catch (InstanceNotFoundException e) {
 			exceptionCatched = true;
