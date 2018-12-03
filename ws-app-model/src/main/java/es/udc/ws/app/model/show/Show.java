@@ -5,7 +5,7 @@ import java.util.Objects;
 
 public class Show
 {
-	private long id;
+	private Long id;
 	private String name;
 	private String description;
 	private Calendar startDate;
@@ -20,7 +20,7 @@ public class Show
 	public Show() { }
 
 	public Show(long id, String name, String description, Calendar startDate,
-			long duration, Calendar limitDate, long maxTickets, long availableTickets, 
+			long duration, Calendar limitDate, long maxTickets, long availableTickets,
 			float realPrice, float discountedPrice, float salesCommission) {
 		this.id = id;
 		this.name = name;
@@ -35,11 +35,11 @@ public class Show
 		this.salesCommission = salesCommission;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

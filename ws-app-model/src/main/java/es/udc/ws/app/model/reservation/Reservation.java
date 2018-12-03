@@ -5,8 +5,8 @@ import java.util.Objects;
 
 public class Reservation
 {
-    private long id;
-    private long showId;
+    private Long id;
+    private Long showId;
     private String email;
     private String cardNumber;
     private int tickets;
@@ -17,7 +17,7 @@ public class Reservation
 
     public Reservation() { }
 
-	public Reservation(long id, long showId, String email, 
+	public Reservation(Long id, long showId, String email,
 			String cardNumber, int tickets, boolean isValid, String code, 
 			Calendar reservationDate, float price) {
 		this.id = id;
@@ -32,11 +32,11 @@ public class Reservation
 	}
 
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
