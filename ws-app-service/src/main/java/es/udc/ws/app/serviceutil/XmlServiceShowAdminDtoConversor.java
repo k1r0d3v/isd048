@@ -3,7 +3,6 @@ package es.udc.ws.app.serviceutil;
 import es.udc.ws.app.dto.ServiceShowAdminDto;
 import es.udc.ws.util.xml.exceptions.ParsingException;
 import javax.xml.bind.DatatypeConverter;
-import javax.xml.datatype.DatatypeFactory;
 
 import org.jdom2.DataConversionException;
 import org.jdom2.Document;
@@ -13,12 +12,7 @@ import org.jdom2.input.SAXBuilder;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 public class XmlServiceShowAdminDtoConversor {
@@ -44,7 +38,7 @@ public class XmlServiceShowAdminDtoConversor {
         Element showElement = new Element("show", XML_NS);
 
         if (show.getId() != null) {
-            Element identifierElement = new Element("showId", XML_NS);
+            Element identifierElement = new Element("id", XML_NS);
             identifierElement.setText(show.getId().toString());
             showElement.addContent(identifierElement);
         }
@@ -54,7 +48,7 @@ public class XmlServiceShowAdminDtoConversor {
         showElement.addContent(runtimeElement);
 
         Element descriptionElement = new Element("description", XML_NS);
-        descriptionElement.setText(show.getName());
+        descriptionElement.setText(show.getDescription());
         showElement.addContent(descriptionElement);
 
         Element startDateElement = new Element("startDate", XML_NS);
@@ -92,14 +86,14 @@ public class XmlServiceShowAdminDtoConversor {
         return showElement;
     }
 
-    public static ServiceShowAdminDto toServiceShowDto(InputStream movieXml) throws ParsingException {
+    public static ServiceShowAdminDto toServiceShowAdminDto(InputStream movieXml) throws ParsingException {
         try {
 
             SAXBuilder builder = new SAXBuilder();
             Document document = builder.build(movieXml);
             Element rootElement = document.getRootElement();
 
-            return toServiceShowDto(rootElement);
+            return toServiceShowAdminDto(rootElement);
         } catch (ParsingException ex) {
             throw ex;
         } catch (Exception e) {
@@ -107,13 +101,13 @@ public class XmlServiceShowAdminDtoConversor {
         }
     }
 
-    private static ServiceShowAdminDto toServiceShowDto(Element showElement)
+    private static ServiceShowAdminDto toServiceShowAdminDto(Element showElement)
             throws ParsingException, DataConversionException {
 
         if (!"show".equals(showElement.getName())) {
             throw new ParsingException("Unrecognized element '" + showElement.getName() + "' ('show' expected)");
         }
-        Element identifierElement = showElement.getChild("showId", XML_NS);
+        Element identifierElement = showElement.getChild("id", XML_NS);
         Long identifier = null;
         if (identifierElement != null) {
             identifier = Long.valueOf(identifierElement.getTextTrim());

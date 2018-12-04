@@ -72,7 +72,7 @@ public class ShowsServlet extends HttpServlet {
         }
         ServiceShowAdminDto xmlshow;
         try {
-            xmlshow = XmlServiceShowAdminDtoConversor.toServiceShowDto(req.getInputStream());
+            xmlshow = XmlServiceShowAdminDtoConversor.toServiceShowAdminDto(req.getInputStream());
         } catch (ParsingException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST, XmlServiceExceptionConversor
                     .toXml(new InputValidationException(ex.getMessage())), null);
@@ -98,13 +98,15 @@ public class ShowsServlet extends HttpServlet {
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String path = ServletUtils.normalizePath(req.getPathInfo());
+
         if (path == null || path.length() == 0) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                     XmlServiceExceptionConversor.toXml(
-                            new InputValidationException("Invalid Request: " + "invalid movie id")),
+                            new InputValidationException("Invalid Request: " + "invalid show id")),
                     null);
             return;
         }
+
         String showIdAsString = path.substring(1);
         Long showId;
         try {
@@ -117,9 +119,9 @@ public class ShowsServlet extends HttpServlet {
             return;
         }
 
-        ServiceShowDto showDto;
+        ServiceShowAdminDto showDto;
         try {
-            showDto = XmlServiceShowDtoConversor.toServiceShowDto(req.getInputStream());
+            showDto = XmlServiceShowAdminDtoConversor.toServiceShowAdminDto(req.getInputStream());
         } catch (ParsingException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST, XmlServiceExceptionConversor
                     .toXml(new InputValidationException(ex.getMessage())), null);
@@ -129,12 +131,12 @@ public class ShowsServlet extends HttpServlet {
         if (!showId.equals(showDto.getId())) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                     XmlServiceExceptionConversor.toXml(
-                            new InputValidationException("Invalid Request: " + "invalid showId")),
+                            new InputValidationException("Invalid Request: " + "invalid show id")),
                     null);
             return;
         }
 
-        Show show = null;// TODO: ??????? ShowToDto.toShow(showDto);
+        Show show = ShowToDto.toShow(showDto);
         try {
             TicketSellerServiceFactory.getService().updateShow(show);
         } catch (InputValidationException ex) {
@@ -180,7 +182,7 @@ public class ShowsServlet extends HttpServlet {
             return;
         }
         /*
-        TODO: ?????????????????
+        TODO: Implement remove Show in service?????
         try {
             TicketSellerServiceFactory.getService().removeShow(showId);
         } catch (InstanceNotFoundException ex) {

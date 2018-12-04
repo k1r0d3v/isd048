@@ -42,7 +42,7 @@ public class XmlServiceShowDtoConversor {
         Element showElement = new Element("show", XML_NS);
 
         if (show.getId() != null) {
-            Element identifierElement = new Element("showId", XML_NS);
+            Element identifierElement = new Element("id", XML_NS);
             identifierElement.setText(show.getId().toString());
             showElement.addContent(identifierElement);
         }
@@ -52,7 +52,7 @@ public class XmlServiceShowDtoConversor {
         showElement.addContent(runtimeElement);
 
         Element descriptionElement = new Element("description", XML_NS);
-        descriptionElement.setText(show.getName());
+        descriptionElement.setText(show.getDescription());
         showElement.addContent(descriptionElement);
 
         Element startDateElement = new Element("startDate", XML_NS);
@@ -103,7 +103,7 @@ public class XmlServiceShowDtoConversor {
         if (!"show".equals(showElement.getName())) {
             throw new ParsingException("Unrecognized element '" + showElement.getName() + "' ('show' expected)");
         }
-        Element identifierElement = showElement.getChild("showId", XML_NS);
+        Element identifierElement = showElement.getChild("id", XML_NS);
         Long identifier = null;
         if (identifierElement != null) {
             identifier = Long.valueOf(identifierElement.getTextTrim());

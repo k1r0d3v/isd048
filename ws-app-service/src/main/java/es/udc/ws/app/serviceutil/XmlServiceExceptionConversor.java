@@ -11,8 +11,6 @@ import java.io.PrintWriter;
 
 
 public class XmlServiceExceptionConversor {
-    public final static String CONVERSION_PATTERN = "EEE, d MMM yyyy HH:mm:ss Z";
-
     public final static Namespace XML_NS = Namespace.getNamespace("http://ws.udc.es/shows/xml");
 
 
