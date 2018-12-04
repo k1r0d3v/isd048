@@ -19,45 +19,99 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.List;
+
 
 public class ShowsServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String path = ServletUtils.normalizePath(req.getPathInfo());
-        if (path == null || path.length() == 0) {
-            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
-                    XmlServiceExceptionConversor.toXml(
-                            new InputValidationException("Invalid Request: " + "invalid show id")),
-                    null);
-            return;
+
+        if (path == null)
+        {
+            String keywordsParam = req.getParameter("keywords");
+            if (keywordsParam == null) {
+                ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                        XmlServiceExceptionConversor.toXml(
+                                new InputValidationException("Invalid Request: " + "parameter 'keywords' is mandatory")),
+                        null);
+                return;
+            }
+
+            String startParam = req.getParameter("start");
+            String endParam = req.getParameter("end");
+
+            Calendar start = null;
+            Calendar end = null;
+
+            if (startParam != null) {
+                try {
+                    start = DatatypeConverter.parseDateTime(startParam);
+                } catch (Exception e) {
+                    ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                            XmlServiceExceptionConversor.toXml(new InputValidationException("Invalid start date format")),null);
+                    return;
+                }
+                if (endParam != null) {
+                    try {
+                        end = DatatypeConverter.parseDateTime(endParam);
+                    } catch (Exception e) {
+                        ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                                XmlServiceExceptionConversor.toXml(new InputValidationException("Invalid start date format")),null);
+                        return;
+                    }
+                }
+            }
+
+            List<Show> shows;
+            try {
+                shows = TicketSellerServiceFactory.getService().findShows(keywordsParam, start, end);
+            } catch (InputValidationException ex) {
+                ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
+                        XmlServiceExceptionConversor.toXml(ex), null);
+                return;
+            }
+
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK,
+                    XmlServiceShowDtoConversor.toXml(ShowToDto.toShowDtos(shows)), null);
         }
+        else
+        {
+            if (path.length() == 0) {
+                ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                        XmlServiceExceptionConversor.toXml(
+                                new InputValidationException("Invalid Request: " + "invalid path " + path)),
+                        null);
+                return;
+            }
 
-        String showIdAsString = path.substring(1);
-        Long showId;
-        try {
-            showId = Long.valueOf(showIdAsString);
-        } catch (NumberFormatException ex) {
-            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
-                    XmlServiceExceptionConversor.toXml(
-                            new InputValidationException("Invalid Request: " + "invalid show id '" + showIdAsString)),
-                    null);
-            return;
+            String showIdAsString = path.substring(1);
+            Long showId;
+            try {
+                showId = Long.valueOf(showIdAsString);
+            } catch (NumberFormatException ex) {
+                ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                        XmlServiceExceptionConversor.toXml(
+                                new InputValidationException("Invalid Request: " + "invalid show id '" + showIdAsString)),
+                        null);
+                return;
+            }
+
+            Show show;
+            try {
+                show = TicketSellerServiceFactory.getService().findShow(showId);
+            } catch (InstanceNotFoundException ex) {
+                ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
+                        XmlServiceExceptionConversor.toInstanceNotFoundException(ex), null);
+                return;
+            }
+
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK,
+                    XmlServiceShowDtoConversor.toXml(ShowToDto.toShowDto(show)), null);
         }
-
-        Show show;
-        try {
-            show = TicketSellerServiceFactory.getService().findShow(showId);
-        } catch (InstanceNotFoundException ex) {
-            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
-                    XmlServiceExceptionConversor.toInstanceNotFoundException(ex), null);
-            return;
-        }
-
-        ServiceShowDto saleDto = ShowToDto.toShowDto(show);
-
-        ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK,
-                XmlServiceShowDtoConversor.toXml(saleDto), null);
     }
 
     @Override
