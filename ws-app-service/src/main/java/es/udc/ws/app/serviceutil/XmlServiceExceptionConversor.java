@@ -7,6 +7,7 @@ import org.jdom2.Element;
 import org.jdom2.Namespace;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 
 public class XmlServiceExceptionConversor {
@@ -19,6 +20,7 @@ public class XmlServiceExceptionConversor {
         Element exceptionElement = new Element("InputValidationException", XML_NS);
 
         Element messageElement = new Element("message", XML_NS);
+
         messageElement.setText(ex.getMessage());
         exceptionElement.addContent(messageElement);
 

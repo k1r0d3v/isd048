@@ -46,7 +46,7 @@ public class TicketSellerServiceImpl implements TicketSellerService
         PropertyValidator.validateFloat("discounted price", show.getDiscountedPrice(), 0.0f, Float.MAX_VALUE);
         PropertyValidator.validateFloat("commission", show.getSalesCommission(), 0.0f, Float.MAX_VALUE);
         PropertyValidator.validateMajorEqualsThan("real price", "discounted price", show.getRealPrice(), show.getDiscountedPrice());
-
+        PropertyValidator.validateMajorEqualsThan("max number of tickets", "available number of tickets", show.getMaxTickets(), show.getAvailableTickets());
 
         try (Connection connection = dataSource.getConnection())
         {

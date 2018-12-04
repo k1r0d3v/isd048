@@ -78,7 +78,6 @@ public class ShowsServlet extends HttpServlet {
 
         }
 
-        System.out.println(xmlshow);
         Show show = ShowToDto.toShow(xmlshow);
         try {
             show = TicketSellerServiceFactory.getService().createShow(show);
@@ -88,11 +87,7 @@ public class ShowsServlet extends HttpServlet {
             return;
         }
         ServiceShowDto showDto = ShowToDto.toShowDto(show);
-
-        //String movieURL = ServletUtils.normalizePath(req.getRequestURL().toString()) + "/" + show.getId();
-        //Map<String, String> headers = new HashMap<>(1);
-        //headers.put("Location", movieURL);
-
+        
         ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_CREATED,
                 XmlServiceShowDtoConversor.toXml(showDto), null);
     }

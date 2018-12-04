@@ -2,6 +2,9 @@ package es.udc.ws.app.serviceutil;
 
 import es.udc.ws.app.dto.ServiceShowAdminDto;
 import es.udc.ws.util.xml.exceptions.ParsingException;
+import javax.xml.bind.DatatypeConverter;
+import javax.xml.datatype.DatatypeFactory;
+
 import org.jdom2.DataConversionException;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -39,11 +42,6 @@ public class XmlServiceShowAdminDtoConversor {
     public static Element toJDOMElement(ServiceShowAdminDto show) {
 
         Element showElement = new Element("show", XML_NS);
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ"){
-            public Date parse(String source, ParsePosition pos) {
-                return super.parse(source.replaceFirst(":(?=[0-9]{2}$)",""),pos);
-            }
-        };
 
         if (show.getId() != null) {
             Element identifierElement = new Element("showId", XML_NS);
@@ -60,7 +58,7 @@ public class XmlServiceShowAdminDtoConversor {
         showElement.addContent(descriptionElement);
 
         Element startDateElement = new Element("startDate", XML_NS);
-        startDateElement.setText(format.format(show.getStartDate().getTime()));
+        startDateElement.setText(DatatypeConverter.printDateTime(show.getStartDate()));
         showElement.addContent(startDateElement);
 
         Element priceElement = new Element("duration", XML_NS);
@@ -68,11 +66,11 @@ public class XmlServiceShowAdminDtoConversor {
         showElement.addContent(priceElement);
 
         Element limitDateElement = new Element("limitDate", XML_NS);
-        limitDateElement.setText(format.format(show.getLimitDate()));
+        limitDateElement.setText(DatatypeConverter.printDateTime(show.getLimitDate()));
         showElement.addContent(limitDateElement);
 
         Element maxTicketsElement = new Element("maxTickets", XML_NS);
-        maxTicketsElement.setText(format.format(show.getLimitDate()));
+        maxTicketsElement.setText(Long.toString(show.getMaxTickets()));
         showElement.addContent(maxTicketsElement);
 
         Element avalilableTicketsElement = new Element("availableTickets", XML_NS);
@@ -112,12 +110,6 @@ public class XmlServiceShowAdminDtoConversor {
     private static ServiceShowAdminDto toServiceShowDto(Element showElement)
             throws ParsingException, DataConversionException {
 
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ"){
-            public Date parse(String source, ParsePosition pos) {
-                return super.parse(source.replaceFirst(":(?=[0-9]{2}$)",""),pos);
-            }
-        };
-
         if (!"show".equals(showElement.getName())) {
             throw new ParsingException("Unrecognized element '" + showElement.getName() + "' ('show' expected)");
         }
@@ -147,20 +139,8 @@ public class XmlServiceShowAdminDtoConversor {
 
         String salesCommission = showElement.getChildTextNormalize("salesCommission", XML_NS);
 
-
-        Calendar startCalendar = Calendar.getInstance();
-        Calendar limitCalendar = Calendar.getInstance();
-        try {
-            startCalendar.setTime(format.parse(startDate));
-        } catch (ParseException e) {
-            throw new DataConversionException(startDate, "Calendar");
-        }
-
-        try {
-            limitCalendar.setTime(format.parse(limitDate));
-        } catch (ParseException e) {
-            throw new DataConversionException(startDate, "Calendar");
-        }
+        Calendar startCalendar = DatatypeConverter.parseDateTime(startDate);
+        Calendar limitCalendar = DatatypeConverter.parseDateTime(limitDate);
 
         return new ServiceShowAdminDto(identifier, name, description, startCalendar, Long.parseLong(duration), limitCalendar, Integer.parseInt(maxTickets), Integer.parseInt(availableTickets), Float.parseFloat(realPrice), Float.parseFloat(discountedPrice), Float.parseFloat(salesCommission));
     }

@@ -166,10 +166,8 @@ public class TicketSellerServiceTest
 		otherCalendar.add(Calendar.YEAR, 1);
 		otherCalendar.add(Calendar.DAY_OF_WEEK, -1);
 
-		Show s = new Show(754883452L, name, description, calendar, 120, otherCalendar, 10000, 100000,
+		return new Show(754883452L, name, description, calendar, 120, otherCalendar, 10000, 10000,
 				60.0f, 50.0f, 20.0f);
-
-		return s;
 	}
 
 	private Show getValidShow() {
@@ -294,6 +292,18 @@ public class TicketSellerServiceTest
 		}
 		assertTrue(exceptionCatched);
 		try { removeShow(show.getId()); } catch (Exception e) { }
+		exceptionCatched = false;
+
+		try
+		{
+			show.setAvailableTickets(120);
+			show.setMaxTickets(100);
+			show = ticketService.createShow(show);
+		} catch (InputValidationException e) {
+			exceptionCatched = true;
+		}
+		assertTrue(exceptionCatched);
+		try { removeShow(show.getId()); } catch (Exception e) { }
 	}
 
 	@Test
@@ -376,8 +386,6 @@ public class TicketSellerServiceTest
 
 
 		//
-		show.setMaxTickets(100);
-
 		date = Calendar.getInstance();
 		date.add(Calendar.WEEK_OF_YEAR, 1);
 		show.setStartDate(date);
@@ -467,8 +475,6 @@ public class TicketSellerServiceTest
 		Show show = getValidShow();
 
 		//
-		show.setMaxTickets(100);
-
 		date = Calendar.getInstance();
 		date.add(Calendar.WEEK_OF_YEAR, 1);
 		show.setStartDate(date);
@@ -529,8 +535,6 @@ public class TicketSellerServiceTest
 		Show show = getValidShow();
 
 		//
-		show.setMaxTickets(100);
-
 		date = Calendar.getInstance();
 		date.add(Calendar.WEEK_OF_YEAR, 1);
 		show.setStartDate(date);
