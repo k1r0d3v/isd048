@@ -1,4 +1,4 @@
-package es.udc.ws.app.serviceutil;
+package es.udc.ws.app.restservice.xml;
 
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;

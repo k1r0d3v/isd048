@@ -1,4 +1,4 @@
-package es.udc.ws.app.service.restservice;
+package es.udc.ws.app.serviceutil;
 
 import es.udc.ws.app.dto.ServiceReservationDto;
 import es.udc.ws.app.model.reservation.Reservation;

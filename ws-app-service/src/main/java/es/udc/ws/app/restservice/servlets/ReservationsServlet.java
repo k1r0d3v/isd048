@@ -2,9 +2,9 @@ package es.udc.ws.app.restservice.servlets;
 
 import es.udc.ws.app.model.reservation.Reservation;
 import es.udc.ws.app.model.service.TicketSellerServiceFactory;
-import es.udc.ws.app.service.restservice.ReservationToDto;
-import es.udc.ws.app.serviceutil.XmlServiceExceptionConversor;
-import es.udc.ws.app.serviceutil.XmlServiceReservationDtoConversor;
+import es.udc.ws.app.serviceutil.ReservationToDto;
+import es.udc.ws.app.restservice.xml.XmlServiceExceptionConversor;
+import es.udc.ws.app.restservice.xml.XmlServiceReservationDtoConversor;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.servlet.ServletUtils;
 

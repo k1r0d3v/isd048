@@ -3,7 +3,7 @@ package es.udc.ws.app.restservice.servlets;
 import es.udc.ws.app.model.service.TicketSellerServiceFactory;
 import es.udc.ws.app.model.service.exceptions.CreditCardNotCoincident;
 import es.udc.ws.app.model.service.exceptions.ReservationAlreadyChecked;
-import es.udc.ws.app.serviceutil.XmlServiceExceptionConversor;
+import es.udc.ws.app.restservice.xml.XmlServiceExceptionConversor;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import es.udc.ws.util.servlet.ServletUtils;
