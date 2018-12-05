@@ -120,4 +120,19 @@ public class ServiceReservationDto {
     public int hashCode() {
         return Objects.hash(id, showId, email, cardNumber, tickets, isValid, code, reservationDate, price);
     }
+
+    @Override
+    public String toString() {
+        return "ServiceReservationDto{" +
+                "id=" + id +
+                ", showId=" + showId +
+                ", email='" + email + '\'' +
+                ", cardNumber='" + cardNumber + '\'' +
+                ", tickets=" + tickets +
+                ", isValid=" + isValid +
+                ", code='" + code + '\'' +
+                ", reservationDate=" + reservationDate +
+                ", price=" + price +
+                '}';
+    }
 }

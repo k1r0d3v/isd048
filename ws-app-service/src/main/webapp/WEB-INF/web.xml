@@ -48,6 +48,22 @@
         </servlet-class>
     </servlet>
 
+    <servlet>
+        <display-name>CheckServlet</display-name>
+        <servlet-name>CheckServlet</servlet-name>
+        <servlet-class>
+            es.udc.ws.app.restservice.servlets.CheckServlet
+        </servlet-class>
+    </servlet>
+
+    <servlet>
+        <display-name>BuyServlet</display-name>
+        <servlet-name>BuyServlet</servlet-name>
+        <servlet-class>
+            es.udc.ws.app.restservice.servlets.BuyServlet
+        </servlet-class>
+    </servlet>
+
     <servlet-mapping>
         <servlet-name>ShowsServlet</servlet-name>
         <url-pattern>/shows/*</url-pattern>
@@ -56,6 +72,16 @@
     <servlet-mapping>
         <servlet-name>ReservationsServlet</servlet-name>
         <url-pattern>/reservations/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>CheckServlet</servlet-name>
+        <url-pattern>/check/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>BuyServlet</servlet-name>
+        <url-pattern>/buy/*</url-pattern>
     </servlet-mapping>
 
     <!-- General configuration -->

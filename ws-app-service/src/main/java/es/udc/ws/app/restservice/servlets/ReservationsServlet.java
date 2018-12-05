@@ -1,29 +1,48 @@
 package es.udc.ws.app.restservice.servlets;
 
+import es.udc.ws.app.model.reservation.Reservation;
+import es.udc.ws.app.model.service.TicketSellerServiceFactory;
+import es.udc.ws.app.service.restservice.ReservationToDto;
+import es.udc.ws.app.serviceutil.XmlServiceExceptionConversor;
+import es.udc.ws.app.serviceutil.XmlServiceReservationDtoConversor;
+import es.udc.ws.util.exceptions.InputValidationException;
+import es.udc.ws.util.servlet.ServletUtils;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
+
 
 public class ReservationsServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doGet(req, resp);
-    }
+        String path = ServletUtils.normalizePath(req.getPathInfo());
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doPost(req, resp);
-    }
+        if (path == null)
+        {
+            String emailParam = req.getParameter("email");
+            if (emailParam == null) {
+                ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                        XmlServiceExceptionConversor.convertException(
+                                new InputValidationException("Invalid Request: " + "parameter 'email' is mandatory")),
+                        null);
+                return;
+            }
 
-    @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doPut(req, resp);
-    }
+            List<Reservation> reservations;
+            try {
+                reservations = TicketSellerServiceFactory.getService().getUserReservations(emailParam);
+            } catch (InputValidationException ex) {
+                ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
+                        XmlServiceExceptionConversor.convertException(ex), null);
+                return;
+            }
 
-    @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doDelete(req, resp);
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK,
+                    XmlServiceReservationDtoConversor.toXml(ReservationToDto.toReservationDtos(reservations)), null);
+        }
     }
 }

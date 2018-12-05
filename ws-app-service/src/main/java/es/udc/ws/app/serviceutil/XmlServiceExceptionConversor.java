@@ -14,7 +14,7 @@ public class XmlServiceExceptionConversor {
     public final static Namespace XML_NS = Namespace.getNamespace("http://ws.udc.es/shows/xml");
 
 
-    public static Document toInstanceNotFoundException(InstanceNotFoundException ex) throws IOException {
+    public static Document convertInstanceNotFoundException(InstanceNotFoundException ex) throws IOException {
 
         Element exceptionElement = new Element("InstanceNotFoundException", XML_NS);
 
@@ -34,8 +34,8 @@ public class XmlServiceExceptionConversor {
         return new Document(exceptionElement);
     }
 
-    public static <T extends Exception> Document toXml(T t) throws IOException {
-        Element exceptionElement = new Element(t.getClass().getName(), XML_NS);
+    public static <T extends Exception> Document convertException(T t) throws IOException {
+        Element exceptionElement = new Element(t.getClass().getSimpleName(), XML_NS);
         Element messageElement = new Element("message", XML_NS);
         messageElement.setText(t.getMessage());
         exceptionElement.addContent(messageElement);

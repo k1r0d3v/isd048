@@ -217,7 +217,7 @@ public class TicketSellerServiceImpl implements TicketSellerService
                     throw new NotEnoughAvailableTickets("There is not enough tickets");
                 }
 
-                show.setAvailableTickets(show.getAvailableTickets() + count);
+                show.setAvailableTickets(show.getAvailableTickets() - count);
                 showDao.update(connection, show);
 
                 Reservation reservation = new Reservation();
