@@ -17,7 +17,7 @@ public class TicketSellerServiceAdminClient
             printUsageAndExit();
 
         ClientAdminTicketSellerService clientTicketSellerService = ClientAdminTicketSellerServiceFactory.getService();
-        
+
     }
 
     private static void validateArgs(String[] args, int expectedArgs, int[] numericArguments)
@@ -42,8 +42,6 @@ public class TicketSellerServiceAdminClient
 
     private static void printUsage() {
         System.err.println("Usage:\n" +
-                "    [find]   TicketSellerServiceClient -f <keywords>\n" +
-                "    [buy]    TicketSellerServiceClient -b <showId> <email> <creditCardNumber> <count>\n" +
-                "    [get]    TicketSellerServiceClient -g <email>\n");
+                "    [?]   TicketSellerServiceAdminClient\n");
     }
 }
