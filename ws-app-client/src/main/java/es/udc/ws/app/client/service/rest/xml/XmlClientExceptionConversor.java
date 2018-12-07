@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
+import es.udc.ws.app.client.service.exceptions.ClientReservationAlreadyChecked;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -44,7 +45,6 @@ public class XmlClientExceptionConversor {
             SAXBuilder builder = new SAXBuilder();
             Document document = builder.build(ex);
             Element rootElement = document.getRootElement();
-
             Element message = rootElement.getChild("message", XML_NS);
 
             return new Exception(message.getText());

@@ -15,7 +15,7 @@ public class TicketSellerServiceClient {
         if(args.length == 0)
             printUsageAndExit();
 
-        ClientTicketSellerService clientTicketSellerService = ClientTicketSellerServiceFactory.getService();
+        ClientTicketSellerService service = ClientTicketSellerServiceFactory.getService();
 
 
         if("-f".equalsIgnoreCase(args[0]))
@@ -24,7 +24,7 @@ public class TicketSellerServiceClient {
             validateArgs(args, 2, new int[] {});
 
             try {
-                List<ClientShowDto> shows = clientTicketSellerService.findShows(args[1]);
+                List<ClientShowDto> shows = service.findShows(args[1]);
                 System.out.println("Found " + shows.size() +
                         " show(s) with keywords '" + args[1] + "'");
 
@@ -54,7 +54,7 @@ public class TicketSellerServiceClient {
 
             ClientReservationDto reservation;
             try {
-                reservation = clientTicketSellerService.buyTickets(Long.parseLong(args[1]), args[2], args[3], Integer.parseInt(args[4]));
+                reservation = service.buyTickets(Long.parseLong(args[1]), args[2], args[3], Integer.parseInt(args[4]));
 
                 System.out.println("Purchased  " + reservation.getTickets() + " tickets successfully");
                 System.out.println(
@@ -80,7 +80,7 @@ public class TicketSellerServiceClient {
             validateArgs(args, 2, new int[] {});
 
             try {
-                List<ClientReservationDto> reservations = clientTicketSellerService.getUserReservations(args[1]);
+                List<ClientReservationDto> reservations = service.getUserReservations(args[1]);
 
                 System.out.println("Found " + reservations.size() +
                         " reservation(s) for email '" + args[1] + "'");

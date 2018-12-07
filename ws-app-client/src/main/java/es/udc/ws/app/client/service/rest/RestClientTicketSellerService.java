@@ -19,6 +19,8 @@ import org.apache.http.client.fluent.Request;
 import java.net.URLEncoder;
 import java.util.List;
 
+
+// TODO: Implement correct exception handling
 public class RestClientTicketSellerService implements ClientTicketSellerService
 {
     private final static String ENDPOINT_ADDRESS_PARAMETER = "RestClientTicketSellerService.endpointAddress";
@@ -45,10 +47,10 @@ public class RestClientTicketSellerService implements ClientTicketSellerService
     public ClientReservationDto buyTickets(long showId, String email, String cardNumber, int count) throws InstanceNotFoundException, InputValidationException, ClientNotEnoughAvailableTickets, ClientLimitDateExceeded {
         try {
             HttpResponse response = Request.Post(getEndpointAddress() + "buy" +
-                    "?show=" + URLEncoder.encode(Long.toString(showId), "UTF-8") +
+                    "?show=" + showId +
                     "&email=" + URLEncoder.encode(email, "UTF-8") +
                     "&creditCard=" + URLEncoder.encode(cardNumber, "UTF-8") +
-                    "&count=" + URLEncoder.encode(Integer.toString(count), "UTF-8")).
+                    "&count=" + count).
                     execute().returnResponse();
 
             validateStatusCode(HttpStatus.SC_OK, response);
