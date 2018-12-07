@@ -26,10 +26,30 @@ public class TicketSellerServiceAdminClient
             } catch (Exception ex) {
                 ex.printStackTrace(System.err);
             }
-        } else if("-c".equalsIgnoreCase(args[0]))
+        } else if("-a".equalsIgnoreCase(args[0]))
         // [add]      TicketSellerServiceAdminClient -a <name> <description> <start> <end> <limit> <tickets> <price> <discount>
         {
             validateArgs(args, 9, new int[] {});
+
+            try
+            {
+
+            } catch (Exception ex) {
+                ex.printStackTrace(System.err);
+            }
+        } else if("-u".equalsIgnoreCase(args[0]))
+        {
+
+            try
+            {
+
+            } catch (Exception ex) {
+                ex.printStackTrace(System.err);
+            }
+        } else if("-g".equalsIgnoreCase(args[0]))
+        // [get]      TicketSellerServiceAdminClient -g <showId>
+        {
+            validateArgs(args, 2, new int[] {});
 
             try
             {
@@ -64,10 +84,10 @@ public class TicketSellerServiceAdminClient
     private static void printUsage()
     {
         System.err.println("Usage:\n" +
-                "    [add]      TicketSellerServiceAdminClient -a <name> <description> <start> <end> <limit> <maxTickets> <tickets> <price> <discount> <commission>\n" +
+                "    [add]      TicketSellerServiceAdminClient -a <name> <description> <start> <duration> <limit> <maxTickets> <tickets> <price> <discount> <commission>\n" +
                 "    [update]   TicketSellerServiceAdminClient -u <id> [-name <name>] [-description <description>] " +
-                "                                                      [-start <start>] [-limit <limit>] [-maxTickets <maxTickets>] " +
-                "                                                      [-tickets <tickets>] [-price <price>] " +
+                "                                                      [-start <start>] [-duration <duration>] [-limit <limit>] " +
+                "                                                      [-maxTickets <maxTickets>] [-tickets <tickets>] [-price <price>] " +
                 "                                                      [-discount <discount>] [-commission <commission>] \n" +
                 "    [get]      TicketSellerServiceAdminClient -g <showId>\n" +
                 "    [check]    TicketSellerServiceAdminClient -c <reservationCode> <creditCardNumber>\n");
