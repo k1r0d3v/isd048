@@ -2,6 +2,7 @@ package es.udc.ws.app.client.ui;
 
 import es.udc.ws.app.client.service.ClientAdminTicketSellerService;
 import es.udc.ws.app.client.service.ClientAdminTicketSellerServiceFactory;
+import es.udc.ws.app.client.service.dto.ClientAdminShowDto;
 
 
 public class TicketSellerServiceAdminClient
@@ -29,11 +30,17 @@ public class TicketSellerServiceAdminClient
         } else if("-a".equalsIgnoreCase(args[0]))
         // [add]      TicketSellerServiceAdminClient -a <name> <description> <start> <end> <limit> <tickets> <price> <discount>
         {
-            validateArgs(args, 9, new int[] {});
+            validateArgs(args, 9, new int[] {7, 8, 9});
 
             try
             {
-
+                //Calendar startDate, long duration, Calendar limitDate, long maxTickets, long tickets, float price, float discountedPrice, float commission)
+                /*ClientAdminShowDto show = service.createShow(new ClientAdminShowDto(
+                        null,
+                        args[1],
+                        args[2],
+                ));
+                */
             } catch (Exception ex) {
                 ex.printStackTrace(System.err);
             }
