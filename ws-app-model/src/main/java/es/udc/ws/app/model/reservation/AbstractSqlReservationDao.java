@@ -21,7 +21,7 @@ public abstract class AbstractSqlReservationDao implements SqlReservationDao
         String query = "UPDATE ReservationTable SET " +
                 "showId = ?, " +
                 "email = ?, " +
-                "cardNumber = ?, " +
+                "creditCard = ?, " +
                 "tickets = ?, " +
                 "isValid = ?, " +
                 "code = ?, " +
@@ -35,7 +35,7 @@ public abstract class AbstractSqlReservationDao implements SqlReservationDao
 
             ps.setLong(index++, reservation.getShowId());
             ps.setString(index++, reservation.getEmail());
-            ps.setString(index++, reservation.getCardNumber());
+            ps.setString(index++, reservation.getCreditCard());
             ps.setInt(index++, reservation.getTickets());
             ps.setBoolean(index++, reservation.isValid());
             ps.setString(index++, reservation.getCode());
@@ -78,7 +78,7 @@ public abstract class AbstractSqlReservationDao implements SqlReservationDao
                 "id," +
                 "showId, " +
                 "email, " +
-                "cardNumber, " +
+                "creditCard, " +
                 "tickets, " +
                 "isValid, " +
                 "code, " +
@@ -101,7 +101,7 @@ public abstract class AbstractSqlReservationDao implements SqlReservationDao
                 r.setId(rs.getLong(index++));
                 r.setShowId(rs.getLong(index++));
                 r.setEmail(rs.getString(index++));
-                r.setCardNumber(rs.getString(index++));
+                r.setCreditCard(rs.getString(index++));
                 r.setTickets(rs.getInt(index++));
                 r.setValid(rs.getBoolean(index++));
                 r.setCode(rs.getString(index++));
@@ -128,7 +128,7 @@ public abstract class AbstractSqlReservationDao implements SqlReservationDao
                 "id," +
                 "showId, " +
                 "email, " +
-                "cardNumber, " +
+                "creditCard, " +
                 "tickets, " +
                 "isValid, " +
                 "code, " +
@@ -152,7 +152,7 @@ public abstract class AbstractSqlReservationDao implements SqlReservationDao
             r.setId(rs.getLong(index++));
             r.setShowId(rs.getLong(index++));
             r.setEmail(rs.getString(index++));
-            r.setCardNumber(rs.getString(index++));
+            r.setCreditCard(rs.getString(index++));
             r.setTickets(rs.getInt(index++));
             r.setValid(rs.getBoolean(index++));
             r.setCode(rs.getString(index++));

@@ -20,10 +20,10 @@ CREATE TABLE ShowTable (
     duration BIGINT NOT NULL,
     limitDate DATETIME NOT NULL,
     maxTickets BIGINT NOT NULL,
-    availableTickets BIGINT NOT NULL,
-    realPrice FLOAT NOT NULL,
+    tickets BIGINT NOT NULL,
+    price FLOAT NOT NULL,
     discountedPrice FLOAT NOT NULL,
-    salesCommission FLOAT NOT NULL,
+    commission FLOAT NOT NULL,
 
     CONSTRAINT ShowPK PRIMARY KEY(id) ) ENGINE = InnoDB;
 
@@ -32,7 +32,7 @@ CREATE TABLE ReservationTable (
     id BIGINT NOT NULL AUTO_INCREMENT,
     showId BIGINT NOT NULL,
     email VARCHAR(255) NOT NULL,
-    cardNumber VARCHAR(255) NOT NULL,
+    creditCard VARCHAR(255) NOT NULL,
     tickets BIGINT NOT NULL,
     isValid BOOL NOT NULL,
     code VARCHAR(255) NOT NULL,

@@ -1,39 +1,39 @@
-package es.udc.ws.app.restservice.xml;
+package es.udc.ws.app.client.service.rest.xml;
 
-import es.udc.ws.app.dto.ServiceShowAdminDto;
+import es.udc.ws.app.client.service.dto.ClientAdminShowDto;
 import es.udc.ws.util.xml.exceptions.ParsingException;
-import javax.xml.bind.DatatypeConverter;
-
 import org.jdom2.DataConversionException;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.jdom2.input.SAXBuilder;
 
+import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class XmlServiceShowAdminDtoConversor {
+public class XmlClientAdminShowDtoConversor {
 
     public final static Namespace XML_NS = Namespace.getNamespace("http://ws.udc.es/shows/xml");
 
-    public static Document toXml(ServiceShowAdminDto show) throws IOException {
+    public static Document toXml(ClientAdminShowDto show) throws IOException {
         Element movieElement = toJDOMElement(show);
         return new Document(movieElement);
     }
 
-    public static Document toXml(List<ServiceShowAdminDto> shows) throws IOException {
+    public static Document toXml(List<ClientAdminShowDto> shows) throws IOException {
 
         Element showElements = new Element("shows", XML_NS);
-        for (ServiceShowAdminDto i : shows)
+        for (ClientAdminShowDto i : shows)
             showElements.addContent(toJDOMElement(i));
 
         return new Document(showElements);
     }
 
-    public static Element toJDOMElement(ServiceShowAdminDto show) {
+    public static Element toJDOMElement(ClientAdminShowDto show) {
 
         Element showElement = new Element("show", XML_NS);
 
@@ -86,14 +86,24 @@ public class XmlServiceShowAdminDtoConversor {
         return showElement;
     }
 
-    public static ServiceShowAdminDto toServiceShowAdminDto(InputStream movieXml) throws ParsingException {
+    public static List<ClientAdminShowDto> toClientAdminShowDtos(InputStream movieXml)
+            throws ParsingException {
         try {
 
             SAXBuilder builder = new SAXBuilder();
             Document document = builder.build(movieXml);
             Element rootElement = document.getRootElement();
 
-            return toServiceShowAdminDto(rootElement);
+            if (!"shows".equalsIgnoreCase(rootElement.getName())) {
+                throw new ParsingException("Unrecognized element '"
+                        + rootElement.getName() + "' ('shows' expected)");
+            }
+            List<Element> children = rootElement.getChildren();
+            List<ClientAdminShowDto> movieDtos = new ArrayList<>(children.size());
+            for (Element element : children)
+                movieDtos.add(toClientAdminShowDto(element));
+
+            return movieDtos;
         } catch (ParsingException ex) {
             throw ex;
         } catch (Exception e) {
@@ -101,7 +111,22 @@ public class XmlServiceShowAdminDtoConversor {
         }
     }
 
-    private static ServiceShowAdminDto toServiceShowAdminDto(Element showElement)
+    public static ClientAdminShowDto toClientAdminShowDto(InputStream movieXml) throws ParsingException {
+        try {
+
+            SAXBuilder builder = new SAXBuilder();
+            Document document = builder.build(movieXml);
+            Element rootElement = document.getRootElement();
+
+            return toClientAdminShowDto(rootElement);
+        } catch (ParsingException ex) {
+            throw ex;
+        } catch (Exception e) {
+            throw new ParsingException(e);
+        }
+    }
+
+    private static ClientAdminShowDto toClientAdminShowDto(Element showElement)
             throws ParsingException, DataConversionException {
 
         if (!"show".equals(showElement.getName())) {
@@ -133,9 +158,11 @@ public class XmlServiceShowAdminDtoConversor {
 
         String commission = showElement.getChildTextNormalize("commission", XML_NS);
 
+
         Calendar startCalendar = DatatypeConverter.parseDateTime(startDate);
         Calendar limitCalendar = DatatypeConverter.parseDateTime(limitDate);
 
-        return new ServiceShowAdminDto(identifier, name, description, startCalendar, Long.parseLong(duration), limitCalendar, Integer.parseInt(maxTickets), Integer.parseInt(availableTickets), Float.parseFloat(realPrice), Float.parseFloat(discountedPrice), Float.parseFloat(commission));
+
+        return new ClientAdminShowDto(identifier, name, description, startCalendar, Long.parseLong(duration), limitCalendar, Integer.parseInt(maxTickets), Integer.parseInt(availableTickets), Float.parseFloat(realPrice), Float.parseFloat(discountedPrice), Float.parseFloat(commission));
     }
 }

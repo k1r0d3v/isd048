@@ -29,7 +29,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 
@@ -263,7 +262,7 @@ public class TicketSellerServiceTest
 
 		try
 		{
-			show.setRealPrice(-1.0f);
+			show.setPrice(-1.0f);
 			show = ticketService.createShow(show);
 		} catch (InputValidationException e) {
 			exceptionCatched = true;
@@ -285,7 +284,7 @@ public class TicketSellerServiceTest
 
 		try
 		{
-			show.setSalesCommission(-1.0f);
+			show.setCommission(-1.0f);
 			show = ticketService.createShow(show);
 		} catch (InputValidationException e) {
 			exceptionCatched = true;
@@ -296,7 +295,7 @@ public class TicketSellerServiceTest
 
 		try
 		{
-			show.setAvailableTickets(120);
+			show.setTickets(120);
 			show.setMaxTickets(100);
 			show = ticketService.createShow(show);
 		} catch (InputValidationException e) {
@@ -321,7 +320,7 @@ public class TicketSellerServiceTest
 		}
 
 		long tmpId = show.getId();
-		float tmpRealPrice = show.getRealPrice();
+		float tmpRealPrice = show.getPrice();
 
 		try {
 			show.setId(100L);
@@ -337,8 +336,8 @@ public class TicketSellerServiceTest
 		show.setId(tmpId);
 
 		try {
-			show.setAvailableTickets(show.getAvailableTickets()-1);
-			show.setRealPrice(10.0f);
+			show.setTickets(show.getTickets()-1);
+			show.setPrice(10.0f);
 			ticketService.updateShow(show);
 		} catch (InputValidationException e) {
 			exceptionCatched = true;
@@ -347,11 +346,11 @@ public class TicketSellerServiceTest
 			throw new RuntimeException("Unexpected exception");
 		}
 		assertTrue(exceptionCatched);
-		show.setRealPrice(tmpRealPrice);
+		show.setPrice(tmpRealPrice);
 		exceptionCatched = false;
 
 		try {
-			show.setAvailableTickets(show.getAvailableTickets()-1);
+			show.setTickets(show.getTickets()-1);
 			ticketService.updateShow(show);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -359,7 +358,7 @@ public class TicketSellerServiceTest
 		}
 
 		try {	
-			show.setRealPrice(10.0f);
+			show.setPrice(10.0f);
 			show.setDiscountedPrice(5.0f);
 			ticketService.updateShow(show);
 		} catch (ShowHasReservations e) {

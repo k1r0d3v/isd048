@@ -17,14 +17,14 @@ public class ShowToDto {
     }
 
     public static ServiceShowDto toShowDto(Show show) {
-        return new ServiceShowDto(show.getId(), show.getName(), show.getDescription(), (Calendar)show.getStartDate().clone(), show.getDuration(), (Calendar)show.getLimitDate().clone(), show.getAvailableTickets(), show.getRealPrice(), show.getDiscountedPrice());
+        return new ServiceShowDto(show.getId(), show.getName(), show.getDescription(), (Calendar)show.getStartDate().clone(), show.getDuration(), (Calendar)show.getLimitDate().clone(), show.getTickets(), show.getPrice(), show.getDiscountedPrice());
     }
 
     public static ServiceShowAdminDto toShowAdminDto(Show show) {
-        return new ServiceShowAdminDto(show.getId(), show.getName(), show.getDescription(), (Calendar)show.getStartDate().clone(), show.getDuration(), (Calendar)show.getLimitDate().clone(), show.getMaxTickets(), show.getAvailableTickets(), show.getRealPrice(), show.getDiscountedPrice(), show.getSalesCommission());
+        return new ServiceShowAdminDto(show.getId(), show.getName(), show.getDescription(), (Calendar)show.getStartDate().clone(), show.getDuration(), (Calendar)show.getLimitDate().clone(), show.getMaxTickets(), show.getTickets(), show.getPrice(), show.getDiscountedPrice(), show.getCommission());
     }
 
     public static Show toShow(ServiceShowAdminDto show) {
-        return new Show(show.getId(), show.getName(), show.getDescription(), (Calendar)show.getStartDate().clone(), show.getDuration(), (Calendar)show.getLimitDate().clone(), show.getMaxTickets(), show.getAvailableTickets(), show.getRealPrice(), show.getDiscountedPrice(), show.getSalesCommission());
+        return new Show(show.getId(), show.getName(), show.getDescription(), (Calendar)show.getStartDate().clone(), show.getDuration(), (Calendar)show.getLimitDate().clone(), show.getMaxTickets(), show.getTickets(), show.getPrice(), show.getDiscountedPrice(), show.getCommission());
     }
 }

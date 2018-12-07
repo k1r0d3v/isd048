@@ -11,22 +11,22 @@ public class ServiceShowDto
     private Calendar startDate;
     private long duration;
     private Calendar limitDate;
-    private long availableTickets;
-    private float realPrice;
+    private long tickets;
+    private float price;
     private float discountedPrice;
 
 
     public ServiceShowDto() { }
 
-    public ServiceShowDto(Long id, String name, String description, Calendar startDate, long duration, Calendar limitDate, long availableTickets, float realPrice, float discountedPrice) {
+    public ServiceShowDto(Long id, String name, String description, Calendar startDate, long duration, Calendar limitDate, long tickets, float price, float discountedPrice) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.startDate = startDate;
         this.duration = duration;
         this.limitDate = limitDate;
-        this.availableTickets = availableTickets;
-        this.realPrice = realPrice;
+        this.tickets = tickets;
+        this.price = price;
         this.discountedPrice = discountedPrice;
     }
 
@@ -78,20 +78,20 @@ public class ServiceShowDto
         this.limitDate = limitDate;
     }
 
-    public long getAvailableTickets() {
-        return availableTickets;
+    public long getTickets() {
+        return tickets;
     }
 
-    public void setAvailableTickets(long availableTickets) {
-        this.availableTickets = availableTickets;
+    public void setTickets(long tickets) {
+        this.tickets = tickets;
     }
 
-    public float getRealPrice() {
-        return realPrice;
+    public float getPrice() {
+        return price;
     }
 
-    public void setRealPrice(float realPrice) {
-        this.realPrice = realPrice;
+    public void setPrice(float price) {
+        this.price = price;
     }
 
     public float getDiscountedPrice() {
@@ -109,8 +109,8 @@ public class ServiceShowDto
         ServiceShowDto that = (ServiceShowDto) o;
         return id == that.id &&
                 duration == that.duration &&
-                availableTickets == that.availableTickets &&
-                Float.compare(that.realPrice, realPrice) == 0 &&
+                tickets == that.tickets &&
+                Float.compare(that.price, price) == 0 &&
                 Float.compare(that.discountedPrice, discountedPrice) == 0 &&
                 Objects.equals(name, that.name) &&
                 Objects.equals(description, that.description) &&
@@ -120,7 +120,7 @@ public class ServiceShowDto
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, startDate, duration, limitDate, availableTickets, realPrice, discountedPrice);
+        return Objects.hash(id, name, description, startDate, duration, limitDate, tickets, price, discountedPrice);
     }
 
     @Override
@@ -132,8 +132,8 @@ public class ServiceShowDto
                 ", startDate=" + startDate +
                 ", duration=" + duration +
                 ", limitDate=" + limitDate +
-                ", availableTickets=" + availableTickets +
-                ", realPrice=" + realPrice +
+                ", tickets=" + tickets +
+                ", price=" + price +
                 ", discountedPrice=" + discountedPrice +
                 '}';
     }

@@ -7,7 +7,7 @@ public class ServiceReservationDto {
     private Long id;
     private Long showId;
     private String email;
-    private String cardNumber;
+    private String creditCard;
     private int tickets;
     private boolean isValid;
     private String code;
@@ -16,11 +16,11 @@ public class ServiceReservationDto {
 
     public ServiceReservationDto() { }
 
-    public ServiceReservationDto(Long id, long showId, String email, String cardNumber, int tickets, boolean isValid, String code, Calendar reservationDate, float price) {
+    public ServiceReservationDto(Long id, long showId, String email, String creditCard, int tickets, boolean isValid, String code, Calendar reservationDate, float price) {
         this.id = id;
         this.showId = showId;
         this.email = email;
-        this.cardNumber = cardNumber;
+        this.creditCard = creditCard;
         this.tickets = tickets;
         this.isValid = isValid;
         this.code = code;
@@ -52,12 +52,12 @@ public class ServiceReservationDto {
         this.email = email;
     }
 
-    public String getCardNumber() {
-        return cardNumber;
+    public String getCreditCard() {
+        return creditCard;
     }
 
-    public void setCardNumber(String cardNumber) {
-        this.cardNumber = cardNumber;
+    public void setCreditCard(String creditCard) {
+        this.creditCard = creditCard;
     }
 
     public int getTickets() {
@@ -111,14 +111,14 @@ public class ServiceReservationDto {
                 Objects.equals(id, that.id) &&
                 Objects.equals(showId, that.showId) &&
                 Objects.equals(email, that.email) &&
-                Objects.equals(cardNumber, that.cardNumber) &&
+                Objects.equals(creditCard, that.creditCard) &&
                 Objects.equals(code, that.code) &&
                 Objects.equals(reservationDate, that.reservationDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, showId, email, cardNumber, tickets, isValid, code, reservationDate, price);
+        return Objects.hash(id, showId, email, creditCard, tickets, isValid, code, reservationDate, price);
     }
 
     @Override
@@ -127,7 +127,7 @@ public class ServiceReservationDto {
                 "id=" + id +
                 ", showId=" + showId +
                 ", email='" + email + '\'' +
-                ", cardNumber='" + cardNumber + '\'' +
+                ", creditCard='" + creditCard + '\'' +
                 ", tickets=" + tickets +
                 ", isValid=" + isValid +
                 ", code='" + code + '\'' +

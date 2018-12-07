@@ -14,7 +14,7 @@ public class Jdbc3CcSqlReservationDao extends AbstractSqlReservationDao
                 "ReservationTable(" +
                         "showId, " +
                         "email, " +
-                        "cardNumber, " +
+                        "creditCard, " +
                         "tickets, " +
                         "isValid, " +
                         "code, " +
@@ -28,7 +28,7 @@ public class Jdbc3CcSqlReservationDao extends AbstractSqlReservationDao
 
             ps.setLong(index++, reservation.getShowId());
             ps.setString(index++, reservation.getEmail());
-            ps.setString(index++, reservation.getCardNumber());
+            ps.setString(index++, reservation.getCreditCard());
             ps.setInt(index++, reservation.getTickets());
             ps.setBoolean(index++, reservation.isValid());
             ps.setString(index++, reservation.getCode());

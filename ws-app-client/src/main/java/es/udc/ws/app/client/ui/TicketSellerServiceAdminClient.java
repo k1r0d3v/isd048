@@ -26,6 +26,17 @@ public class TicketSellerServiceAdminClient
             } catch (Exception ex) {
                 ex.printStackTrace(System.err);
             }
+        } else if("-c".equalsIgnoreCase(args[0]))
+        // [add]      TicketSellerServiceAdminClient -a <name> <description> <start> <end> <limit> <tickets> <price> <discount>
+        {
+            validateArgs(args, 9, new int[] {});
+
+            try
+            {
+
+            } catch (Exception ex) {
+                ex.printStackTrace(System.err);
+            }
         }
     }
 
@@ -44,15 +55,20 @@ public class TicketSellerServiceAdminClient
         }
     }
 
-    private static void printUsageAndExit() {
+    private static void printUsageAndExit()
+    {
         printUsage();
         System.exit(-1);
     }
 
-    private static void printUsage() {
+    private static void printUsage()
+    {
         System.err.println("Usage:\n" +
-                "    [add]      TicketSellerServiceAdminClient -a \n" +
-                "    [update]   TicketSellerServiceAdminClient -u \n" +
+                "    [add]      TicketSellerServiceAdminClient -a <name> <description> <start> <end> <limit> <maxTickets> <tickets> <price> <discount> <commission>\n" +
+                "    [update]   TicketSellerServiceAdminClient -u <id> [-name <name>] [-description <description>] " +
+                "                                                      [-start <start>] [-limit <limit>] [-maxTickets <maxTickets>] " +
+                "                                                      [-tickets <tickets>] [-price <price>] " +
+                "                                                      [-discount <discount>] [-commission <commission>] \n" +
                 "    [get]      TicketSellerServiceAdminClient -g <showId>\n" +
                 "    [check]    TicketSellerServiceAdminClient -c <reservationCode> <creditCardNumber>\n");
     }

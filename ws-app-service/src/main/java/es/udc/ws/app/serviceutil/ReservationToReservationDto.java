@@ -15,10 +15,10 @@ public class ReservationToReservationDto {
     }
 
     public static ServiceReservationDto toReservationDto(Reservation reservation) {
-        return new ServiceReservationDto(reservation.getId(), reservation.getShowId(), reservation.getEmail(), reservation.getCardNumber(), reservation.getTickets(), reservation.isValid(), reservation.getCode(), reservation.getReservationDate(), reservation.getPrice());
+        return new ServiceReservationDto(reservation.getId(), reservation.getShowId(), reservation.getEmail(), reservation.getCreditCard(), reservation.getTickets(), reservation.isValid(), reservation.getCode(), reservation.getReservationDate(), reservation.getPrice());
     }
 
     public static Reservation toReservation(ServiceReservationDto sreservation) {
-        return new Reservation(sreservation.getId(), sreservation.getShowId(), sreservation.getEmail(), sreservation.getCardNumber(), sreservation.getTickets(), sreservation.isValid(), sreservation.getCode(), sreservation.getReservationDate(), sreservation.getPrice());
+        return new Reservation(sreservation.getId(), sreservation.getShowId(), sreservation.getEmail(), sreservation.getCreditCard(), sreservation.getTickets(), sreservation.isValid(), sreservation.getCode(), sreservation.getReservationDate(), sreservation.getPrice());
     }
 }

@@ -29,10 +29,10 @@ public abstract class AbstractSqlShowDao implements SqlShowDao
 				"duration = ?, " +
 				"limitDate = ?, " +
 				"maxTickets = ?, " +
-				"availableTickets = ?, " +
-				"realPrice = ?, " +
+				"tickets = ?, " +
+				"price = ?, " +
 				"discountedPrice = ?, " +
-                "salesCommission = ?" +
+                "commission = ?" +
 				"WHERE id = ?";
 
 
@@ -46,10 +46,10 @@ public abstract class AbstractSqlShowDao implements SqlShowDao
 			preparedStatement.setLong(index++, show.getDuration());
 			preparedStatement.setTimestamp(index++, new Timestamp(show.getLimitDate().getTimeInMillis()));
 			preparedStatement.setLong(index++, show.getMaxTickets());
-			preparedStatement.setLong(index++, show.getAvailableTickets());
-			preparedStatement.setFloat(index++, show.getRealPrice());
+			preparedStatement.setLong(index++, show.getTickets());
+			preparedStatement.setFloat(index++, show.getPrice());
 			preparedStatement.setFloat(index++, show.getDiscountedPrice());
-			preparedStatement.setFloat(index++, show.getSalesCommission());
+			preparedStatement.setFloat(index++, show.getCommission());
 
             preparedStatement.setLong(index, show.getId());
 
@@ -94,10 +94,10 @@ public abstract class AbstractSqlShowDao implements SqlShowDao
                 "duration, " +
                 "limitDate, " +
                 "maxTickets, " +
-                "availableTickets, " +
-                "realPrice, " +
+                "tickets, " +
+                "price, " +
                 "discountedPrice, " +
-                "salesCommission " +
+                "commission " +
                 "FROM ShowTable " +
                 "WHERE id = ?";
 
@@ -129,10 +129,10 @@ public abstract class AbstractSqlShowDao implements SqlShowDao
 			s.setLimitDate(calendar);
 
 			s.setMaxTickets(rs.getLong(index++));
-			s.setAvailableTickets(rs.getLong(index++));
-			s.setRealPrice(rs.getFloat(index++));
+			s.setTickets(rs.getLong(index++));
+			s.setPrice(rs.getFloat(index++));
 			s.setDiscountedPrice(rs.getFloat(index++));
-			s.setSalesCommission(rs.getFloat(index));
+			s.setCommission(rs.getFloat(index));
 
 			return s;
 
@@ -154,10 +154,10 @@ public abstract class AbstractSqlShowDao implements SqlShowDao
                 "duration, " +
                 "limitDate, " +
                 "maxTickets, " +
-                "availableTickets, " +
-                "realPrice, " +
+                "tickets, " +
+                "price, " +
                 "discountedPrice, " +
-                "salesCommission " +
+                "commission " +
                 "FROM ShowTable";
 
 		if (keywords.length > 0)
@@ -212,10 +212,10 @@ public abstract class AbstractSqlShowDao implements SqlShowDao
                 s.setLimitDate(calendar);
 
                 s.setMaxTickets(rs.getLong(i++));
-                s.setAvailableTickets(rs.getLong(i++));
-                s.setRealPrice(rs.getFloat(i++));
+                s.setTickets(rs.getLong(i++));
+                s.setPrice(rs.getFloat(i++));
                 s.setDiscountedPrice(rs.getFloat(i++));
-                s.setSalesCommission(rs.getFloat(i));
+                s.setCommission(rs.getFloat(i));
 
 				shows.add(s);
 			}

@@ -12,16 +12,16 @@ public class Show
 	private long duration;
 	private Calendar limitDate;
 	private long maxTickets;
-	private long availableTickets;
-	private float realPrice;
+	private long tickets;
+	private float price;
 	private float discountedPrice;
-	private float salesCommission;
+	private float commission;
 
 	public Show() { }
 
 	public Show(Long id, String name, String description, Calendar startDate,
-			long duration, Calendar limitDate, long maxTickets, long availableTickets,
-			float realPrice, float discountedPrice, float salesCommission) {
+				long duration, Calendar limitDate, long maxTickets, long tickets,
+				float price, float discountedPrice, float commission) {
 		this.id = id;
 		this.name = name;
 		this.description = description;
@@ -29,10 +29,10 @@ public class Show
 		this.duration = duration;
 		this.limitDate = limitDate;
 		this.maxTickets = maxTickets;
-		this.availableTickets = availableTickets;
-		this.realPrice = realPrice;
+		this.tickets = tickets;
+		this.price = price;
 		this.discountedPrice = discountedPrice;
-		this.salesCommission = salesCommission;
+		this.commission = commission;
 	}
 
 	public Long getId() {
@@ -93,20 +93,20 @@ public class Show
 		this.maxTickets = maxTickets;
 	}
 
-	public long getAvailableTickets() {
-		return availableTickets;
+	public long getTickets() {
+		return tickets;
 	}
 
-	public void setAvailableTickets(long availableTickets) {
-		this.availableTickets = availableTickets;
+	public void setTickets(long tickets) {
+		this.tickets = tickets;
 	}
 
-	public float getRealPrice() {
-		return realPrice;
+	public float getPrice() {
+		return price;
 	}
 
-	public void setRealPrice(float realPrice) {
-		this.realPrice = realPrice;
+	public void setPrice(float price) {
+		this.price = price;
 	}
 
 	public float getDiscountedPrice() {
@@ -117,12 +117,12 @@ public class Show
 		this.discountedPrice = discountedPrice;
 	}
 
-	public float getSalesCommission() {
-		return salesCommission;
+	public float getCommission() {
+		return commission;
 	}
 
-	public void setSalesCommission(float salesCommission) {
-		this.salesCommission = salesCommission;
+	public void setCommission(float commission) {
+		this.commission = commission;
 	}
 
 	public boolean equals(Object object) {
@@ -133,10 +133,10 @@ public class Show
 		return id == show.id &&
 				duration == show.duration &&
 				maxTickets == show.maxTickets && 
-				availableTickets == show.availableTickets &&
-				Float.compare(show.realPrice, realPrice) == 0 &&
+				tickets == show.tickets &&
+				Float.compare(show.price, price) == 0 &&
 				Float.compare(show.discountedPrice, discountedPrice) == 0 &&
-				Float.compare(show.salesCommission, salesCommission) == 0 &&
+				Float.compare(show.commission, commission) == 0 &&
 				java.util.Objects.equals(name, show.name) &&
 				java.util.Objects.equals(description, show.description) &&
 				java.util.Objects.equals(startDate, show.startDate) &&
@@ -144,8 +144,9 @@ public class Show
 	}
 
 	public int hashCode() {
-		return Objects.hash(super.hashCode(), id, name, description, startDate, duration, limitDate, maxTickets, availableTickets, realPrice, discountedPrice, salesCommission);
+		return Objects.hash(super.hashCode(), id, name, description, startDate, duration, limitDate, maxTickets, tickets, price, discountedPrice, commission);
 	}
+
 
 	@Override
 	public String toString() {
@@ -157,10 +158,10 @@ public class Show
 				", duration=" + duration +
 				", limitDate=" + limitDate +
 				", maxTickets=" + maxTickets +
-				", availableTickets=" + availableTickets +
-				", realPrice=" + realPrice +
+				", tickets=" + tickets +
+				", price=" + price +
 				", discountedPrice=" + discountedPrice +
-				", salesCommission=" + salesCommission +
+				", commission=" + commission +
 				'}';
 	}
 }

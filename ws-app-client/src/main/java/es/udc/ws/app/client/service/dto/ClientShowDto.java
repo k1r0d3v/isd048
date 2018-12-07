@@ -11,22 +11,22 @@ public class ClientShowDto
     private Calendar startDate;
     private Calendar endDate;
     private Calendar limitDate;
-    private long availableTickets;
-    private float realPrice;
+    private long tickets;
+    private float price;
     private float discountedPrice;
 
 
     public ClientShowDto() { }
 
-    public ClientShowDto(Long id, String name, String description, Calendar startDate, Calendar endDate, Calendar limitDate, long availableTickets, float realPrice, float discountedPrice) {
+    public ClientShowDto(Long id, String name, String description, Calendar startDate, Calendar endDate, Calendar limitDate, long tickets, float price, float discountedPrice) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.startDate = startDate;
         this.endDate = endDate;
         this.limitDate = limitDate;
-        this.availableTickets = availableTickets;
-        this.realPrice = realPrice;
+        this.tickets = tickets;
+        this.price = price;
         this.discountedPrice = discountedPrice;
     }
 
@@ -70,20 +70,20 @@ public class ClientShowDto
         this.limitDate = limitDate;
     }
 
-    public long getAvailableTickets() {
-        return availableTickets;
+    public long getTickets() {
+        return tickets;
     }
 
-    public void setAvailableTickets(long availableTickets) {
-        this.availableTickets = availableTickets;
+    public void setTickets(long tickets) {
+        this.tickets = tickets;
     }
 
-    public float getRealPrice() {
-        return realPrice;
+    public float getPrice() {
+        return price;
     }
 
-    public void setRealPrice(float realPrice) {
-        this.realPrice = realPrice;
+    public void setPrice(float price) {
+        this.price = price;
     }
 
     public float getDiscountedPrice() {
@@ -107,8 +107,8 @@ public class ClientShowDto
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ClientShowDto that = (ClientShowDto) o;
-        return availableTickets == that.availableTickets &&
-                Float.compare(that.realPrice, realPrice) == 0 &&
+        return tickets == that.tickets &&
+                Float.compare(that.price, price) == 0 &&
                 Float.compare(that.discountedPrice, discountedPrice) == 0 &&
                 Objects.equals(id, that.id) &&
                 Objects.equals(name, that.name) &&
@@ -120,7 +120,7 @@ public class ClientShowDto
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, startDate, endDate, limitDate, availableTickets, realPrice, discountedPrice);
+        return Objects.hash(id, name, description, startDate, endDate, limitDate, tickets, price, discountedPrice);
     }
 
     @Override
@@ -132,8 +132,8 @@ public class ClientShowDto
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
                 ", limitDate=" + limitDate +
-                ", availableTickets=" + availableTickets +
-                ", realPrice=" + realPrice +
+                ", tickets=" + tickets +
+                ", price=" + price +
                 ", discountedPrice=" + discountedPrice +
                 '}';
     }

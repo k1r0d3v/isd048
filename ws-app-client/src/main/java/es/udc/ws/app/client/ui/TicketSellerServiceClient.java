@@ -4,8 +4,7 @@ import es.udc.ws.app.client.service.ClientTicketSellerService;
 import es.udc.ws.app.client.service.ClientTicketSellerServiceFactory;
 import es.udc.ws.app.client.service.dto.ClientReservationDto;
 import es.udc.ws.app.client.service.dto.ClientShowDto;
-import es.udc.ws.util.exceptions.InputValidationException;
-import es.udc.ws.util.exceptions.InstanceNotFoundException;
+
 import java.util.List;
 
 public class TicketSellerServiceClient {
@@ -37,8 +36,8 @@ public class TicketSellerServiceClient {
                             ", startDate=" + show.getStartDate().toInstant() +
                             ", endDate=" + show.getEndDate().toInstant() +
                             ", limitDate=" + show.getLimitDate().toInstant() +
-                            ", availableTickets=" + show.getAvailableTickets() +
-                            ", realPrice=" + show.getRealPrice() +
+                            ", tickets=" + show.getTickets() +
+                            ", price=" + show.getPrice() +
                             ", discountedPrice=" + show.getDiscountedPrice() +
                             "}");
                 }
@@ -62,7 +61,7 @@ public class TicketSellerServiceClient {
                         "id=" + reservation.getId() +
                         ", showId=" + reservation.getShowId() +
                         ", email='" + reservation.getEmail() + '\'' +
-                        ", cardNumber='" + reservation.getCardNumber() + '\'' +
+                        ", creditCard='" + reservation.getCreditCard() + '\'' +
                         ", tickets=" + reservation.getTickets() +
                         ", isValid=" + reservation.isValid() +
                         ", code='" + reservation.getCode() + '\'' +
@@ -92,7 +91,7 @@ public class TicketSellerServiceClient {
                             "id=" + reservation.getId() +
                             ", showId=" + reservation.getShowId() +
                             ", email='" + reservation.getEmail() + '\'' +
-                            ", cardNumber='" + reservation.getCardNumber() + '\'' +
+                            ", creditCard='" + reservation.getCreditCard() + '\'' +
                             ", tickets=" + reservation.getTickets() +
                             ", isValid=" + reservation.isValid() +
                             ", code='" + reservation.getCode() + '\'' +

@@ -14,10 +14,10 @@ public class Jdbc3CcSqlShowDao extends AbstractSqlShowDao
 				"duration, " +
 				"limitDate, " +
 				"maxTickets, " +
-				"availableTickets, " +
-				"realPrice, " +
+				"tickets, " +
+				"price, " +
 				"discountedPrice, " +
-				"salesCommission) " +
+				"commission) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 		try (PreparedStatement preparedStatement = c.prepareStatement(
@@ -30,10 +30,10 @@ public class Jdbc3CcSqlShowDao extends AbstractSqlShowDao
 			preparedStatement.setLong(i++, show.getDuration());
 			preparedStatement.setTimestamp(i++, new Timestamp(show.getLimitDate().getTimeInMillis()));
 			preparedStatement.setLong(i++, show.getMaxTickets());
-			preparedStatement.setLong(i++, show.getAvailableTickets());
-			preparedStatement.setFloat(i++, show.getRealPrice());
+			preparedStatement.setLong(i++, show.getTickets());
+			preparedStatement.setFloat(i++, show.getPrice());
 			preparedStatement.setFloat(i++, show.getDiscountedPrice());
-			preparedStatement.setFloat(i, show.getSalesCommission());
+			preparedStatement.setFloat(i, show.getCommission());
 
 			preparedStatement.executeUpdate();
 

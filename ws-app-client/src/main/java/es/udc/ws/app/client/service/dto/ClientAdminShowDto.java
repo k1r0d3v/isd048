@@ -1,10 +1,9 @@
-package es.udc.ws.app.dto;
+package es.udc.ws.app.client.service.dto;
 
 import java.util.Calendar;
 import java.util.Objects;
 
-public class ServiceShowAdminDto
-{
+public class ClientAdminShowDto {
     private Long id;
     private String name;
     private String description;
@@ -17,9 +16,9 @@ public class ServiceShowAdminDto
     private float discountedPrice;
     private float commission;
 
-    public ServiceShowAdminDto() { }
+    public ClientAdminShowDto() { }
 
-    public ServiceShowAdminDto(Long id, String name, String description, Calendar startDate, long duration, Calendar limitDate, long maxTickets, long tickets, float price, float discountedPrice, float commission) {
+    public ClientAdminShowDto(Long id, String name, String description, Calendar startDate, long duration, Calendar limitDate, long maxTickets, long tickets, float price, float discountedPrice, float commission) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -32,6 +31,7 @@ public class ServiceShowAdminDto
         this.discountedPrice = discountedPrice;
         this.commission = commission;
     }
+
 
     public Long getId() {
         return id;
@@ -125,7 +125,7 @@ public class ServiceShowAdminDto
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ServiceShowAdminDto that = (ServiceShowAdminDto) o;
+        ClientAdminShowDto that = (ClientAdminShowDto) o;
         return duration == that.duration &&
                 maxTickets == that.maxTickets &&
                 tickets == that.tickets &&
@@ -146,7 +146,7 @@ public class ServiceShowAdminDto
 
     @Override
     public String toString() {
-        return "ServiceShowAdminDto{" +
+        return "ClientAdminShowDto{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +

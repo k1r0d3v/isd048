@@ -11,12 +11,7 @@ import org.jdom2.input.SAXBuilder;
 import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 public class XmlServiceShowDtoConversor {
@@ -67,12 +62,12 @@ public class XmlServiceShowDtoConversor {
         limitDateElement.setText(DatatypeConverter.printDateTime(show.getLimitDate()));
         showElement.addContent(limitDateElement);
 
-        Element avalilableTicketsElement = new Element("availableTickets", XML_NS);
-        avalilableTicketsElement.setText(Long.toString(show.getAvailableTickets()));
+        Element avalilableTicketsElement = new Element("tickets", XML_NS);
+        avalilableTicketsElement.setText(Long.toString(show.getTickets()));
         showElement.addContent(avalilableTicketsElement);
 
-        Element realPriceElement = new Element("realPrice", XML_NS);
-        realPriceElement.setText(Float.toString(show.getRealPrice()));
+        Element realPriceElement = new Element("price", XML_NS);
+        realPriceElement.setText(Float.toString(show.getPrice()));
         showElement.addContent(realPriceElement);
 
         Element discountedPriceElement = new Element("discountedPrice", XML_NS);
@@ -119,9 +114,9 @@ public class XmlServiceShowDtoConversor {
 
         String limitDate = showElement.getChildTextNormalize("limitDate", XML_NS);
 
-        String availableTickets = showElement.getChildTextNormalize("availableTickets", XML_NS);
+        String availableTickets = showElement.getChildTextNormalize("tickets", XML_NS);
 
-        String realPrice = showElement.getChildTextNormalize("realPrice", XML_NS);
+        String realPrice = showElement.getChildTextNormalize("price", XML_NS);
 
         String discountedPrice = showElement.getChildTextNormalize("discountedPrice", XML_NS);
 

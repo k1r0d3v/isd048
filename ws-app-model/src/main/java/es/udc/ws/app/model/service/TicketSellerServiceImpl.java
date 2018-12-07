@@ -17,7 +17,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 public class TicketSellerServiceImpl implements TicketSellerService
@@ -42,11 +41,13 @@ public class TicketSellerServiceImpl implements TicketSellerService
         PropertyValidator.validateLong("duration", show.getDuration(), 1, Integer.MAX_VALUE);
         PropertyValidator.validateBeforeDate("limit date", show.getLimitDate(), show.getStartDate());
         PropertyValidator.validateLong("max number of tickets", show.getMaxTickets(), 1, Integer.MAX_VALUE);
-        PropertyValidator.validateFloat("real price", show.getRealPrice(), 0.0f, Float.MAX_VALUE);
+        PropertyValidator.validateLong("number of tickets", show.getTickets(), 0, (int)show.getMaxTickets());
+        PropertyValidator.validateFloat("real price", show.getPrice(), 0.0f, Float.MAX_VALUE);
         PropertyValidator.validateFloat("discounted price", show.getDiscountedPrice(), 0.0f, Float.MAX_VALUE);
-        PropertyValidator.validateFloat("commission", show.getSalesCommission(), 0.0f, Float.MAX_VALUE);
-        PropertyValidator.validateMajorEqualsThan("real price", "discounted price", show.getRealPrice(), show.getDiscountedPrice());
-        PropertyValidator.validateMajorEqualsThan("max number of tickets", "available number of tickets", show.getMaxTickets(), show.getAvailableTickets());
+        PropertyValidator.validateFloat("commission", show.getCommission(), 0.0f, Float.MAX_VALUE);
+        PropertyValidator.validateMajorEqualsThan("real price", "discounted price", show.getPrice(), show.getDiscountedPrice());
+        PropertyValidator.validateMajorEqualsThan("max number of tickets", "available number of tickets", show.getMaxTickets(), show.getTickets());
+
 
         try (Connection connection = dataSource.getConnection())
         {
@@ -56,7 +57,7 @@ public class TicketSellerServiceImpl implements TicketSellerService
                 connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
                 connection.setAutoCommit(false);
 
-				show.setAvailableTickets(show.getMaxTickets());
+				show.setTickets(show.getMaxTickets());
 				Show createdShow = showDao.create(connection, show);
 
 				/* Commit. */
@@ -87,10 +88,12 @@ public class TicketSellerServiceImpl implements TicketSellerService
         PropertyValidator.validateLong("duration", show.getDuration(), 1, Integer.MAX_VALUE);
         PropertyValidator.validateBeforeDate("limit date", show.getLimitDate(), show.getStartDate());
         PropertyValidator.validateLong("max number of tickets", show.getMaxTickets(), 1, Integer.MAX_VALUE);
-        PropertyValidator.validateFloat("real price", show.getRealPrice(), 0.0f, Float.MAX_VALUE);
+        PropertyValidator.validateLong("number of tickets", show.getTickets(), 0, (int)show.getMaxTickets());
+        PropertyValidator.validateFloat("real price", show.getPrice(), 0.0f, Float.MAX_VALUE);
         PropertyValidator.validateFloat("discounted price", show.getDiscountedPrice(), 0.0f, Float.MAX_VALUE);
-        PropertyValidator.validateFloat("commission", show.getSalesCommission(), 0.0f, Float.MAX_VALUE);
-        PropertyValidator.validateMajorEqualsThan("real price", "discounted price", show.getRealPrice(), show.getDiscountedPrice());
+        PropertyValidator.validateFloat("commission", show.getCommission(), 0.0f, Float.MAX_VALUE);
+        PropertyValidator.validateMajorEqualsThan("real price", "discounted price", show.getPrice(), show.getDiscountedPrice());
+        PropertyValidator.validateMajorEqualsThan("max number of tickets", "available number of tickets", show.getMaxTickets(), show.getTickets());
 
 
         try (Connection connection = dataSource.getConnection()) {
@@ -105,14 +108,14 @@ public class TicketSellerServiceImpl implements TicketSellerService
 
                 long ticketDifference = show.getMaxTickets() - current.getMaxTickets();
 
-                if (ticketDifference < 0 && ticketDifference + current.getAvailableTickets() < 0) {
+                if (ticketDifference < 0 && ticketDifference + current.getTickets() < 0) {
                     connection.commit();
                     throw new NotEnoughAvailableTickets("Cannot decrease max tickets when there is not enough available tickets");
                 }
 
-                long soldTicketsCurrent = current.getMaxTickets() - current.getAvailableTickets();
-                long soldTicketsShow = show.getMaxTickets() - show.getAvailableTickets();
-                boolean isLessPrice = show.getRealPrice() < current.getRealPrice();
+                long soldTicketsCurrent = current.getMaxTickets() - current.getTickets();
+                long soldTicketsShow = show.getMaxTickets() - show.getTickets();
+                boolean isLessPrice = show.getPrice() < current.getPrice();
 
                 if ((isLessPrice && soldTicketsCurrent > 0) || (isLessPrice && soldTicketsShow > 0) ) {
                     connection.commit();
@@ -125,10 +128,10 @@ public class TicketSellerServiceImpl implements TicketSellerService
                 current.setDuration(show.getDuration());
                 current.setLimitDate(show.getLimitDate());
                 current.setMaxTickets(show.getMaxTickets());
-                current.setAvailableTickets(show.getAvailableTickets() + ticketDifference);
-                current.setRealPrice(show.getRealPrice());
+                current.setTickets(show.getTickets() + ticketDifference);
+                current.setPrice(show.getPrice());
                 current.setDiscountedPrice(show.getDiscountedPrice());
-                current.setSalesCommission(show.getSalesCommission());
+                current.setCommission(show.getCommission());
 
 
                 showDao.update(connection, current);
@@ -207,23 +210,23 @@ public class TicketSellerServiceImpl implements TicketSellerService
                     throw new LimitDateExceeded("Can not buy tickets after limit date");
                 }
 
-				if (show.getAvailableTickets() <= 0) {
+				if (show.getTickets() <= 0) {
                     connection.commit();
                     throw new NotEnoughAvailableTickets("There is not resting tickets");
                 }
 
-				if (show.getAvailableTickets() < count) {
+				if (show.getTickets() < count) {
 				    connection.commit();
                     throw new NotEnoughAvailableTickets("There is not enough tickets");
                 }
 
-                show.setAvailableTickets(show.getAvailableTickets() - count);
+                show.setTickets(show.getTickets() - count);
                 showDao.update(connection, show);
 
                 Reservation reservation = new Reservation();
                 reservation.setShowId(show.getId());
                 reservation.setEmail(email);
-                reservation.setCardNumber(cardNumber);
+                reservation.setCreditCard(cardNumber);
                 reservation.setTickets(count);
                 reservation.setValid(true);
                 reservation.setCode(UUID.randomUUID().toString());
@@ -278,7 +281,7 @@ public class TicketSellerServiceImpl implements TicketSellerService
                 /* Do work. */
                 Reservation reservation = reservationDao.findByCode(connection, code);
 
-                if (!reservation.getCardNumber().equals(cardNumber)) {
+                if (!reservation.getCreditCard().equals(cardNumber)) {
                     connection.commit();
                     throw new CreditCardNotCoincident("Reservation credit card number not coincides with the given number");
                 }

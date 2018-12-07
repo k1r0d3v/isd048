@@ -51,8 +51,8 @@ public class XmlClientReservationDtoConversor
         descriptionElement.setText(reservation.getEmail());
         showElement.addContent(descriptionElement);
 
-        Element startDateElement = new Element("cardNumber", XML_NS);
-        startDateElement.setText(reservation.getCardNumber());
+        Element startDateElement = new Element("creditCard", XML_NS);
+        startDateElement.setText(reservation.getCreditCard());
         showElement.addContent(startDateElement);
 
         Element priceElement = new Element("tickets", XML_NS);
@@ -67,7 +67,7 @@ public class XmlClientReservationDtoConversor
         avalilableTicketsElement.setText(reservation.getCode());
         showElement.addContent(avalilableTicketsElement);
 
-        Element realPriceElement = new Element("date", XML_NS);
+        Element realPriceElement = new Element("reservationDate", XML_NS);
         realPriceElement.setText(DatatypeConverter.printDateTime(reservation.getReservationDate()));
         showElement.addContent(realPriceElement);
 
@@ -134,7 +134,7 @@ public class XmlClientReservationDtoConversor
 
         String email = reservationElement.getChildTextNormalize("email", XML_NS);
 
-        String cardNumber = reservationElement.getChildTextNormalize("cardNumber", XML_NS);
+        String cardNumber = reservationElement.getChildTextNormalize("creditCard", XML_NS);
 
         String tickets = reservationElement.getChildTextNormalize("tickets", XML_NS);
 
@@ -142,7 +142,7 @@ public class XmlClientReservationDtoConversor
 
         String code = reservationElement.getChildTextNormalize("code", XML_NS);
 
-        String date = reservationElement.getChildTextNormalize("date", XML_NS);
+        String date = reservationElement.getChildTextNormalize("reservationDate", XML_NS);
 
         String price = reservationElement.getChildTextNormalize("price", XML_NS);
 
