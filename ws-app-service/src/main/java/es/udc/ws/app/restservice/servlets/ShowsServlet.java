@@ -34,7 +34,7 @@ public class ShowsServlet extends HttpServlet {
             String keywordsParam = req.getParameter("keywords");
             if (keywordsParam == null) {
                 ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
-                        XmlServiceExceptionConversor.convertException(
+                        XmlServiceExceptionConversor.toExceptionXml(
                                 new InputValidationException("Invalid Request: " + "parameter 'keywords' is mandatory")),
                         null);
                 return;
@@ -51,7 +51,7 @@ public class ShowsServlet extends HttpServlet {
                 shows = TicketSellerServiceFactory.getService().findShows(keywordsParam, start, end);
             } catch (InputValidationException ex) {
                 ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
-                        XmlServiceExceptionConversor.convertException(ex), null);
+                        XmlServiceExceptionConversor.toExceptionXml(ex), null);
                 return;
             }
 
@@ -62,7 +62,7 @@ public class ShowsServlet extends HttpServlet {
         {
             if (path.length() == 0) {
                 ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
-                        XmlServiceExceptionConversor.convertException(
+                        XmlServiceExceptionConversor.toExceptionXml(
                                 new InputValidationException("Invalid Request: " + "invalid path " + path)),
                         null);
                 return;
@@ -74,7 +74,7 @@ public class ShowsServlet extends HttpServlet {
                 showId = Long.valueOf(showIdAsString);
             } catch (NumberFormatException ex) {
                 ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
-                        XmlServiceExceptionConversor.convertException(
+                        XmlServiceExceptionConversor.toExceptionXml(
                                 new InputValidationException("Invalid Request: " + "invalid show id '" + showIdAsString)),
                         null);
                 return;
@@ -85,7 +85,7 @@ public class ShowsServlet extends HttpServlet {
                 show = TicketSellerServiceFactory.getService().findShow(showId);
             } catch (InstanceNotFoundException ex) {
                 ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
-                        XmlServiceExceptionConversor.convertInstanceNotFoundException(ex), null);
+                        XmlServiceExceptionConversor.toInstanceNotFoundExceptionXml(ex), null);
                 return;
             }
 
@@ -99,7 +99,7 @@ public class ShowsServlet extends HttpServlet {
         String path = ServletUtils.normalizePath(req.getPathInfo());
         if (path != null && path.length() > 0) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
-                    XmlServiceExceptionConversor.convertException(
+                    XmlServiceExceptionConversor.toExceptionXml(
                             new InputValidationException("Invalid Request: " + "invalid path " + path)),
                     null);
             return;
@@ -109,7 +109,7 @@ public class ShowsServlet extends HttpServlet {
             xmlshow = XmlServiceShowAdminDtoConversor.toServiceShowAdminDto(req.getInputStream());
         } catch (ParsingException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST, XmlServiceExceptionConversor
-                    .convertException(new InputValidationException(ex.getMessage())), null);
+                    .toExceptionXml(new InputValidationException(ex.getMessage())), null);
 
             return;
 
@@ -120,7 +120,7 @@ public class ShowsServlet extends HttpServlet {
             show = TicketSellerServiceFactory.getService().createShow(show);
         } catch (InputValidationException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
-                    XmlServiceExceptionConversor.convertException(ex), null);
+                    XmlServiceExceptionConversor.toExceptionXml(ex), null);
             return;
         }
         ServiceShowDto showDto = ShowToDto.toShowDto(show);
@@ -135,7 +135,7 @@ public class ShowsServlet extends HttpServlet {
 
         if (path == null || path.length() == 0) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
-                    XmlServiceExceptionConversor.convertException(
+                    XmlServiceExceptionConversor.toExceptionXml(
                             new InputValidationException("Invalid Request: " + "invalid show id")),
                     null);
             return;
@@ -147,7 +147,7 @@ public class ShowsServlet extends HttpServlet {
             showId = Long.valueOf(showIdAsString);
         } catch (NumberFormatException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
-                    XmlServiceExceptionConversor.convertException(new InputValidationException(
+                    XmlServiceExceptionConversor.toExceptionXml(new InputValidationException(
                             "Invalid Request: " + "invalid show id '" + showIdAsString + "'")),
                     null);
             return;
@@ -158,13 +158,13 @@ public class ShowsServlet extends HttpServlet {
             showDto = XmlServiceShowAdminDtoConversor.toServiceShowAdminDto(req.getInputStream());
         } catch (ParsingException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST, XmlServiceExceptionConversor
-                    .convertException(new InputValidationException(ex.getMessage())), null);
+                    .toExceptionXml(new InputValidationException(ex.getMessage())), null);
             return;
 
         }
         if (!showId.equals(showDto.getId())) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
-                    XmlServiceExceptionConversor.convertException(
+                    XmlServiceExceptionConversor.toExceptionXml(
                             new InputValidationException("Invalid Request: " + "invalid show id")),
                     null);
             return;
@@ -175,19 +175,19 @@ public class ShowsServlet extends HttpServlet {
             TicketSellerServiceFactory.getService().updateShow(show);
         } catch (InputValidationException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
-                    XmlServiceExceptionConversor.convertException(ex), null);
+                    XmlServiceExceptionConversor.toExceptionXml(ex), null);
             return;
         } catch (NotEnoughAvailableTickets ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_FORBIDDEN,
-                    XmlServiceExceptionConversor.convertException(ex), null);
+                    XmlServiceExceptionConversor.toExceptionXml(ex), null);
             return;
         } catch (ShowHasReservations ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_FORBIDDEN,
-                    XmlServiceExceptionConversor.convertException(ex), null);
+                    XmlServiceExceptionConversor.toExceptionXml(ex), null);
             return;
         } catch (InstanceNotFoundException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
-                    XmlServiceExceptionConversor.convertInstanceNotFoundException(ex), null);
+                    XmlServiceExceptionConversor.toInstanceNotFoundExceptionXml(ex), null);
             return;
         }
         ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NO_CONTENT, null, null);

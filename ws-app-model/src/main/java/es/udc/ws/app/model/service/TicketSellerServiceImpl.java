@@ -159,10 +159,10 @@ public class TicketSellerServiceImpl implements TicketSellerService
 	}
 
 	@Override
-	public List<Show> findShows(String words, Calendar start, Calendar end)
+	public List<Show> findShows(String keywords, Calendar start, Calendar end)
             throws InputValidationException
     {
-        PropertyValidator.validateMandatoryString("words", words);
+        PropertyValidator.validateMandatoryString("words", keywords);
 
 	    if (start == null && end != null)
 	        throw new InputValidationException("end must be null if start is null");
@@ -178,7 +178,7 @@ public class TicketSellerServiceImpl implements TicketSellerService
         }
 
 		try (Connection connection = dataSource.getConnection()) {
-			return showDao.find(connection, words, start, end);
+			return showDao.find(connection, keywords, start, end);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -280,7 +280,7 @@ public class TicketSellerServiceImpl implements TicketSellerService
 
                 if (!reservation.getCardNumber().equals(cardNumber)) {
                     connection.commit();
-                    throw new CreditCardNotCoincident();
+                    throw new CreditCardNotCoincident("Reservation credit card number not coincides with the given number");
                 }
 
                if (!reservation.isValid()) {

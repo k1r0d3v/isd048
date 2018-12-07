@@ -19,7 +19,7 @@ public interface TicketSellerService
 
     Show findShow(long id) throws InstanceNotFoundException;
 
-    List<Show> findShows(String words, Calendar start, Calendar end) throws InputValidationException;
+    List<Show> findShows(String keywords, Calendar start, Calendar end) throws InputValidationException;
 
     Reservation buyTickets(long showId, String email, String cardNumber, int count) throws InstanceNotFoundException, InputValidationException, NotEnoughAvailableTickets, LimitDateExceeded;
 

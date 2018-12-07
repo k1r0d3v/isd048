@@ -1,29 +1,29 @@
-package es.udc.ws.app.dto;
+package es.udc.ws.app.client.service.dto;
 
 import java.util.Calendar;
 import java.util.Objects;
 
-public class ServiceShowDto
+public class ClientShowDto
 {
     private Long id;
     private String name;
     private String description;
     private Calendar startDate;
-    private long duration;
+    private Calendar endDate;
     private Calendar limitDate;
     private long availableTickets;
     private float realPrice;
     private float discountedPrice;
 
 
-    public ServiceShowDto() { }
+    public ClientShowDto() { }
 
-    public ServiceShowDto(Long id, String name, String description, Calendar startDate, long duration, Calendar limitDate, long availableTickets, float realPrice, float discountedPrice) {
+    public ClientShowDto(Long id, String name, String description, Calendar startDate, Calendar endDate, Calendar limitDate, long availableTickets, float realPrice, float discountedPrice) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.startDate = startDate;
-        this.duration = duration;
+        this.endDate = endDate;
         this.limitDate = limitDate;
         this.availableTickets = availableTickets;
         this.realPrice = realPrice;
@@ -62,14 +62,6 @@ public class ServiceShowDto
         this.startDate = startDate;
     }
 
-    public long getDuration() {
-        return duration;
-    }
-
-    public void setDuration(long duration) {
-        this.duration = duration;
-    }
-
     public Calendar getLimitDate() {
         return limitDate;
     }
@@ -102,35 +94,43 @@ public class ServiceShowDto
         this.discountedPrice = discountedPrice;
     }
 
+    public Calendar getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Calendar endDate) {
+        this.endDate = endDate;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ServiceShowDto that = (ServiceShowDto) o;
-        return id == that.id &&
-                duration == that.duration &&
-                availableTickets == that.availableTickets &&
+        ClientShowDto that = (ClientShowDto) o;
+        return availableTickets == that.availableTickets &&
                 Float.compare(that.realPrice, realPrice) == 0 &&
                 Float.compare(that.discountedPrice, discountedPrice) == 0 &&
+                Objects.equals(id, that.id) &&
                 Objects.equals(name, that.name) &&
                 Objects.equals(description, that.description) &&
                 Objects.equals(startDate, that.startDate) &&
+                Objects.equals(endDate, that.endDate) &&
                 Objects.equals(limitDate, that.limitDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, startDate, duration, limitDate, availableTickets, realPrice, discountedPrice);
+        return Objects.hash(id, name, description, startDate, endDate, limitDate, availableTickets, realPrice, discountedPrice);
     }
 
     @Override
     public String toString() {
-        return "ServiceShowAdminDto{" +
+        return "ClientShowDto{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", startDate=" + startDate +
-                ", duration=" + duration +
+                ", endDate=" + endDate +
                 ", limitDate=" + limitDate +
                 ", availableTickets=" + availableTickets +
                 ", realPrice=" + realPrice +

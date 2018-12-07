@@ -21,7 +21,7 @@ public class CheckServlet extends HttpServlet
         if (path != null && path.length() != 0)
         {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
-                    XmlServiceExceptionConversor.convertException(
+                    XmlServiceExceptionConversor.toExceptionXml(
                             new InputValidationException("Invalid Request: " + "invalid path " + path)),
                     null);
             return;
@@ -32,7 +32,7 @@ public class CheckServlet extends HttpServlet
 
         if (code == null) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
-                    XmlServiceExceptionConversor.convertException(
+                    XmlServiceExceptionConversor.toExceptionXml(
                             new InputValidationException("Invalid Request: " + "parameter 'code' is mandatory")),
                     null);
             return;
@@ -40,7 +40,7 @@ public class CheckServlet extends HttpServlet
 
         if (creditCard == null) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
-            XmlServiceExceptionConversor.convertException(
+            XmlServiceExceptionConversor.toExceptionXml(
             new InputValidationException("Invalid Request: " + "parameter 'creditCard' is mandatory")),
             null);
                 return;
@@ -50,15 +50,15 @@ public class CheckServlet extends HttpServlet
             TicketSellerServiceFactory.getService().checkReservation(code, creditCard);
         } catch (InputValidationException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
-                    XmlServiceExceptionConversor.convertException(ex), null);
+                    XmlServiceExceptionConversor.toExceptionXml(ex), null);
             return;
         } catch (CreditCardNotCoincident | ReservationAlreadyChecked ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_FORBIDDEN,
-                    XmlServiceExceptionConversor.convertException(ex), null);
+                    XmlServiceExceptionConversor.toExceptionXml(ex), null);
             return;
         } catch (InstanceNotFoundException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
-                    XmlServiceExceptionConversor.convertInstanceNotFoundException(ex), null);
+                    XmlServiceExceptionConversor.toInstanceNotFoundExceptionXml(ex), null);
             return;
         }
     }

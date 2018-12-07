@@ -26,7 +26,7 @@ public class ReservationsServlet extends HttpServlet {
             String emailParam = req.getParameter("email");
             if (emailParam == null) {
                 ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
-                        XmlServiceExceptionConversor.convertException(
+                        XmlServiceExceptionConversor.toExceptionXml(
                                 new InputValidationException("Invalid Request: " + "parameter 'email' is mandatory")),
                         null);
                 return;
@@ -37,7 +37,7 @@ public class ReservationsServlet extends HttpServlet {
                 reservations = TicketSellerServiceFactory.getService().getUserReservations(emailParam);
             } catch (InputValidationException ex) {
                 ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
-                        XmlServiceExceptionConversor.convertException(ex), null);
+                        XmlServiceExceptionConversor.toExceptionXml(ex), null);
                 return;
             }
 

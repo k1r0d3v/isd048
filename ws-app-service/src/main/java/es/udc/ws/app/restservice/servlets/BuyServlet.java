@@ -31,7 +31,7 @@ public class BuyServlet extends HttpServlet
         if (path != null && path.length() != 0)
         {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
-                    XmlServiceExceptionConversor.convertException(
+                    XmlServiceExceptionConversor.toExceptionXml(
                             new InputValidationException("Invalid Request: " + "invalid path " + path)),
                     null);
             return;
@@ -44,7 +44,7 @@ public class BuyServlet extends HttpServlet
 
         if (showId == null) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
-                    XmlServiceExceptionConversor.convertException(
+                    XmlServiceExceptionConversor.toExceptionXml(
                             new InputValidationException("Invalid Request: " + "parameter 'show' is mandatory")),
                     null);
             return;
@@ -52,7 +52,7 @@ public class BuyServlet extends HttpServlet
 
         if (email == null) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
-                    XmlServiceExceptionConversor.convertException(
+                    XmlServiceExceptionConversor.toExceptionXml(
                             new InputValidationException("Invalid Request: " + "parameter 'email' is mandatory")),
                     null);
             return;
@@ -60,7 +60,7 @@ public class BuyServlet extends HttpServlet
 
         if (creditCard == null) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
-                    XmlServiceExceptionConversor.convertException(
+                    XmlServiceExceptionConversor.toExceptionXml(
                             new InputValidationException("Invalid Request: " + "parameter 'creditCard' is mandatory")),
                     null);
             return;
@@ -68,7 +68,7 @@ public class BuyServlet extends HttpServlet
 
         if (count == null) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
-                    XmlServiceExceptionConversor.convertException(
+                    XmlServiceExceptionConversor.toExceptionXml(
                             new InputValidationException("Invalid Request: " + "parameter 'count' is mandatory")),
                     null);
             return;
@@ -79,19 +79,19 @@ public class BuyServlet extends HttpServlet
             reservation = TicketSellerServiceFactory.getService().buyTickets(Long.parseLong(showId), email, creditCard, Integer.parseInt(count));
         } catch (InputValidationException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
-                    XmlServiceExceptionConversor.convertException(ex), null);
+                    XmlServiceExceptionConversor.toExceptionXml(ex), null);
             return;
         } catch (NotEnoughAvailableTickets ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
-                    XmlServiceExceptionConversor.convertException(ex), null);
+                    XmlServiceExceptionConversor.toExceptionXml(ex), null);
             return;
         } catch (InstanceNotFoundException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
-                    XmlServiceExceptionConversor.convertInstanceNotFoundException(ex), null);
+                    XmlServiceExceptionConversor.toInstanceNotFoundExceptionXml(ex), null);
             return;
         } catch (LimitDateExceeded ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
-                    XmlServiceExceptionConversor.convertException(ex), null);
+                    XmlServiceExceptionConversor.toExceptionXml(ex), null);
             return;
         }
 
