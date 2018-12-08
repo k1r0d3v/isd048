@@ -3,6 +3,10 @@ package es.udc.ws.app.client.ui;
 import es.udc.ws.app.client.service.ClientAdminTicketSellerService;
 import es.udc.ws.app.client.service.ClientAdminTicketSellerServiceFactory;
 import es.udc.ws.app.client.service.dto.ClientAdminShowDto;
+import es.udc.ws.app.client.service.dto.ClientShowDto;
+
+import javax.xml.bind.DatatypeConverter;
+import java.util.Calendar;
 
 
 public class TicketSellerServiceAdminClient
@@ -28,43 +32,99 @@ public class TicketSellerServiceAdminClient
                 ex.printStackTrace(System.err);
             }
         } else if("-a".equalsIgnoreCase(args[0]))
-        // [add]      TicketSellerServiceAdminClient -a <name> <description> <start> <end> <limit> <tickets> <price> <discount>
+        // [add]      TicketSellerServiceAdminClient -a <name> <description> <start> <duration> <limit> <maxTickets> <tickets> <price> <discount> <commission>
         {
-            validateArgs(args, 9, new int[] {7, 8, 9});
+            validateArgs(args, 11, new int[] {4, 6, 7, 8, 9, 10});
 
             try
             {
-                //Calendar startDate, long duration, Calendar limitDate, long maxTickets, long tickets, float price, float discountedPrice, float commission)
-                /*ClientAdminShowDto show = service.createShow(new ClientAdminShowDto(
+                ClientShowDto show = service.createShow(new ClientAdminShowDto(
                         null,
                         args[1],
                         args[2],
+                        DatatypeConverter.parseDateTime(args[3]),
+                        Long.parseLong(args[4]),
+                        DatatypeConverter.parseDateTime(args[5]),
+                        Long.parseLong(args[6]),
+                        Long.parseLong(args[7]),
+                        Float.parseFloat(args[8]),
+                        Float.parseFloat(args[8]) - Float.parseFloat(args[9]),
+                        Float.parseFloat(args[10])
                 ));
-                */
+
+                System.out.println("{" +
+                        "id=" + show.getId() +
+                        ", name='" + show.getName() + '\'' +
+                        ", description='" + show.getDescription() + '\'' +
+                        ", startDate=" + show.getStartDate().toInstant() +
+                        ", endDate=" + show.getEndDate().toInstant() +
+                        ", limitDate=" + show.getLimitDate().toInstant() +
+                        ", tickets=" + show.getTickets() +
+                        ", price=" + show.getPrice() +
+                        ", discountedPrice=" + show.getDiscountedPrice() +
+                        "}");
+
             } catch (Exception ex) {
                 ex.printStackTrace(System.err);
             }
         } else if("-u".equalsIgnoreCase(args[0]))
+        // [update]   TicketSellerServiceAdminClient -u <id> <name> <description> <start> <duration> <limit> <maxTickets> <tickets> <price> <discount> <commission>
         {
-
+            validateArgs(args, 12, new int[] {1, 5, 7, 8, 9, 10, 11});
             try
             {
+                service.updateShow(new ClientAdminShowDto(
+                        Long.parseLong(args[1]),
+                        args[2],
+                        args[3],
+                        DatatypeConverter.parseDateTime(args[4]),
+                        Long.parseLong(args[5]),
+                        DatatypeConverter.parseDateTime(args[6]),
+                        Long.parseLong(args[7]),
+                        Long.parseLong(args[8]),
+                        Float.parseFloat(args[9]),
+                        Float.parseFloat(args[9]) - Float.parseFloat(args[10]),
+                        Float.parseFloat(args[11])
+                ));
 
+                ClientShowDto show = service.findShow(Long.parseLong(args[1]));
+                System.out.println("{" +
+                        "id=" + show.getId() +
+                        ", name='" + show.getName() + '\'' +
+                        ", description='" + show.getDescription() + '\'' +
+                        ", startDate=" + show.getStartDate().toInstant() +
+                        ", endDate=" + show.getEndDate().toInstant() +
+                        ", limitDate=" + show.getLimitDate().toInstant() +
+                        ", tickets=" + show.getTickets() +
+                        ", price=" + show.getPrice() +
+                        ", discountedPrice=" + show.getDiscountedPrice() +
+                        "}");
             } catch (Exception ex) {
                 ex.printStackTrace(System.err);
             }
         } else if("-g".equalsIgnoreCase(args[0]))
         // [get]      TicketSellerServiceAdminClient -g <showId>
         {
-            validateArgs(args, 2, new int[] {});
+            validateArgs(args, 2, new int[] {1});
 
             try
             {
-
+                ClientShowDto show = service.findShow(Long.parseLong(args[1]));
+                System.out.println("{" +
+                        "id=" + show.getId() +
+                        ", name='" + show.getName() + '\'' +
+                        ", description='" + show.getDescription() + '\'' +
+                        ", startDate=" + show.getStartDate().toInstant() +
+                        ", endDate=" + show.getEndDate().toInstant() +
+                        ", limitDate=" + show.getLimitDate().toInstant() +
+                        ", tickets=" + show.getTickets() +
+                        ", price=" + show.getPrice() +
+                        ", discountedPrice=" + show.getDiscountedPrice() +
+                        "}");
             } catch (Exception ex) {
                 ex.printStackTrace(System.err);
             }
-        }
+        } else printUsageAndExit();
     }
 
     private static void validateArgs(String[] args, int expectedArgs, int[] numericArguments)
@@ -92,10 +152,7 @@ public class TicketSellerServiceAdminClient
     {
         System.err.println("Usage:\n" +
                 "    [add]      TicketSellerServiceAdminClient -a <name> <description> <start> <duration> <limit> <maxTickets> <tickets> <price> <discount> <commission>\n" +
-                "    [update]   TicketSellerServiceAdminClient -u <id> [-name <name>] [-description <description>] " +
-                "                                                      [-start <start>] [-duration <duration>] [-limit <limit>] " +
-                "                                                      [-maxTickets <maxTickets>] [-tickets <tickets>] [-price <price>] " +
-                "                                                      [-discount <discount>] [-commission <commission>] \n" +
+                "    [update]   TicketSellerServiceAdminClient -u <id> <name> <description> <start> <duration> <limit> <maxTickets> <tickets> <price> <discount> <commission> \n" +
                 "    [get]      TicketSellerServiceAdminClient -g <showId>\n" +
                 "    [check]    TicketSellerServiceAdminClient -c <reservationCode> <creditCardNumber>\n");
     }

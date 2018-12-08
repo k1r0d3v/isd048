@@ -36,7 +36,7 @@ public class RestClientAdminTicketSellerService implements ClientAdminTicketSell
     private String endpointAddress;
 
     @Override
-    public ClientAdminShowDto createShow(ClientAdminShowDto show) throws InputValidationException {
+    public ClientShowDto createShow(ClientAdminShowDto show) throws InputValidationException {
         try {
 
             HttpResponse response = Request.Post(getEndpointAddress() + "shows").
@@ -45,7 +45,7 @@ public class RestClientAdminTicketSellerService implements ClientAdminTicketSell
 
             validateStatusCode(HttpStatus.SC_CREATED, response);
 
-            return XmlClientAdminShowDtoConversor.toClientAdminShowDto(response.getEntity().getContent());
+            return XmlClientShowDtoConversor.toClientShowDto(response.getEntity().getContent());
 
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -71,16 +71,16 @@ public class RestClientAdminTicketSellerService implements ClientAdminTicketSell
     }
 
     @Override
-    public ClientAdminShowDto findShow(long id)
+    public ClientShowDto findShow(long id)
             throws InstanceNotFoundException
     {
         try {
-            HttpResponse response = Request.Post(getEndpointAddress() +
+            HttpResponse response = Request.Get(getEndpointAddress() +
                     "shows/" + id).execute().returnResponse();
 
             validateStatusCode(HttpStatus.SC_OK, response);
 
-            return XmlClientAdminShowDtoConversor.toClientAdminShowDto(response.getEntity().getContent());
+            return XmlClientShowDtoConversor.toClientShowDto(response.getEntity().getContent());
 
         }catch (Exception e) {
             throw new RuntimeException(e);

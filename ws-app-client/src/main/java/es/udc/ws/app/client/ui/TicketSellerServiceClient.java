@@ -102,7 +102,7 @@ public class TicketSellerServiceClient {
             } catch (Exception ex) {
                 ex.printStackTrace(System.err);
             }
-        }
+        } else printUsageAndExit();
     }
 
     private static void validateArgs(String[] args, int expectedArgs, int[] numericArguments)

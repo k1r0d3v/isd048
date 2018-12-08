@@ -1,4 +1,5 @@
  Varios servlets (buy, check). Yo creo que si
  Varios servicios de cliente. Yo creo que si
  Pasar id de la reserva DTO? Yo creo que no
- 
+ Mapeo de excepciones en el cliente con códigos de error?
+ El servicio solo devuelve un ShowDto para los clientes, ShowAdminDto no puede ser adquirido pero si creado?
