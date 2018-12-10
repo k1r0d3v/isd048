@@ -1,5 +1,17 @@
- Varios servlets (buy, check). Yo creo que si
- Varios servicios de cliente. Yo creo que si
- Pasar id de la reserva DTO? Yo creo que no
- Mapeo de excepciones en el cliente con códigos de error?
- El servicio solo devuelve un ShowDto para los clientes, ShowAdminDto no puede ser adquirido pero si creado?
+ Varios servlets (buy, check). 
+(Un servlet por recurso ejemplo de movies y reservas. Preferiblemente en este caso só 2).
+Reducir servlets con post por ejempo (Analizar URL y decidir en funcion del path que hacer según qué parámetros sean -mediante post-).
+
+ Varios servicios de cliente. 
+Sí, dos, uno para el cliente normal y otro para el que vende entradas.
+
+ Pasar id de la reserva DTO? 
+Sí. (Tal y como está ya.)
+
+ Mapeo de excepciones en el cliente con códigos de error? 
+Sí. Varias excepciones pueden mapear el mismo código de error. Y analizar el elemento raíz para decidir que tipo de error sería. 
+
+El servicio solo devuelve un ShowDto para los clientes, ShowAdminDto no puede ser adquirido pero si creado? 
+Decidir.
+
+//Justificar en la memoria todo.
