@@ -165,7 +165,7 @@ public class TicketSellerServiceTest
 		otherCalendar.add(Calendar.YEAR, 1);
 		otherCalendar.add(Calendar.DAY_OF_WEEK, -1);
 
-		return new Show(754883452L, name, description, calendar, 120, otherCalendar, 10000, 10000,
+		return new Show(754883452L, name, description, calendar, 120, otherCalendar, 10000, 10000L,
 				60.0f, 50.0f, 20.0f);
 	}
 
@@ -295,7 +295,7 @@ public class TicketSellerServiceTest
 
 		try
 		{
-			show.setTickets(120);
+			show.setTickets(120L);
 			show.setMaxTickets(100);
 			show = ticketService.createShow(show);
 		} catch (InputValidationException e) {
@@ -336,8 +336,15 @@ public class TicketSellerServiceTest
 		show.setId(tmpId);
 
 		try {
-			show.setTickets(show.getTickets()-1);
-			show.setPrice(10.0f);
+			ticketService.buyTickets(show.getId(), "foo@foo.com", "1234567891234567", 1);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException("Unexpected exception");
+		}
+
+		try {
+            show.setPrice(10.0f);
+		    show.setDiscountedPrice(50.0f);
 			ticketService.updateShow(show);
 		} catch (InputValidationException e) {
 			exceptionCatched = true;
@@ -348,14 +355,6 @@ public class TicketSellerServiceTest
 		assertTrue(exceptionCatched);
 		show.setPrice(tmpRealPrice);
 		exceptionCatched = false;
-
-		try {
-			show.setTickets(show.getTickets()-1);
-			ticketService.updateShow(show);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException("Unexpected exception");
-		}
 
 		try {	
 			show.setPrice(10.0f);

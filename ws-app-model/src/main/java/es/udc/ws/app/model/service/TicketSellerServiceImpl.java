@@ -41,12 +41,10 @@ public class TicketSellerServiceImpl implements TicketSellerService
         PropertyValidator.validateLong("duration", show.getDuration(), 1, Integer.MAX_VALUE);
         PropertyValidator.validateBeforeDate("limit date", show.getLimitDate(), show.getStartDate());
         PropertyValidator.validateLong("max number of tickets", show.getMaxTickets(), 1, Integer.MAX_VALUE);
-        PropertyValidator.validateLong("number of tickets", show.getTickets(), 0, (int)show.getMaxTickets());
         PropertyValidator.validateFloat("real price", show.getPrice(), 0.0f, Float.MAX_VALUE);
         PropertyValidator.validateFloat("discounted price", show.getDiscountedPrice(), 0.0f, Float.MAX_VALUE);
         PropertyValidator.validateFloat("commission", show.getCommission(), 0.0f, Float.MAX_VALUE);
         PropertyValidator.validateMajorEqualsThan("real price", "discounted price", show.getPrice(), show.getDiscountedPrice());
-        PropertyValidator.validateMajorEqualsThan("max number of tickets", "available number of tickets", show.getMaxTickets(), show.getTickets());
 
 
         try (Connection connection = dataSource.getConnection())
@@ -88,13 +86,10 @@ public class TicketSellerServiceImpl implements TicketSellerService
         PropertyValidator.validateLong("duration", show.getDuration(), 1, Integer.MAX_VALUE);
         PropertyValidator.validateBeforeDate("limit date", show.getLimitDate(), show.getStartDate());
         PropertyValidator.validateLong("max number of tickets", show.getMaxTickets(), 1, Integer.MAX_VALUE);
-        PropertyValidator.validateLong("number of tickets", show.getTickets(), 0, (int)show.getMaxTickets());
         PropertyValidator.validateFloat("real price", show.getPrice(), 0.0f, Float.MAX_VALUE);
         PropertyValidator.validateFloat("discounted price", show.getDiscountedPrice(), 0.0f, Float.MAX_VALUE);
         PropertyValidator.validateFloat("commission", show.getCommission(), 0.0f, Float.MAX_VALUE);
         PropertyValidator.validateMajorEqualsThan("real price", "discounted price", show.getPrice(), show.getDiscountedPrice());
-        PropertyValidator.validateMajorEqualsThan("max number of tickets", "available number of tickets", show.getMaxTickets(), show.getTickets());
-
 
         try (Connection connection = dataSource.getConnection()) {
 
@@ -114,10 +109,9 @@ public class TicketSellerServiceImpl implements TicketSellerService
                 }
 
                 long soldTicketsCurrent = current.getMaxTickets() - current.getTickets();
-                long soldTicketsShow = show.getMaxTickets() - show.getTickets();
                 boolean isLessPrice = show.getPrice() < current.getPrice();
 
-                if ((isLessPrice && soldTicketsCurrent > 0) || (isLessPrice && soldTicketsShow > 0) ) {
+                if ((isLessPrice && soldTicketsCurrent > 0)) {
                     connection.commit();
                     throw new ShowHasReservations("Cannot decrease the show price when it has sold tickets");
                 }
@@ -128,11 +122,10 @@ public class TicketSellerServiceImpl implements TicketSellerService
                 current.setDuration(show.getDuration());
                 current.setLimitDate(show.getLimitDate());
                 current.setMaxTickets(show.getMaxTickets());
-                current.setTickets(show.getTickets() + ticketDifference);
+                current.setTickets(current.getTickets() + ticketDifference); // Note here, tickets cannot be modified directly
                 current.setPrice(show.getPrice());
                 current.setDiscountedPrice(show.getDiscountedPrice());
                 current.setCommission(show.getCommission());
-
 
                 showDao.update(connection, current);
 
@@ -274,32 +267,30 @@ public class TicketSellerServiceImpl implements TicketSellerService
 
             try {
 
-                /* Prepare connection. */
+                // Prepare connection
                 connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
                 connection.setAutoCommit(false);
 
-                /* Do work. */
+                // Do work
                 Reservation reservation = reservationDao.findByCode(connection, code);
 
-                if (!reservation.getCreditCard().equals(cardNumber)) {
-                    connection.commit();
+                if (!reservation.getCreditCard().equals(cardNumber))
                     throw new CreditCardNotCoincident("Reservation credit card number not coincides with the given number");
-                }
 
-               if (!reservation.isValid()) {
-                   connection.commit();
+               if (!reservation.isValid())
                    throw new ReservationAlreadyChecked();
-               }
-
 
                 reservation.setValid(false);
                 reservationDao.update(connection, reservation);
 
-                /* Commit. */
+                // Commit
                 connection.commit();
             } catch (SQLException e) {
                 connection.rollback();
                 throw new RuntimeException(e);
+            } catch (CreditCardNotCoincident | ReservationAlreadyChecked e) {
+                connection.commit();
+                throw e;
             } catch (RuntimeException | Error | InstanceNotFoundException e) {
                 connection.rollback();
                 throw e;

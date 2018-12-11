@@ -16,8 +16,6 @@ public interface ClientAdminTicketSellerService
             throws InstanceNotFoundException, InputValidationException,
             ClientShowHasReservations, ClientNotEnoughAvailableTickets;
 
-    // TODO: Ask to the teacher
-    // Using the client dto here makes not sense :(
     ClientShowDto findShow(long id)
             throws InstanceNotFoundException;
 

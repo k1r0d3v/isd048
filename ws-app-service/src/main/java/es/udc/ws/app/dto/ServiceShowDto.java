@@ -11,14 +11,14 @@ public class ServiceShowDto
     private Calendar startDate;
     private long duration;
     private Calendar limitDate;
-    private long tickets;
+    private Long tickets;
     private float price;
     private float discountedPrice;
 
 
     public ServiceShowDto() { }
 
-    public ServiceShowDto(Long id, String name, String description, Calendar startDate, long duration, Calendar limitDate, long tickets, float price, float discountedPrice) {
+    public ServiceShowDto(Long id, String name, String description, Calendar startDate, long duration, Calendar limitDate, Long tickets, float price, float discountedPrice) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -78,11 +78,11 @@ public class ServiceShowDto
         this.limitDate = limitDate;
     }
 
-    public long getTickets() {
+    public Long getTickets() {
         return tickets;
     }
 
-    public void setTickets(long tickets) {
+    public void setTickets(Long tickets) {
         this.tickets = tickets;
     }
 
@@ -107,15 +107,15 @@ public class ServiceShowDto
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ServiceShowDto that = (ServiceShowDto) o;
-        return id == that.id &&
-                duration == that.duration &&
-                tickets == that.tickets &&
+        return duration == that.duration &&
                 Float.compare(that.price, price) == 0 &&
                 Float.compare(that.discountedPrice, discountedPrice) == 0 &&
+                Objects.equals(id, that.id) &&
                 Objects.equals(name, that.name) &&
                 Objects.equals(description, that.description) &&
                 Objects.equals(startDate, that.startDate) &&
-                Objects.equals(limitDate, that.limitDate);
+                Objects.equals(limitDate, that.limitDate) &&
+                Objects.equals(tickets, that.tickets);
     }
 
     @Override
@@ -125,7 +125,7 @@ public class ServiceShowDto
 
     @Override
     public String toString() {
-        return "ServiceShowAdminDto{" +
+        return "ServiceShowDto{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +

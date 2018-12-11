@@ -114,8 +114,6 @@ public class XmlServiceShowDtoConversor {
 
         String limitDate = showElement.getChildTextNormalize("limitDate", XML_NS);
 
-        String availableTickets = showElement.getChildTextNormalize("tickets", XML_NS);
-
         String realPrice = showElement.getChildTextNormalize("price", XML_NS);
 
         String discountedPrice = showElement.getChildTextNormalize("discountedPrice", XML_NS);
@@ -124,6 +122,6 @@ public class XmlServiceShowDtoConversor {
         Calendar startCalendar = DatatypeConverter.parseDateTime(startDate);
         Calendar limitCalendar = DatatypeConverter.parseDateTime(limitDate);
 
-        return new ServiceShowDto(identifier, name, description, startCalendar, Long.parseLong(duration), limitCalendar, Integer.parseInt(availableTickets), Float.parseFloat(realPrice), Float.parseFloat(discountedPrice));
+        return new ServiceShowDto(identifier, name, description, startCalendar, Long.parseLong(duration), limitCalendar, null, Float.parseFloat(realPrice), Float.parseFloat(discountedPrice));
     }
 }

@@ -12,14 +12,14 @@ public class ServiceShowAdminDto
     private long duration;
     private Calendar limitDate;
     private long maxTickets;
-    private long tickets;
+    private Long tickets;
     private float price;
     private float discountedPrice;
     private float commission;
 
     public ServiceShowAdminDto() { }
 
-    public ServiceShowAdminDto(Long id, String name, String description, Calendar startDate, long duration, Calendar limitDate, long maxTickets, long tickets, float price, float discountedPrice, float commission) {
+    public ServiceShowAdminDto(Long id, String name, String description, Calendar startDate, long duration, Calendar limitDate, long maxTickets, Long tickets, float price, float discountedPrice, float commission) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -89,11 +89,11 @@ public class ServiceShowAdminDto
         this.maxTickets = maxTickets;
     }
 
-    public long getTickets() {
+    public Long getTickets() {
         return tickets;
     }
 
-    public void setTickets(long tickets) {
+    public void setTickets(Long tickets) {
         this.tickets = tickets;
     }
 
@@ -128,7 +128,6 @@ public class ServiceShowAdminDto
         ServiceShowAdminDto that = (ServiceShowAdminDto) o;
         return duration == that.duration &&
                 maxTickets == that.maxTickets &&
-                tickets == that.tickets &&
                 Float.compare(that.price, price) == 0 &&
                 Float.compare(that.discountedPrice, discountedPrice) == 0 &&
                 Float.compare(that.commission, commission) == 0 &&
@@ -136,7 +135,8 @@ public class ServiceShowAdminDto
                 Objects.equals(name, that.name) &&
                 Objects.equals(description, that.description) &&
                 Objects.equals(startDate, that.startDate) &&
-                Objects.equals(limitDate, that.limitDate);
+                Objects.equals(limitDate, that.limitDate) &&
+                Objects.equals(tickets, that.tickets);
     }
 
     @Override

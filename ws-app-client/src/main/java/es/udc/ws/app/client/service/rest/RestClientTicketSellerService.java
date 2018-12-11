@@ -46,7 +46,7 @@ public class RestClientTicketSellerService implements ClientTicketSellerService
     @Override
     public ClientReservationDto buyTickets(long showId, String email, String cardNumber, int count) throws InstanceNotFoundException, InputValidationException, ClientNotEnoughAvailableTickets, ClientLimitDateExceeded {
         try {
-            HttpResponse response = Request.Post(getEndpointAddress() + "buy" +
+            HttpResponse response = Request.Post(getEndpointAddress() + "reservations" +
                     "?show=" + showId +
                     "&email=" + URLEncoder.encode(email, "UTF-8") +
                     "&creditCard=" + URLEncoder.encode(cardNumber, "UTF-8") +

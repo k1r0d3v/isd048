@@ -6,7 +6,6 @@ import es.udc.ws.app.client.service.dto.ClientAdminShowDto;
 import es.udc.ws.app.client.service.dto.ClientShowDto;
 
 import javax.xml.bind.DatatypeConverter;
-import java.util.Calendar;
 
 
 public class TicketSellerServiceAdminClient
@@ -68,9 +67,10 @@ public class TicketSellerServiceAdminClient
                 ex.printStackTrace(System.err);
             }
         } else if("-u".equalsIgnoreCase(args[0]))
-        // [update]   TicketSellerServiceAdminClient -u <id> <name> <description> <start> <duration> <limit> <maxTickets> <tickets> <price> <discount> <commission>
+        // [update]   TicketSellerServiceAdminClient -u <id> <name> <description> <start> <duration> <limit> <maxTickets> <price> <discount> <commission>
         {
-            validateArgs(args, 12, new int[] {1, 5, 7, 8, 9, 10, 11});
+            validateArgs(args, 12, new int[] {1, 5, 7, 8, 9, 10});
+
             try
             {
                 service.updateShow(new ClientAdminShowDto(

@@ -112,7 +112,6 @@ public class ShowsServlet extends HttpServlet {
                     .toExceptionXml(new InputValidationException(ex.getMessage())), null);
 
             return;
-
         }
 
         Show show = ShowToDto.toShow(xmlshow);
@@ -177,11 +176,7 @@ public class ShowsServlet extends HttpServlet {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                     XmlServiceExceptionConversor.toExceptionXml(ex), null);
             return;
-        } catch (NotEnoughAvailableTickets ex) {
-            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_FORBIDDEN,
-                    XmlServiceExceptionConversor.toExceptionXml(ex), null);
-            return;
-        } catch (ShowHasReservations ex) {
+        } catch (NotEnoughAvailableTickets | ShowHasReservations ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_FORBIDDEN,
                     XmlServiceExceptionConversor.toExceptionXml(ex), null);
             return;

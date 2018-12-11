@@ -12,7 +12,7 @@ public class Show
 	private long duration;
 	private Calendar limitDate;
 	private long maxTickets;
-	private long tickets;
+	private Long tickets;
 	private float price;
 	private float discountedPrice;
 	private float commission;
@@ -20,7 +20,7 @@ public class Show
 	public Show() { }
 
 	public Show(Long id, String name, String description, Calendar startDate,
-				long duration, Calendar limitDate, long maxTickets, long tickets,
+				long duration, Calendar limitDate, long maxTickets, Long tickets,
 				float price, float discountedPrice, float commission) {
 		this.id = id;
 		this.name = name;
@@ -93,11 +93,11 @@ public class Show
 		this.maxTickets = maxTickets;
 	}
 
-	public long getTickets() {
+	public Long getTickets() {
 		return tickets;
 	}
 
-	public void setTickets(long tickets) {
+	public void setTickets(Long tickets) {
 		this.tickets = tickets;
 	}
 
@@ -125,43 +125,44 @@ public class Show
 		this.commission = commission;
 	}
 
-	public boolean equals(Object object) {
-		if (this == object) return true;
-		if (object == null || getClass() != object.getClass()) return false;
 
-		Show show = (Show) object;
-		return id == show.id &&
-				duration == show.duration &&
-				maxTickets == show.maxTickets && 
-				tickets == show.tickets &&
-				Float.compare(show.price, price) == 0 &&
-				Float.compare(show.discountedPrice, discountedPrice) == 0 &&
-				Float.compare(show.commission, commission) == 0 &&
-				java.util.Objects.equals(name, show.name) &&
-				java.util.Objects.equals(description, show.description) &&
-				java.util.Objects.equals(startDate, show.startDate) &&
-				java.util.Objects.equals(limitDate, show.limitDate);
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Show show = (Show) o;
+        return duration == show.duration &&
+                maxTickets == show.maxTickets &&
+                Float.compare(show.price, price) == 0 &&
+                Float.compare(show.discountedPrice, discountedPrice) == 0 &&
+                Float.compare(show.commission, commission) == 0 &&
+                Objects.equals(id, show.id) &&
+                Objects.equals(name, show.name) &&
+                Objects.equals(description, show.description) &&
+                Objects.equals(startDate, show.startDate) &&
+                Objects.equals(limitDate, show.limitDate) &&
+                Objects.equals(tickets, show.tickets);
+    }
 
-	public int hashCode() {
-		return Objects.hash(super.hashCode(), id, name, description, startDate, duration, limitDate, maxTickets, tickets, price, discountedPrice, commission);
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, description, startDate, duration, limitDate, maxTickets, tickets, price, discountedPrice, commission);
+    }
 
-
-	@Override
-	public String toString() {
-		return "Show{" +
-				"id=" + id +
-				", name='" + name + '\'' +
-				", description='" + description + '\'' +
-				", startDate=" + startDate +
-				", duration=" + duration +
-				", limitDate=" + limitDate +
-				", maxTickets=" + maxTickets +
-				", tickets=" + tickets +
-				", price=" + price +
-				", discountedPrice=" + discountedPrice +
-				", commission=" + commission +
-				'}';
-	}
+    @Override
+    public String toString() {
+        return "Show{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", startDate=" + startDate +
+                ", duration=" + duration +
+                ", limitDate=" + limitDate +
+                ", maxTickets=" + maxTickets +
+                ", tickets=" + tickets +
+                ", price=" + price +
+                ", discountedPrice=" + discountedPrice +
+                ", commission=" + commission +
+                '}';
+    }
 }
