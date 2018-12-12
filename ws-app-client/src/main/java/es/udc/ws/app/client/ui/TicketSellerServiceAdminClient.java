@@ -31,9 +31,9 @@ public class TicketSellerServiceAdminClient
                 ex.printStackTrace(System.err);
             }
         } else if("-a".equalsIgnoreCase(args[0]))
-        // [add]      TicketSellerServiceAdminClient -a <name> <description> <start> <duration> <limit> <maxTickets> <tickets> <price> <discount> <commission>
+        // [add]      TicketSellerServiceAdminClient -a <name> <description> <start> <duration> <limit> <tickets> <price> <discountedPrice> <commission>
         {
-            validateArgs(args, 11, new int[] {4, 6, 7, 8, 9, 10});
+            validateArgs(args, 10, new int[] {4, 6, 7, 8, 9});
 
             try
             {
@@ -45,10 +45,10 @@ public class TicketSellerServiceAdminClient
                         Long.parseLong(args[4]),
                         DatatypeConverter.parseDateTime(args[5]),
                         Long.parseLong(args[6]),
-                        Long.parseLong(args[7]),
+                        Long.parseLong(args[6]),
+                        Float.parseFloat(args[7]),
                         Float.parseFloat(args[8]),
-                        Float.parseFloat(args[8]) - Float.parseFloat(args[9]),
-                        Float.parseFloat(args[10])
+                        Float.parseFloat(args[9])
                 ));
 
                 System.out.println("{" +
@@ -67,9 +67,9 @@ public class TicketSellerServiceAdminClient
                 ex.printStackTrace(System.err);
             }
         } else if("-u".equalsIgnoreCase(args[0]))
-        // [update]   TicketSellerServiceAdminClient -u <id> <name> <description> <start> <duration> <limit> <maxTickets> <price> <discount> <commission>
+        // [update]   TicketSellerServiceAdminClient -u <id> <name> <description> <start> <duration> <limit> <tickets> <price> <discountedPrice> <commission>
         {
-            validateArgs(args, 12, new int[] {1, 5, 7, 8, 9, 10});
+            validateArgs(args, 11, new int[] {1, 5, 7, 8, 9, 10});
 
             try
             {
@@ -81,10 +81,10 @@ public class TicketSellerServiceAdminClient
                         Long.parseLong(args[5]),
                         DatatypeConverter.parseDateTime(args[6]),
                         Long.parseLong(args[7]),
-                        Long.parseLong(args[8]),
+                        Long.parseLong(args[7]),
+                        Float.parseFloat(args[8]),
                         Float.parseFloat(args[9]),
-                        Float.parseFloat(args[9]) - Float.parseFloat(args[10]),
-                        Float.parseFloat(args[11])
+                        Float.parseFloat(args[10])
                 ));
 
                 ClientShowDto show = service.findShow(Long.parseLong(args[1]));
@@ -151,8 +151,8 @@ public class TicketSellerServiceAdminClient
     private static void printUsage()
     {
         System.err.println("Usage:\n" +
-                "    [add]      TicketSellerServiceAdminClient -a <name> <description> <start> <duration> <limit> <maxTickets> <tickets> <price> <discount> <commission>\n" +
-                "    [update]   TicketSellerServiceAdminClient -u <id> <name> <description> <start> <duration> <limit> <maxTickets> <tickets> <price> <discount> <commission> \n" +
+                "    [add]      TicketSellerServiceAdminClient -a <name> <description> <start> <duration> <limit> <tickets> <price> <discountedPrice> <commission>\n" +
+                "    [update]   TicketSellerServiceAdminClient -u <id> <name> <description> <start> <duration> <limit> <tickets> <price> <discountedPrice> <commission> \n" +
                 "    [get]      TicketSellerServiceAdminClient -g <showId>\n" +
                 "    [check]    TicketSellerServiceAdminClient -c <reservationCode> <creditCardNumber>\n");
     }
