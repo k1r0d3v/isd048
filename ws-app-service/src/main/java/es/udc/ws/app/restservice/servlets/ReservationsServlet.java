@@ -27,36 +27,33 @@ public class ReservationsServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String path = ServletUtils.normalizePath(req.getPathInfo());
 
-        if (path != null && path.length() != 0)
-        {
-            String emailParam = req.getParameter("email");
-            if (emailParam == null) {
-                ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
-                        XmlServiceExceptionConversor.toExceptionXml(
-                                new InputValidationException("Invalid Request: " + "parameter 'email' is mandatory")),
-                        null);
-                return;
-            }
-
-            List<Reservation> reservations;
-            try {
-                reservations = TicketSellerServiceFactory.getService().getUserReservations(emailParam);
-            } catch (InputValidationException ex) {
-                ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
-                        XmlServiceExceptionConversor.toExceptionXml(ex), null);
-                return;
-            }
-
-            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK,
-                    XmlServiceReservationDtoConversor.toXml(ReservationToDto.toReservationDtos(reservations)), null);
-        }
-        else
-        {
+        if (path != null && path.length() != 0) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                     XmlServiceExceptionConversor.toExceptionXml(
                             new InputValidationException("Invalid Request: " + "invalid path " + path)),
                     null);
         }
+
+        String emailParam = req.getParameter("email");
+        if (emailParam == null) {
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                    XmlServiceExceptionConversor.toExceptionXml(
+                            new InputValidationException("Invalid Request: " + "parameter 'email' is mandatory")),
+                    null);
+            return;
+        }
+
+        List<Reservation> reservations;
+        try {
+            reservations = TicketSellerServiceFactory.getService().getUserReservations(emailParam);
+        } catch (InputValidationException ex) {
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
+                    XmlServiceExceptionConversor.toExceptionXml(ex), null);
+            return;
+        }
+
+        ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK,
+                XmlServiceReservationDtoConversor.toXml(ReservationToDto.toReservationDtos(reservations)), null);
     }
 
     @Override

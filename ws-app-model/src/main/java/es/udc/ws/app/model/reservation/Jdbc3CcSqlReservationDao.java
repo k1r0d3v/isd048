@@ -48,10 +48,4 @@ public class Jdbc3CcSqlReservationDao extends AbstractSqlReservationDao
             throw new RuntimeException(e);
         }
     }
-
-	@Override
-	public void remove(Connection c, Long id) throws InstanceNotFoundException {
-		// TODO Auto-generated method stub
-		
-	}
 }

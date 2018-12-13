@@ -29,14 +29,15 @@ import java.net.URLEncoder;
 import java.util.List;
 
 
-// TODO: Implement correct exception handling
 public class RestClientAdminTicketSellerService implements ClientAdminTicketSellerService
 {
     private final static String ENDPOINT_ADDRESS_PARAMETER = "RestClientTicketSellerService.endpointAddress";
     private String endpointAddress;
 
     @Override
-    public ClientShowDto createShow(ClientAdminShowDto show) throws InputValidationException {
+    public ClientShowDto createShow(ClientAdminShowDto show)
+            throws InputValidationException
+    {
         try {
 
             HttpResponse response = Request.Post(getEndpointAddress() + "shows").
@@ -47,6 +48,8 @@ public class RestClientAdminTicketSellerService implements ClientAdminTicketSell
 
             return XmlClientShowDtoConversor.toClientShowDto(response.getEntity().getContent());
 
+        } catch (InputValidationException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -65,6 +68,9 @@ public class RestClientAdminTicketSellerService implements ClientAdminTicketSell
 
             validateStatusCode(HttpStatus.SC_NO_CONTENT, response);
 
+        } catch (InstanceNotFoundException | InputValidationException |
+            ClientShowHasReservations | ClientNotEnoughAvailableTickets e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -82,7 +88,9 @@ public class RestClientAdminTicketSellerService implements ClientAdminTicketSell
 
             return XmlClientShowDtoConversor.toClientShowDto(response.getEntity().getContent());
 
-        }catch (Exception e) {
+        } catch (InstanceNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -100,6 +108,9 @@ public class RestClientAdminTicketSellerService implements ClientAdminTicketSell
                     execute().returnResponse();
 
             validateStatusCode(HttpStatus.SC_OK, response);
+        } catch (InstanceNotFoundException | InputValidationException |
+            ClientCreditCardNotCoincident | ClientReservationAlreadyChecked e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -113,7 +124,10 @@ public class RestClientAdminTicketSellerService implements ClientAdminTicketSell
 
 
     private void validateStatusCode(int successCode, HttpResponse response)
-            throws ParsingException {
+            throws ParsingException, InstanceNotFoundException, ClientLimitDateExceeded, ClientCreditCardNotCoincident,
+            ClientNotEnoughAvailableTickets, ClientReservationAlreadyChecked,
+            ClientUnknownException, ClientShowHasReservations, InputValidationException
+    {
 
         try
         {
@@ -133,14 +147,14 @@ public class RestClientAdminTicketSellerService implements ClientAdminTicketSell
                 case HttpStatus.SC_BAD_REQUEST:
                 case HttpStatus.SC_GONE:
                 case HttpStatus.SC_FORBIDDEN:
-                    throw XmlClientExceptionConversor.fromExceptionXml(
+                    XmlClientExceptionConversor.throwFromExceptionXml(
                             response.getEntity().getContent());
 
                 default:
                     throw new RuntimeException("HTTP error; status code = " + statusCode);
             }
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

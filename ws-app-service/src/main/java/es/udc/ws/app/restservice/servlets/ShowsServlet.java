@@ -50,7 +50,7 @@ public class ShowsServlet extends HttpServlet {
             try {
                 shows = TicketSellerServiceFactory.getService().findShows(keywordsParam, start, end);
             } catch (InputValidationException ex) {
-                ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
+                ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                         XmlServiceExceptionConversor.toExceptionXml(ex), null);
                 return;
             }

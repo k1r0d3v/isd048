@@ -3,8 +3,7 @@ package es.udc.ws.app.client.service.rest;
 import es.udc.ws.app.client.service.ClientTicketSellerService;
 import es.udc.ws.app.client.service.dto.ClientReservationDto;
 import es.udc.ws.app.client.service.dto.ClientShowDto;
-import es.udc.ws.app.client.service.exceptions.ClientLimitDateExceeded;
-import es.udc.ws.app.client.service.exceptions.ClientNotEnoughAvailableTickets;
+import es.udc.ws.app.client.service.exceptions.*;
 import es.udc.ws.app.client.service.rest.xml.XmlClientExceptionConversor;
 import es.udc.ws.app.client.service.rest.xml.XmlClientReservationDtoConversor;
 import es.udc.ws.app.client.service.rest.xml.XmlClientShowDtoConversor;
@@ -16,11 +15,11 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.fluent.Request;
 
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.List;
 
 
-// TODO: Implement correct exception handling
 public class RestClientTicketSellerService implements ClientTicketSellerService
 {
     private final static String ENDPOINT_ADDRESS_PARAMETER = "RestClientTicketSellerService.endpointAddress";
@@ -38,14 +37,20 @@ public class RestClientTicketSellerService implements ClientTicketSellerService
 
             return XmlClientShowDtoConversor.toClientShowDtos(response.getEntity().getContent());
 
+        } catch (InputValidationException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public ClientReservationDto buyTickets(long showId, String email, String cardNumber, int count) throws InstanceNotFoundException, InputValidationException, ClientNotEnoughAvailableTickets, ClientLimitDateExceeded {
-        try {
+    public ClientReservationDto buyTickets(long showId, String email, String cardNumber, int count)
+            throws InstanceNotFoundException, InputValidationException,
+            ClientNotEnoughAvailableTickets, ClientLimitDateExceeded
+    {
+        try
+        {
             HttpResponse response = Request.Post(getEndpointAddress() + "reservations" +
                     "?show=" + showId +
                     "&email=" + URLEncoder.encode(email, "UTF-8") +
@@ -57,6 +62,8 @@ public class RestClientTicketSellerService implements ClientTicketSellerService
 
             return XmlClientReservationDtoConversor.toClientReservationDto(response.getEntity().getContent());
 
+        } catch (InstanceNotFoundException | InputValidationException | ClientNotEnoughAvailableTickets | ClientLimitDateExceeded e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -74,6 +81,8 @@ public class RestClientTicketSellerService implements ClientTicketSellerService
 
             return XmlClientReservationDtoConversor.toClientReservationDtos(response.getEntity().getContent());
 
+        } catch (InputValidationException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -87,7 +96,10 @@ public class RestClientTicketSellerService implements ClientTicketSellerService
 
 
     private void validateStatusCode(int successCode, HttpResponse response)
-            throws ParsingException {
+            throws ParsingException, InstanceNotFoundException, ClientLimitDateExceeded, ClientCreditCardNotCoincident,
+            ClientNotEnoughAvailableTickets, ClientReservationAlreadyChecked,
+            ClientUnknownException, ClientShowHasReservations, InputValidationException
+    {
 
         try
         {
@@ -107,14 +119,14 @@ public class RestClientTicketSellerService implements ClientTicketSellerService
                 case HttpStatus.SC_BAD_REQUEST:
                 case HttpStatus.SC_GONE:
                 case HttpStatus.SC_FORBIDDEN:
-                    throw XmlClientExceptionConversor.fromExceptionXml(
+                    XmlClientExceptionConversor.throwFromExceptionXml(
                             response.getEntity().getContent());
 
                 default:
                     throw new RuntimeException("HTTP error; status code = " + statusCode);
             }
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
