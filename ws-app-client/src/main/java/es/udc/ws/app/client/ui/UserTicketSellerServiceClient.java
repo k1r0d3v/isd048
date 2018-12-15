@@ -7,7 +7,7 @@ import es.udc.ws.app.client.service.dto.ClientShowDto;
 
 import java.util.List;
 
-public class TicketSellerServiceClient {
+public class UserTicketSellerServiceClient {
 
     public static void main(String[] args) {
 
@@ -18,7 +18,7 @@ public class TicketSellerServiceClient {
 
 
         if("-f".equalsIgnoreCase(args[0]))
-            // [find] TicketSellerServiceClient -f <keywords>
+            // [find] UserTicketSellerServiceClient -f <keywords>
         {
             validateArgs(args, 2, new int[] {});
 
@@ -47,7 +47,7 @@ public class TicketSellerServiceClient {
 
         }
         else if("-b".equalsIgnoreCase(args[0]))
-            // [buy] TicketSellerServiceClient -b <showId> <email> <creditCardNumber> <count>
+            // [buy] UserTicketSellerServiceClient -b <showId> <email> <creditCardNumber> <count>
         {
             validateArgs(args, 5, new int[] {1, 4});
 
@@ -74,7 +74,7 @@ public class TicketSellerServiceClient {
             }
         }
         else if("-g".equalsIgnoreCase(args[0]))
-            // [get] TicketSellerServiceClient -g <email>
+            // [get] UserTicketSellerServiceClient -g <email>
         {
             validateArgs(args, 2, new int[] {});
 
@@ -127,8 +127,8 @@ public class TicketSellerServiceClient {
 
     private static void printUsage() {
         System.err.println("Usage:\n" +
-                "    [find]   TicketSellerServiceClient -f <keywords>\n" +
-                "    [buy]    TicketSellerServiceClient -b <showId> <email> <creditCardNumber> <count>\n" +
-                "    [get]    TicketSellerServiceClient -g <email>\n");
+                "    [find]   UserTicketSellerServiceClient -f <keywords>\n" +
+                "    [buy]    UserTicketSellerServiceClient -b <showId> <email> <creditCardNumber> <count>\n" +
+                "    [get]    UserTicketSellerServiceClient -g <email>\n");
     }
 }

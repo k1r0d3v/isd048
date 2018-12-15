@@ -8,7 +8,7 @@ import es.udc.ws.app.client.service.dto.ClientShowDto;
 import javax.xml.bind.DatatypeConverter;
 
 
-public class TicketSellerServiceAdminClient
+public class AdminTicketSellerServiceClient
 {
     public static void main(String[] args) {
 
@@ -18,7 +18,7 @@ public class TicketSellerServiceAdminClient
         ClientAdminTicketSellerService service = ClientAdminTicketSellerServiceFactory.getService();
 
         if("-c".equalsIgnoreCase(args[0]))
-        // [check] TicketSellerServiceClient -c <reservationCode> <creditCardNumber>
+        // [check] UserTicketSellerServiceClient -c <reservationCode> <creditCardNumber>
         {
             validateArgs(args, 3, new int[] {});
 
@@ -31,7 +31,7 @@ public class TicketSellerServiceAdminClient
                 ex.printStackTrace(System.err);
             }
         } else if("-a".equalsIgnoreCase(args[0]))
-        // [add]      TicketSellerServiceAdminClient -a <name> <description> <start> <duration> <limit> <tickets> <price> <discountedPrice> <commission>
+        // [add]      AdminTicketSellerServiceClient -a <name> <description> <start> <duration> <limit> <tickets> <price> <discountedPrice> <commission>
         {
             validateArgs(args, 10, new int[] {4, 6, 7, 8, 9});
 
@@ -67,7 +67,7 @@ public class TicketSellerServiceAdminClient
                 ex.printStackTrace(System.err);
             }
         } else if("-u".equalsIgnoreCase(args[0]))
-        // [update]   TicketSellerServiceAdminClient -u <id> <name> <description> <start> <duration> <limit> <tickets> <price> <discountedPrice> <commission>
+        // [update]   AdminTicketSellerServiceClient -u <id> <name> <description> <start> <duration> <limit> <tickets> <price> <discountedPrice> <commission>
         {
             validateArgs(args, 11, new int[] {1, 5, 7, 8, 9, 10});
 
@@ -103,7 +103,7 @@ public class TicketSellerServiceAdminClient
                 ex.printStackTrace(System.err);
             }
         } else if("-g".equalsIgnoreCase(args[0]))
-        // [get]      TicketSellerServiceAdminClient -g <showId>
+        // [get]      AdminTicketSellerServiceClient -g <showId>
         {
             validateArgs(args, 2, new int[] {1});
 
@@ -151,9 +151,9 @@ public class TicketSellerServiceAdminClient
     private static void printUsage()
     {
         System.err.println("Usage:\n" +
-                "    [add]      TicketSellerServiceAdminClient -a <name> <description> <start> <duration> <limit> <tickets> <price> <discountedPrice> <commission>\n" +
-                "    [update]   TicketSellerServiceAdminClient -u <id> <name> <description> <start> <duration> <limit> <tickets> <price> <discountedPrice> <commission> \n" +
-                "    [get]      TicketSellerServiceAdminClient -g <showId>\n" +
-                "    [check]    TicketSellerServiceAdminClient -c <reservationCode> <creditCardNumber>\n");
+                "    [add]      AdminTicketSellerServiceClient -a <name> <description> <start> <duration> <limit> <tickets> <price> <discountedPrice> <commission>\n" +
+                "    [update]   AdminTicketSellerServiceClient -u <id> <name> <description> <start> <duration> <limit> <tickets> <price> <discountedPrice> <commission> \n" +
+                "    [get]      AdminTicketSellerServiceClient -g <showId>\n" +
+                "    [check]    AdminTicketSellerServiceClient -c <reservationCode> <creditCardNumber>\n");
     }
 }
