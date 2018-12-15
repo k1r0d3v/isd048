@@ -102,7 +102,7 @@ public class RestClientAdminTicketSellerService implements ClientAdminTicketSell
     {
         try
         {
-            HttpResponse response = Request.Post(getEndpointAddress() + "/reservations/check" +
+            HttpResponse response = Request.Put(getEndpointAddress() + "/reservations/check" +
                     "?code=" + URLEncoder.encode(code, "UTF-8") +
                     "&creditCard=" + URLEncoder.encode(cardNumber, "UTF-8")).
                     execute().returnResponse();
