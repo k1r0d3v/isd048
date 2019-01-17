@@ -5,6 +5,7 @@ import es.udc.ws.app.client.service.ClientTicketSellerServiceFactory;
 import es.udc.ws.app.client.service.dto.ClientReservationDto;
 import es.udc.ws.app.client.service.dto.ClientShowDto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserTicketSellerServiceClient {
@@ -20,31 +21,35 @@ public class UserTicketSellerServiceClient {
         if("-f".equalsIgnoreCase(args[0]))
             // [find] UserTicketSellerServiceClient -f <keywords>
         {
-            validateArgs(args, 2, new int[] {});
+
+            List<ClientShowDto> shows = new ArrayList<>();
 
             try {
-                List<ClientShowDto> shows = service.findShows(args[1]);
-                System.out.println("Found " + shows.size() +
-                        " show(s) with keywords '" + args[1] + "'");
-
-                for (ClientShowDto show : shows)
-                {
-                    System.out.println("{" +
-                            "id=" + show.getId() +
-                            ", name='" + show.getName() + '\'' +
-                            ", description='" + show.getDescription() + '\'' +
-                            ", startDate=" + show.getStartDate().toInstant() +
-                            ", endDate=" + show.getEndDate().toInstant() +
-                            ", limitDate=" + show.getLimitDate().toInstant() +
-                            ", tickets=" + show.getTickets() +
-                            ", price=" + show.getPrice() +
-                            ", discountedPrice=" + show.getDiscountedPrice() +
-                            "}");
-                }
+                if (args.length == 1)
+                    shows = service.findShows("");
+                else if (args.length == 2)
+                    shows = service.findShows(args[1]);
+                else printUsageAndExit();
             } catch (Exception ex) {
                 ex.printStackTrace(System.err);
             }
 
+            System.out.println("Found " + shows.size() + " show(s)");
+
+            for (ClientShowDto show : shows)
+            {
+                System.out.println("{" +
+                        "id=" + show.getId() +
+                        ", name='" + show.getName() + '\'' +
+                        ", description='" + show.getDescription() + '\'' +
+                        ", startDate=" + show.getStartDate().toInstant() +
+                        ", endDate=" + show.getEndDate().toInstant() +
+                        ", limitDate=" + show.getLimitDate().toInstant() +
+                        ", tickets=" + show.getTickets() +
+                        ", price=" + show.getPrice() +
+                        ", discountedPrice=" + show.getDiscountedPrice() +
+                        "}");
+            }
         }
         else if("-b".equalsIgnoreCase(args[0]))
             // [buy] UserTicketSellerServiceClient -b <showId> <email> <creditCardNumber> <count>

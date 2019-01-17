@@ -142,10 +142,8 @@ public abstract class AbstractSqlShowDao implements SqlShowDao
 	}
 
 	@Override
-	public List<Show> find(Connection c, String words, Calendar startDate, Calendar endDate)
+	public List<Show> find(Connection c, String keywords, Calendar startDate, Calendar endDate)
 	{
-		String[] keywords = words.split(" ");
-
 		String query = "SELECT " +
                 "id, " +
                 "name, " +
@@ -160,12 +158,13 @@ public abstract class AbstractSqlShowDao implements SqlShowDao
                 "commission " +
                 "FROM ShowTable";
 
-		if (keywords.length > 0)
+		String[] keywordsParts = keywords.split(" ");
+		if (keywordsParts.length > 0)
 		{
 		    StringBuilder tmp = new StringBuilder();
 		    tmp.append(" WHERE");
 
-			for (int i = 0; i < (keywords.length - 1); i++)
+			for (int i = 0; i < (keywordsParts.length - 1); i++)
 				tmp.append(" LOWER(description) LIKE LOWER(?) AND");
 
             tmp.append(" LOWER(description) LIKE LOWER(?)");
@@ -180,8 +179,8 @@ public abstract class AbstractSqlShowDao implements SqlShowDao
 		try (PreparedStatement preparedStatement = c.prepareStatement(query)) {
 
             int i = 0;
-            for (; i < keywords.length; i++)
-                preparedStatement.setString(i + 1, String.format("%%%s%%", keywords[i]));
+            for (; i < keywordsParts.length; i++)
+                preparedStatement.setString(i + 1, String.format("%%%s%%", keywordsParts[i]));
 
             if (startDate != null && endDate != null) {
                 preparedStatement.setTimestamp(i + 1, new Timestamp(startDate.getTimeInMillis()));

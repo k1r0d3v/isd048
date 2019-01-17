@@ -158,7 +158,8 @@ public class TicketSellerServiceImpl implements TicketSellerService
 	public List<Show> findShows(String keywords, Calendar start, Calendar end)
             throws InputValidationException
     {
-        PropertyValidator.validateMandatoryString("words", keywords);
+        if (keywords == null)
+            throw new InputValidationException("keywords can not be null");
 
 	    if (start == null && end != null)
 	        throw new InputValidationException("end must be null if start is null");

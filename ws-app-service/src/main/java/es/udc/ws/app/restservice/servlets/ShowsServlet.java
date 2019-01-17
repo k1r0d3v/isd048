@@ -42,6 +42,8 @@ public class ShowsServlet extends HttpServlet {
 
 
             Calendar start = Calendar.getInstance();
+            start.set(Calendar.MONTH, Calendar.DECEMBER);
+            start.set(Calendar.DAY_OF_MONTH, 17);
             Calendar end = (Calendar)start.clone();
             end.add(Calendar.DAY_OF_YEAR, 30);
 
