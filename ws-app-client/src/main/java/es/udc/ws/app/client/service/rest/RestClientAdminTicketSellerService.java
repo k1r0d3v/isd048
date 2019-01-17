@@ -102,12 +102,12 @@ public class RestClientAdminTicketSellerService implements ClientAdminTicketSell
     {
         try
         {
-            HttpResponse response = Request.Put(getEndpointAddress() + "/reservations/check" +
+            HttpResponse response = Request.Post(getEndpointAddress() + "reservations/check" +
                     "?code=" + URLEncoder.encode(code, "UTF-8") +
                     "&creditCard=" + URLEncoder.encode(cardNumber, "UTF-8")).
                     execute().returnResponse();
 
-            validateStatusCode(HttpStatus.SC_OK, response);
+            validateStatusCode(HttpStatus.SC_NO_CONTENT, response);
         } catch (InstanceNotFoundException | InputValidationException |
             ClientCreditCardNotCoincident | ClientReservationAlreadyChecked e) {
             throw e;
