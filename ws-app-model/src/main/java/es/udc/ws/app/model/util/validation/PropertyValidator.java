@@ -83,8 +83,8 @@ public class PropertyValidator
 
         if ( (date == null) || date.before(after) ) {
             throw new InputValidationException("Invalid " + propertyName +
-                    " value (it must be after " + after + " ): " +
-                    date);
+                    " value (it must be after " + after.getTime() + " ): " +
+                    (date != null ? date.getTime() : "null"));
         }
 
     }
@@ -95,20 +95,20 @@ public class PropertyValidator
 
         if ( (date == null) || date.after(before) ) {
             throw new InputValidationException("Invalid " + propertyName +
-                    " value (it must be before " + before + " ): " +
-                    date);
+                    " value (it must be before " + before.getTime() + " ): " +
+                    (date != null ? date.getTime() : "null"));
         }
 
     }
 
     public static void validateFutureDate(String propertyName,
-                                        Calendar propertyValue) throws InputValidationException {
+                                        Calendar date) throws InputValidationException {
 
         Calendar now = Calendar.getInstance();
-        if ( (propertyValue == null) || (propertyValue.before(now)) ) {
+        if ( (date == null) || (date.before(now)) ) {
             throw new InputValidationException("Invalid " + propertyName +
                     " value (it must be a future date): " +
-                    propertyValue);
+                    (date != null ? date.getTime() : "null"));
         }
 
     }

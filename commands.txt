@@ -1,11 +1,12 @@
 1. Añadir espectáculo (AdminTicketSellerServiceClient)
 // ok
 // ok
+//ok
 // falla
 
 mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerServiceClient" -Dexec.args="-a  'Fútbol' 'Partido de liga UDC' 2020-01-06T12:00:00+01:00 120 2020-01-01T00:00:00+01:00 100 30 25 3"
 mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerServiceClient" -Dexec.args="-a  'Concierto' 'Concierto benéfico UDC' 2020-01-04T12:00:00+01:00 90 2020-01-01T20:00:00+01:00 20 15 12 2"
-mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerServiceClient" -Dexec.args="-a   'Fiesta' 'Fiesta de Carnaval UDC' 2020-03-05T12:00:00+01:00 240 2020-03-01T12:00:00+01:00 200 10 8 1"
+mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerServiceClient" -Dexec.args="-a  'Fiesta' 'Fiesta de Carnaval UDC' 2020-03-05T12:00:00+01:00 240 2020-03-01T12:00:00+01:00 200 10 8 1"
 mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerServiceClient" -Dexec.args="-a  'Fiesta' 'Fiesta de Carnaval UDC' 2020-03-05T12:00:00+01:00 240 2020-05-05T12:00:00+01:00 200 10 8 1"
 
 2. Buscar espectáculo (AdminTicketSellerServiceClient)
