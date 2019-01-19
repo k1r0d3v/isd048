@@ -21,9 +21,9 @@ public interface TicketSellerService
 
     List<Show> findShows(String keywords, Calendar start, Calendar end) throws InputValidationException;
 
-    Reservation buyTickets(long showId, String email, String cardNumber, int count) throws InstanceNotFoundException, InputValidationException, NotEnoughAvailableTickets, LimitDateExceeded;
+    Reservation buyTickets(long showId, String email, String creditCard, int count) throws InstanceNotFoundException, InputValidationException, NotEnoughAvailableTickets, LimitDateExceeded;
 
     List<Reservation> getUserReservations(String email) throws InputValidationException;
 
-    void checkReservation(String code, String cardNumber) throws InstanceNotFoundException, InputValidationException, CreditCardNotCoincident, ReservationAlreadyChecked;
+    void checkReservation(String code, String creditCard) throws InstanceNotFoundException, InputValidationException, CreditCardNotCoincident, ReservationAlreadyChecked;
 }

@@ -37,7 +37,7 @@
 
             <!-- Insert into the SEI tag the JAX-WS service class name
                  implementation and uncomment this plugin -->
-            <!--
+
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>jaxws-maven-plugin</artifactId>
@@ -51,7 +51,7 @@
 						<configuration>
 							<executable>${tool.wsgen}</executable>
 							<sei>
-								XXXService
+                                es.udc.ws.app.soapservice.SoapTicketSellerService
 							</sei>
 							<genWsdl>true</genWsdl>
 							<keep>true</keep>
@@ -60,7 +60,6 @@
 					</execution>
 				</executions>
 			</plugin>
-           -->
            			
             <!-- ========================================================== -->
             <!-- Jetty configuration -->

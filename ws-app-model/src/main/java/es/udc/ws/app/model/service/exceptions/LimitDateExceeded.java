@@ -5,7 +5,14 @@ import java.util.Date;
 
 public class LimitDateExceeded extends Exception
 {
-    public LimitDateExceeded(Date date) {
-        super("Limit date (" + date + ") exceeded");
+    private Date limitDate;
+
+    public LimitDateExceeded(Date limitDate) {
+        super("Limit date (" + limitDate + ") exceeded");
+        this.limitDate = limitDate;
+    }
+
+    public Date getLimitDate() {
+        return limitDate;
     }
 }
