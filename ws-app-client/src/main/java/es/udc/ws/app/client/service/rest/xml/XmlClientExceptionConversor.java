@@ -40,7 +40,7 @@ public class XmlClientExceptionConversor {
         switch (root.getName()) {
             case "CreditCardNotCoincident":
                 throw new ClientCreditCardNotCoincident(message.getText());
-            case "LimitExceeded":
+            case "LimitDateExceeded":
                 throw new ClientLimitDateExceeded(message.getText());
             case "NotEnoughAvailableTickets":
                 throw new ClientNotEnoughAvailableTickets(message.getText());

@@ -201,7 +201,7 @@ public class TicketSellerServiceImpl implements TicketSellerService
 
 				if (Calendar.getInstance().after(show.getLimitDate())) {
 				    connection.commit();
-                    throw new LimitDateExceeded("Can not buy tickets after limit date");
+                    throw new LimitDateExceeded(Calendar.getInstance().getTime());
                 }
 
 				if (show.getTickets() <= 0) {
