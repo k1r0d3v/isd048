@@ -9,6 +9,7 @@ import java.util.Locale;
 
 import es.udc.ws.app.client.service.exceptions.*;
 import es.udc.ws.util.exceptions.InputValidationException;
+import org.apache.http.HttpStatus;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -23,37 +24,20 @@ public class XmlClientExceptionConversor {
     public final static Namespace XML_NS = 
             Namespace.getNamespace("http://ws.udc.es/shows/xml");
 
-    public static InstanceNotFoundException fromInstanceNotFoundExceptionXml(InputStream ex) 
-            throws ParsingException
-    {
-        try {
-
-            SAXBuilder builder = new SAXBuilder();
-            Document document = builder.build(ex);
-            Element rootElement = document.getRootElement();
-
-            Element instanceId = rootElement.getChild("instanceId", XML_NS);
-            Element instanceType = rootElement.getChild("instanceType", XML_NS);
-
-            return new InstanceNotFoundException(instanceId.getText(), instanceType.getText());
-        } catch (Exception e) {
-            throw new ParsingException(e);
-        }
-    }
-
-    public static void throwFromExceptionXml(InputStream ex)
+    public static void throwFromExceptionXml(InputStream content, int statusCode)
             throws ClientCreditCardNotCoincident, ClientLimitDateExceeded,
             ClientNotEnoughAvailableTickets, ClientReservationAlreadyChecked,
-            ClientShowHasReservations, ClientUnknownException, InputValidationException, ParsingException
+            ClientShowHasReservations, InputValidationException,
+            ParsingException, InstanceNotFoundException
     {
         SAXBuilder builder = new SAXBuilder();
         Document document;
-        try { document = builder.build(ex); } catch (Exception e) { throw new ParsingException(e); }
+        try { document = builder.build(content); } catch (Exception e) { throw new ParsingException(e); }
 
-        Element rootElement = document.getRootElement();
-        Element message = rootElement.getChild("message", XML_NS);
+        Element root = document.getRootElement();
+        Element message = root.getChild("message", XML_NS);
 
-        switch (rootElement.getName()) {
+        switch (root.getName()) {
             case "CreditCardNotCoincident":
                 throw new ClientCreditCardNotCoincident(message.getText());
             case "LimitExceeded":
@@ -66,8 +50,23 @@ public class XmlClientExceptionConversor {
                 throw new ClientShowHasReservations(message.getText());
             case "InputValidationException":
                 throw new InputValidationException(message.getText());
+            case "InstanceNotFoundException":
+                throw XmlClientExceptionConversor.fromInstanceNotFoundExceptionXml(root);
+            default:
+                throw new RuntimeException("HTTP error; status code = " + statusCode + ";\n" + message.getText());
         }
+    }
 
-        throw new ClientUnknownException(message.getText());
+    private static InstanceNotFoundException fromInstanceNotFoundExceptionXml(Element root)
+            throws ParsingException
+    {
+        try {
+            Element instanceId = root.getChild("instanceId", XML_NS);
+            Element instanceType = root.getChild("instanceType", XML_NS);
+
+            return new InstanceNotFoundException(instanceId.getText(), instanceType.getText());
+        } catch (Exception e) {
+            throw new ParsingException(e);
+        }
     }
 }

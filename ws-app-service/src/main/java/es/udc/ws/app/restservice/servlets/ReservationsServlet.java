@@ -35,6 +35,7 @@ public class ReservationsServlet extends HttpServlet {
                     XmlServiceExceptionConversor.toExceptionXml(
                             new InputValidationException("Invalid Request: " + "invalid path " + path)),
                     null);
+            return;
         }
 
         String emailParam = req.getParameter("email");
@@ -168,14 +169,16 @@ public class ReservationsServlet extends HttpServlet {
             return;
         }
 
+        // Location not needed here? reservations can not be accessed by id
+        /*
         String reservationLocation = ServletUtils.normalizePath(req.getRequestURL().toString()) + "/" + reservation.getId().toString();
 
         Map<String, String> headers = new HashMap<>(1);
         headers.put("Location", reservationLocation);
-
+        */
 
         ServiceReservationDto reservationDto = ReservationToDto.toReservationDto(reservation);
         ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_CREATED,
-                XmlServiceReservationDtoConversor.toXml(reservationDto), headers);
+                XmlServiceReservationDtoConversor.toXml(reservationDto), null/*headers*/);
     }
 }

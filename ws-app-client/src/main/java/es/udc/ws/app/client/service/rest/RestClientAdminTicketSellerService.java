@@ -126,7 +126,7 @@ public class RestClientAdminTicketSellerService implements ClientAdminTicketSell
     private void validateStatusCode(int successCode, HttpResponse response)
             throws ParsingException, InstanceNotFoundException, ClientLimitDateExceeded, ClientCreditCardNotCoincident,
             ClientNotEnoughAvailableTickets, ClientReservationAlreadyChecked,
-            ClientUnknownException, ClientShowHasReservations, InputValidationException
+            ClientShowHasReservations, InputValidationException
     {
 
         try
@@ -137,22 +137,9 @@ public class RestClientAdminTicketSellerService implements ClientAdminTicketSell
             if (statusCode == successCode)
                 return;
 
-            // Handler error.
-            switch (statusCode) {
+            XmlClientExceptionConversor.throwFromExceptionXml(
+                    response.getEntity().getContent(), statusCode);
 
-                case HttpStatus.SC_NOT_FOUND:
-                    throw XmlClientExceptionConversor.fromInstanceNotFoundExceptionXml(
-                            response.getEntity().getContent());
-
-                case HttpStatus.SC_BAD_REQUEST:
-                case HttpStatus.SC_GONE:
-                case HttpStatus.SC_FORBIDDEN:
-                    XmlClientExceptionConversor.throwFromExceptionXml(
-                            response.getEntity().getContent());
-
-                default:
-                    throw new RuntimeException("HTTP error; status code = " + statusCode);
-            }
 
         } catch (IOException e) {
             throw new RuntimeException(e);
