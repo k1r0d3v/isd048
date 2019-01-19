@@ -58,7 +58,7 @@ public class RestClientTicketSellerService implements ClientTicketSellerService
                     "&count=" + count).
                     execute().returnResponse();
 
-            validateStatusCode(HttpStatus.SC_OK, response);
+            validateStatusCode(HttpStatus.SC_CREATED, response);
 
             return XmlClientReservationDtoConversor.toClientReservationDto(response.getEntity().getContent());
 

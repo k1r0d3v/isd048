@@ -21,7 +21,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class ShowsServlet extends HttpServlet {
@@ -126,8 +128,13 @@ public class ShowsServlet extends HttpServlet {
         }
         ServiceShowDto showDto = ShowToDto.toShowDto(show);
 
+        String showLocation = ServletUtils.normalizePath(req.getRequestURL().toString()) + "/" + show.getId().toString();
+
+        Map<String, String> headers = new HashMap<>(1);
+        headers.put("Location", showLocation);
+
         ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_CREATED,
-                XmlServiceShowDtoConversor.toXml(showDto), null);
+                XmlServiceShowDtoConversor.toXml(showDto), headers);
     }
 
     @Override

@@ -7,6 +7,7 @@ import es.udc.ws.app.model.service.exceptions.CreditCardNotCoincident;
 import es.udc.ws.app.model.service.exceptions.LimitDateExceeded;
 import es.udc.ws.app.model.service.exceptions.NotEnoughAvailableTickets;
 import es.udc.ws.app.model.service.exceptions.ReservationAlreadyChecked;
+import es.udc.ws.app.restservice.xml.XmlServiceShowDtoConversor;
 import es.udc.ws.app.serviceutil.ReservationToDto;
 import es.udc.ws.app.restservice.xml.XmlServiceExceptionConversor;
 import es.udc.ws.app.restservice.xml.XmlServiceReservationDtoConversor;
@@ -19,7 +20,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class ReservationsServlet extends HttpServlet {
@@ -165,8 +168,14 @@ public class ReservationsServlet extends HttpServlet {
             return;
         }
 
+        String reservationLocation = ServletUtils.normalizePath(req.getRequestURL().toString()) + "/" + reservation.getId().toString();
+
+        Map<String, String> headers = new HashMap<>(1);
+        headers.put("Location", reservationLocation);
+
+
         ServiceReservationDto reservationDto = ReservationToDto.toReservationDto(reservation);
-        ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK,
-                XmlServiceReservationDtoConversor.toXml(reservationDto), null);
+        ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_CREATED,
+                XmlServiceReservationDtoConversor.toXml(reservationDto), headers);
     }
 }
