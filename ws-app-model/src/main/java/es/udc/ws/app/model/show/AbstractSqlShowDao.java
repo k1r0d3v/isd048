@@ -159,6 +159,7 @@ public abstract class AbstractSqlShowDao implements SqlShowDao
                 "FROM ShowTable";
 
 		String[] keywordsParts = keywords.split(" ");
+
 		if (keywordsParts.length > 0)
 		{
 		    StringBuilder tmp = new StringBuilder();
@@ -169,10 +170,16 @@ public abstract class AbstractSqlShowDao implements SqlShowDao
 
             tmp.append(" LOWER(description) LIKE LOWER(?)");
             query += tmp.toString();
+
+            if (startDate != null && endDate != null)
+                query += " AND startDate BETWEEN ? AND ?";
+        }
+        else
+        {
+            if (startDate != null && endDate != null)
+                query += " WHERE startDate BETWEEN ? AND ?";
         }
 
-        if (startDate != null && endDate != null)
-            query += " AND startDate BETWEEN ? AND ?";
 
 		query += " ORDER BY startDate";
 

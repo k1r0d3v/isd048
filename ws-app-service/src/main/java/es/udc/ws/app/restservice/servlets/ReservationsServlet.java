@@ -3,11 +3,10 @@ package es.udc.ws.app.restservice.servlets;
 import es.udc.ws.app.dto.ServiceReservationDto;
 import es.udc.ws.app.model.reservation.Reservation;
 import es.udc.ws.app.model.service.TicketSellerServiceFactory;
-import es.udc.ws.app.model.service.exceptions.CreditCardNotCoincident;
-import es.udc.ws.app.model.service.exceptions.LimitDateExceeded;
-import es.udc.ws.app.model.service.exceptions.NotEnoughAvailableTickets;
-import es.udc.ws.app.model.service.exceptions.ReservationAlreadyChecked;
-import es.udc.ws.app.restservice.xml.XmlServiceShowDtoConversor;
+import es.udc.ws.app.model.service.exceptions.CreditCardNotCoincidentException;
+import es.udc.ws.app.model.service.exceptions.LimitDateExceededException;
+import es.udc.ws.app.model.service.exceptions.NotEnoughAvailableTicketsException;
+import es.udc.ws.app.model.service.exceptions.ReservationAlreadyCheckedException;
 import es.udc.ws.app.serviceutil.ReservationToDto;
 import es.udc.ws.app.restservice.xml.XmlServiceExceptionConversor;
 import es.udc.ws.app.restservice.xml.XmlServiceReservationDtoConversor;
@@ -20,9 +19,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 public class ReservationsServlet extends HttpServlet {
@@ -94,7 +91,7 @@ public class ReservationsServlet extends HttpServlet {
                     ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                             XmlServiceExceptionConversor.toExceptionXml(ex), null);
                     return;
-                } catch (CreditCardNotCoincident | ReservationAlreadyChecked ex) {
+                } catch (CreditCardNotCoincidentException | ReservationAlreadyCheckedException ex) {
                     ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_FORBIDDEN,
                             XmlServiceExceptionConversor.toExceptionXml(ex), null);
                     return;
@@ -158,10 +155,16 @@ public class ReservationsServlet extends HttpServlet {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                     XmlServiceExceptionConversor.toExceptionXml(ex), null);
             return;
-        } catch (NotEnoughAvailableTickets | LimitDateExceeded ex) {
-            // Available tickets can grow and limit date can change then can not be a permanent error
+        } catch (NotEnoughAvailableTicketsException ex) {
+            // Available tickets can grow, then can not be a permanent error
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
                     XmlServiceExceptionConversor.toExceptionXml(ex), null);
+            return;
+        }
+        catch (LimitDateExceededException ex) {
+            // Limit date can change then can not be a permanent error
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
+                    XmlServiceExceptionConversor.toLimitDateExceededExceptionXml(ex), null);
             return;
         } catch (InstanceNotFoundException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,

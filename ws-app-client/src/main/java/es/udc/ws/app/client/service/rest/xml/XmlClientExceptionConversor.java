@@ -19,6 +19,8 @@ import org.jdom2.input.SAXBuilder;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import es.udc.ws.util.xml.exceptions.ParsingException;
 
+import javax.xml.bind.DatatypeConverter;
+
 
 public class XmlClientExceptionConversor {
     public final static Namespace XML_NS = 
@@ -38,19 +40,19 @@ public class XmlClientExceptionConversor {
         Element message = root.getChild("message", XML_NS);
 
         switch (root.getName()) {
-            case "CreditCardNotCoincident":
+            case "CreditCardNotCoincidentException":
                 throw new ClientCreditCardNotCoincident(message.getText());
-            case "LimitDateExceeded":
-                throw new ClientLimitDateExceeded(message.getText());
-            case "NotEnoughAvailableTickets":
+            case "LimitDateExceededException":
+                throw fromLimitDateExceededExceptionXml(root);
+            case "NotEnoughAvailableTicketsException":
                 throw new ClientNotEnoughAvailableTickets(message.getText());
-            case "ReservationAlreadyChecked":
+            case "ReservationAlreadyCheckedException":
                 throw new ClientReservationAlreadyChecked(message.getText());
-            case "ShowHasReservations":
+            case "ShowHasReservationsException":
                 throw new ClientShowHasReservations(message.getText());
-            case "InputValidationException":
+            case "InputValidationExceptionException":
                 throw new InputValidationException(message.getText());
-            case "InstanceNotFoundException":
+            case "InstanceNotFoundExceptionException":
                 throw XmlClientExceptionConversor.fromInstanceNotFoundExceptionXml(root);
             default:
                 throw new RuntimeException("HTTP error; status code = " + statusCode + ";\n" + message.getText());
@@ -65,6 +67,17 @@ public class XmlClientExceptionConversor {
             Element instanceType = root.getChild("instanceType", XML_NS);
 
             return new InstanceNotFoundException(instanceId.getText(), instanceType.getText());
+        } catch (Exception e) {
+            throw new ParsingException(e);
+        }
+    }
+
+    private static ClientLimitDateExceeded fromLimitDateExceededExceptionXml(Element root)
+            throws ParsingException
+    {
+        try {
+            Element limitDate = root.getChild("limitDate", XML_NS);
+            return new ClientLimitDateExceeded(DatatypeConverter.parseDateTime(limitDate.getText()).getTime());
         } catch (Exception e) {
             throw new ParsingException(e);
         }

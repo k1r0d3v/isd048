@@ -15,7 +15,7 @@ public interface ClientTicketSellerService
 {
     List<ClientShowDto> findShows(String keywords) throws InputValidationException;
 
-    ClientReservationDto buyTickets(long showId, String email, String cardNumber, int count) throws InstanceNotFoundException, InputValidationException, ClientNotEnoughAvailableTickets, ClientLimitDateExceeded;
+    ClientReservationDto buyTickets(long showId, String email, String creditCard, int count) throws InstanceNotFoundException, InputValidationException, ClientNotEnoughAvailableTickets, ClientLimitDateExceeded;
 
     List<ClientReservationDto> getUserReservations(String email) throws InputValidationException;
 }

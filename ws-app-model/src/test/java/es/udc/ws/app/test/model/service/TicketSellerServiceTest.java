@@ -4,14 +4,14 @@ package es.udc.ws.app.test.model.service;
 import es.udc.ws.app.model.reservation.Reservation;
 import es.udc.ws.app.model.reservation.SqlReservationDao;
 import es.udc.ws.app.model.reservation.SqlReservationDaoFactory;
-import es.udc.ws.app.model.service.exceptions.CreditCardNotCoincident;
-import es.udc.ws.app.model.service.exceptions.NotEnoughAvailableTickets;
+import es.udc.ws.app.model.service.exceptions.CreditCardNotCoincidentException;
+import es.udc.ws.app.model.service.exceptions.NotEnoughAvailableTicketsException;
 import es.udc.ws.app.model.service.TicketSellerService;
 
 import es.udc.ws.app.model.service.TicketSellerServiceFactory;
-import es.udc.ws.app.model.service.exceptions.LimitDateExceeded;
-import es.udc.ws.app.model.service.exceptions.ReservationAlreadyChecked;
-import es.udc.ws.app.model.service.exceptions.ShowHasReservations;
+import es.udc.ws.app.model.service.exceptions.LimitDateExceededException;
+import es.udc.ws.app.model.service.exceptions.ReservationAlreadyCheckedException;
+import es.udc.ws.app.model.service.exceptions.ShowHasReservationsException;
 import es.udc.ws.app.model.show.Show;
 import es.udc.ws.app.model.show.SqlShowDao;
 import es.udc.ws.app.model.show.SqlShowDaoFactory;
@@ -360,7 +360,7 @@ public class TicketSellerServiceTest
 			show.setPrice(10.0f);
 			show.setDiscountedPrice(5.0f);
 			ticketService.updateShow(show);
-		} catch (ShowHasReservations e) {
+		} catch (ShowHasReservationsException e) {
 			exceptionCatched = true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -567,7 +567,7 @@ public class TicketSellerServiceTest
 			ticketService.checkReservation(reservation.getCode(), "1234512345123456");
 		} catch (InputValidationException e) {
 			exceptionCatched = true;
-		} catch(ReservationAlreadyChecked e) {
+		} catch(ReservationAlreadyCheckedException e) {
 			exceptionCatched = true;
 		} catch (Exception e) {
 		
@@ -581,7 +581,7 @@ public class TicketSellerServiceTest
 		//
 		try {
 			ticketService.checkReservation(reservation.getCode(), "6534512345123456");
-		} catch (InputValidationException | CreditCardNotCoincident e) {
+		} catch (InputValidationException | CreditCardNotCoincidentException e) {
 			exceptionCatched = true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -840,7 +840,7 @@ public class TicketSellerServiceTest
 	}
 
 	@Test(expected = InstanceNotFoundException.class)
-	public void buyTicketShowDoesntExist() throws InputValidationException, InstanceNotFoundException, NotEnoughAvailableTickets, LimitDateExceeded {
+	public void buyTicketShowDoesntExist() throws InputValidationException, InstanceNotFoundException, NotEnoughAvailableTicketsException, LimitDateExceededException {
 
 		Reservation res = ticketService.buyTickets((long) -1, "email@gmail.com", "5489162716279483", 1);
 
@@ -849,7 +849,7 @@ public class TicketSellerServiceTest
 	}
 
 	@Test(expected = InputValidationException.class)
-	public void testBuyShowWithInvalidCreditCard() throws InputValidationException, InstanceNotFoundException, NotEnoughAvailableTickets, LimitDateExceeded {
+	public void testBuyShowWithInvalidCreditCard() throws InputValidationException, InstanceNotFoundException, NotEnoughAvailableTicketsException, LimitDateExceededException {
 
 		Show show = ticketService.createShow(getValidShow());
 		try {
@@ -862,8 +862,8 @@ public class TicketSellerServiceTest
 
 	}
 
-	@Test(expected = CreditCardNotCoincident.class)	
-	public void testCheckReservationExceptionIncorrectCreditCardNumber() throws InputValidationException, InstanceNotFoundException, NotEnoughAvailableTickets, LimitDateExceeded, CreditCardNotCoincident, ReservationAlreadyChecked {
+	@Test(expected = CreditCardNotCoincidentException.class)
+	public void testCheckReservationExceptionIncorrectCreditCardNumber() throws InputValidationException, InstanceNotFoundException, NotEnoughAvailableTicketsException, LimitDateExceededException, CreditCardNotCoincidentException, ReservationAlreadyCheckedException {
 		Show show = ticketService.createShow(getValidShow());
 		Reservation res1 = ticketService.buyTickets(show.getId(), "email@gmail.com", "5489627352617220", 1);
 
@@ -872,7 +872,7 @@ public class TicketSellerServiceTest
 	}
 
 	@Test(expected = InputValidationException.class)
-	public void testBuyInvalidAmountOfTickets() throws InputValidationException, InstanceNotFoundException, NotEnoughAvailableTickets, LimitDateExceeded {
+	public void testBuyInvalidAmountOfTickets() throws InputValidationException, InstanceNotFoundException, NotEnoughAvailableTicketsException, LimitDateExceededException {
 
 		Show show = ticketService.createShow(getValidShow());
 		try {
@@ -886,7 +886,7 @@ public class TicketSellerServiceTest
 	}
 
 	@Test(expected = InputValidationException.class)
-	public void testBuyMoreTicketsThanAvailable() throws InputValidationException, InstanceNotFoundException, NotEnoughAvailableTickets, LimitDateExceeded {
+	public void testBuyMoreTicketsThanAvailable() throws InputValidationException, InstanceNotFoundException, NotEnoughAvailableTicketsException, LimitDateExceededException {
 
 		Show show = ticketService.createShow(getValidShow());
 		try {
@@ -900,7 +900,7 @@ public class TicketSellerServiceTest
 	}
 
 	@Test(expected = InputValidationException.class)
-	public void testBuyAfterLimitDate() throws InputValidationException, InstanceNotFoundException, NotEnoughAvailableTickets, LimitDateExceeded {
+	public void testBuyAfterLimitDate() throws InputValidationException, InstanceNotFoundException, NotEnoughAvailableTicketsException, LimitDateExceededException {
 
 		Show show = ticketService.createShow(getValidShow());
 
@@ -921,8 +921,8 @@ public class TicketSellerServiceTest
 
 	}
 
-	@Test(expected = ReservationAlreadyChecked.class)
-	public void testCheckReservationExceptionChecked() throws InputValidationException, InstanceNotFoundException, NotEnoughAvailableTickets, LimitDateExceeded, CreditCardNotCoincident, ReservationAlreadyChecked {
+	@Test(expected = ReservationAlreadyCheckedException.class)
+	public void testCheckReservationExceptionChecked() throws InputValidationException, InstanceNotFoundException, NotEnoughAvailableTicketsException, LimitDateExceededException, CreditCardNotCoincidentException, ReservationAlreadyCheckedException {
 		Show show = ticketService.createShow(getValidShow());
 		Reservation res1 = ticketService.buyTickets(show.getId(), "email@gmail.com", "5489627352617220", 1);
 		ticketService.checkReservation(res1.getCode(), "5489627352617220");

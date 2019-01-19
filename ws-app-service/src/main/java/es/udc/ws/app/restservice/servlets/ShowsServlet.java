@@ -3,8 +3,8 @@ package es.udc.ws.app.restservice.servlets;
 import es.udc.ws.app.dto.ServiceShowAdminDto;
 import es.udc.ws.app.dto.ServiceShowDto;
 import es.udc.ws.app.model.service.TicketSellerServiceFactory;
-import es.udc.ws.app.model.service.exceptions.NotEnoughAvailableTickets;
-import es.udc.ws.app.model.service.exceptions.ShowHasReservations;
+import es.udc.ws.app.model.service.exceptions.NotEnoughAvailableTicketsException;
+import es.udc.ws.app.model.service.exceptions.ShowHasReservationsException;
 import es.udc.ws.app.model.show.Show;
 import es.udc.ws.app.serviceutil.ShowToDto;
 import es.udc.ws.app.restservice.xml.XmlServiceExceptionConversor;
@@ -44,8 +44,6 @@ public class ShowsServlet extends HttpServlet {
 
 
             Calendar start = Calendar.getInstance();
-            start.set(Calendar.MONTH, Calendar.DECEMBER);
-            start.set(Calendar.DAY_OF_MONTH, 17);
             Calendar end = (Calendar)start.clone();
             end.add(Calendar.DAY_OF_YEAR, 30);
 
@@ -185,12 +183,12 @@ public class ShowsServlet extends HttpServlet {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                     XmlServiceExceptionConversor.toExceptionXml(ex), null);
             return;
-        } catch (NotEnoughAvailableTickets ex) {
+        } catch (NotEnoughAvailableTicketsException ex) {
             // Temporal error, no other error code matches
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
                     XmlServiceExceptionConversor.toExceptionXml(ex), null);
             return;
-        } catch (ShowHasReservations ex) {
+        } catch (ShowHasReservationsException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_FORBIDDEN,
                     XmlServiceExceptionConversor.toExceptionXml(ex), null);
             return;

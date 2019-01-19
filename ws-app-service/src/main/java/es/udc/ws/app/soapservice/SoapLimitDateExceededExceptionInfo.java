@@ -13,7 +13,7 @@ public class SoapLimitDateExceededExceptionInfo {
         this.limitDate = limitDate;
     }
 
-    public Object getLimitDate() {
+    public Date getLimitDate() {
         return limitDate;
     }
 

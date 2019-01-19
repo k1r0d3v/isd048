@@ -19,7 +19,7 @@ public interface ClientAdminTicketSellerService
     ClientShowDto findShow(long id)
             throws InstanceNotFoundException;
 
-    void checkReservation(String code, String cardNumber)
+    void checkReservation(String code, String creditCard)
             throws InstanceNotFoundException, InputValidationException,
             ClientCreditCardNotCoincident, ClientReservationAlreadyChecked;
 }

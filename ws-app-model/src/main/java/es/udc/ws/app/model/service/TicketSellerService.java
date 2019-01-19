@@ -15,15 +15,15 @@ public interface TicketSellerService
     Show createShow(Show show) throws InputValidationException;
 
     void updateShow(Show show)
-            throws InstanceNotFoundException, InputValidationException, ShowHasReservations, NotEnoughAvailableTickets;
+            throws InstanceNotFoundException, InputValidationException, ShowHasReservationsException, NotEnoughAvailableTicketsException;
 
     Show findShow(long id) throws InstanceNotFoundException;
 
     List<Show> findShows(String keywords, Calendar start, Calendar end) throws InputValidationException;
 
-    Reservation buyTickets(long showId, String email, String creditCard, int count) throws InstanceNotFoundException, InputValidationException, NotEnoughAvailableTickets, LimitDateExceeded;
+    Reservation buyTickets(long showId, String email, String creditCard, int count) throws InstanceNotFoundException, InputValidationException, NotEnoughAvailableTicketsException, LimitDateExceededException;
 
     List<Reservation> getUserReservations(String email) throws InputValidationException;
 
-    void checkReservation(String code, String creditCard) throws InstanceNotFoundException, InputValidationException, CreditCardNotCoincident, ReservationAlreadyChecked;
+    void checkReservation(String code, String creditCard) throws InstanceNotFoundException, InputValidationException, CreditCardNotCoincidentException, ReservationAlreadyCheckedException;
 }

@@ -78,7 +78,7 @@ public class TicketSellerServiceImpl implements TicketSellerService
 
 	@Override
     public void updateShow(Show show)
-        throws InstanceNotFoundException, InputValidationException, ShowHasReservations, NotEnoughAvailableTickets
+        throws InstanceNotFoundException, InputValidationException, ShowHasReservationsException, NotEnoughAvailableTicketsException
     {
         PropertyValidator.validateMandatoryString("name", show.getName());
         PropertyValidator.validateMandatoryString("description", show.getDescription());
@@ -105,7 +105,7 @@ public class TicketSellerServiceImpl implements TicketSellerService
 
                 if (ticketDifference < 0 && ticketDifference + current.getTickets() < 0) {
                     connection.commit();
-                    throw new NotEnoughAvailableTickets("Cannot decrease max tickets when there is not enough available tickets");
+                    throw new NotEnoughAvailableTicketsException("Cannot decrease max tickets when there is not enough available tickets");
                 }
 
                 long soldTicketsCurrent = current.getMaxTickets() - current.getTickets();
@@ -113,7 +113,7 @@ public class TicketSellerServiceImpl implements TicketSellerService
 
                 if ((isLessPrice && soldTicketsCurrent > 0)) {
                     connection.commit();
-                    throw new ShowHasReservations("Cannot decrease the show price when it has sold tickets");
+                    throw new ShowHasReservationsException("Cannot decrease the show price when it has sold tickets");
                 }
 
                 current.setName(show.getName());
@@ -183,7 +183,7 @@ public class TicketSellerServiceImpl implements TicketSellerService
 
 	@Override
 	public Reservation buyTickets(long showId, String email, String cardNumber, int count)
-            throws InstanceNotFoundException, InputValidationException, NotEnoughAvailableTickets, LimitDateExceeded
+            throws InstanceNotFoundException, InputValidationException, NotEnoughAvailableTicketsException, LimitDateExceededException
     {
 
 		PropertyValidator.validateCreditCard(cardNumber);
@@ -201,17 +201,17 @@ public class TicketSellerServiceImpl implements TicketSellerService
 
 				if (Calendar.getInstance().after(show.getLimitDate())) {
 				    connection.commit();
-                    throw new LimitDateExceeded(Calendar.getInstance().getTime());
+                    throw new LimitDateExceededException(Calendar.getInstance().getTime());
                 }
 
 				if (show.getTickets() <= 0) {
                     connection.commit();
-                    throw new NotEnoughAvailableTickets("There is not resting tickets");
+                    throw new NotEnoughAvailableTicketsException("There is not resting tickets");
                 }
 
 				if (show.getTickets() < count) {
 				    connection.commit();
-                    throw new NotEnoughAvailableTickets("There is not enough tickets");
+                    throw new NotEnoughAvailableTicketsException("There is not enough tickets");
                 }
 
                 show.setTickets(show.getTickets() - count);
@@ -260,7 +260,7 @@ public class TicketSellerServiceImpl implements TicketSellerService
 
     @Override
     public void checkReservation(String code, String cardNumber)
-            throws InstanceNotFoundException, InputValidationException, CreditCardNotCoincident, ReservationAlreadyChecked
+            throws InstanceNotFoundException, InputValidationException, CreditCardNotCoincidentException, ReservationAlreadyCheckedException
     {
         PropertyValidator.validateCreditCard(cardNumber);
 
@@ -276,10 +276,10 @@ public class TicketSellerServiceImpl implements TicketSellerService
                 Reservation reservation = reservationDao.findByCode(connection, code);
 
                 if (!reservation.getCreditCard().equals(cardNumber))
-                    throw new CreditCardNotCoincident("Reservation credit card number not coincides with the given number");
+                    throw new CreditCardNotCoincidentException("Reservation credit card number not coincides with the given number");
 
                if (!reservation.isValid())
-                   throw new ReservationAlreadyChecked();
+                   throw new ReservationAlreadyCheckedException();
 
                 reservation.setValid(false);
                 reservationDao.update(connection, reservation);
@@ -289,7 +289,7 @@ public class TicketSellerServiceImpl implements TicketSellerService
             } catch (SQLException e) {
                 connection.rollback();
                 throw new RuntimeException(e);
-            } catch (CreditCardNotCoincident | ReservationAlreadyChecked e) {
+            } catch (CreditCardNotCoincidentException | ReservationAlreadyCheckedException e) {
                 connection.commit();
                 throw e;
             } catch (RuntimeException | Error | InstanceNotFoundException e) {
