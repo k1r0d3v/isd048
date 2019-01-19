@@ -178,7 +178,12 @@ public class ShowsServlet extends HttpServlet {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                     XmlServiceExceptionConversor.toExceptionXml(ex), null);
             return;
-        } catch (NotEnoughAvailableTickets | ShowHasReservations ex) {
+        } catch (NotEnoughAvailableTickets ex) {
+            // Temporal error, no other error code matches
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
+                    XmlServiceExceptionConversor.toExceptionXml(ex), null);
+            return;
+        } catch (ShowHasReservations ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_FORBIDDEN,
                     XmlServiceExceptionConversor.toExceptionXml(ex), null);
             return;

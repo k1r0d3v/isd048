@@ -155,7 +155,8 @@ public class ReservationsServlet extends HttpServlet {
                     XmlServiceExceptionConversor.toExceptionXml(ex), null);
             return;
         } catch (NotEnoughAvailableTickets | LimitDateExceeded ex) {
-            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_FORBIDDEN,
+            // Available tickets can grow and limit date can change then can not be a permanent error
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
                     XmlServiceExceptionConversor.toExceptionXml(ex), null);
             return;
         } catch (InstanceNotFoundException ex) {

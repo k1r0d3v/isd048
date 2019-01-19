@@ -140,8 +140,8 @@ public class PropertyValidator
             throw new InputValidationException("Email should not be null");
 
         String[] ab = email.split("@");
-        if (ab.length != 2) throw new InputValidationException("Invalid format, expected one @");
+        if (ab.length != 2) throw new InputValidationException("Invalid email format, expected one @");
         String[] cd = ab[1].split("\\.");
-        if (cd.length != 2) throw new InputValidationException("Invalid format, expected one domain dot");
+        if (cd.length != 2) throw new InputValidationException("Invalid email format, expected one domain dot");
     }
 }
