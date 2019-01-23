@@ -259,6 +259,17 @@ public class TicketSellerServiceTest
 		assertTrue(exceptionCatched);
 		try { removeShow(show.getId()); } catch (Exception e) { }
 		exceptionCatched = false;
+		
+		try
+		{
+			show.setMaxTickets(-1);
+			show = ticketService.createShow(show);
+		} catch (InputValidationException e) {
+			exceptionCatched = true;
+		}
+		assertTrue(exceptionCatched);
+		try { removeShow(show.getId()); } catch (Exception e) { }
+		exceptionCatched = false;
 
 		try
 		{
@@ -281,10 +292,21 @@ public class TicketSellerServiceTest
 		assertTrue(exceptionCatched);
 		try { removeShow(show.getId()); } catch (Exception e) { }
 		exceptionCatched = false;
-
+		
 		try
 		{
 			show.setCommission(-1.0f);
+			show = ticketService.createShow(show);
+		} catch (InputValidationException e) {
+			exceptionCatched = true;
+		}
+		assertTrue(exceptionCatched);
+		try { removeShow(show.getId()); } catch (Exception e) { }
+		exceptionCatched = false;
+		
+		try
+		{
+			show.setCommission(0);
 			show = ticketService.createShow(show);
 		} catch (InputValidationException e) {
 			exceptionCatched = true;

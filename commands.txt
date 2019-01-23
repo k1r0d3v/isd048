@@ -86,7 +86,7 @@ mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerService
 mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerServiceClient" -Dexec.args="-c 807ca7be-f81c-47a9-a2e4-42af8e8c0719  0123456789012345"
 
 
-//ClientCreditCardNotCoincident (Reservation credit card number not coincides with the given number). (con reservId2)
+//ClientCreditCardNotCoincident (Reservation credit card number does not match with the given number). (con reservId2)
 
 mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerServiceClient" -Dexec.args="-c 0bbd6f9e-9f08-4ee5-99e7-51f2169ab6dd  0000111122223333"
 
