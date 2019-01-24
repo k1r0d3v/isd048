@@ -105,7 +105,7 @@ public class TicketSellerServiceImpl implements TicketSellerService
 
                 if (ticketDifference < 0 && ticketDifference + current.getTickets() < 0) {
                     connection.commit();
-                    throw new NotEnoughAvailableTicketsException("Cannot decrease max tickets when there is not enough available tickets");
+                    throw new NotEnoughAvailableTicketsException("Cannot decrease max tickets when there are not enough available tickets.");
                 }
 
                 long soldTicketsCurrent = current.getMaxTickets() - current.getTickets();
@@ -113,7 +113,7 @@ public class TicketSellerServiceImpl implements TicketSellerService
 
                 if ((isLessPrice && soldTicketsCurrent > 0)) {
                     connection.commit();
-                    throw new ShowHasReservationsException("Cannot decrease the show price when it has sold tickets");
+                    throw new ShowHasReservationsException("Cannot decrease the show price when it already has sold tickets.");
                 }
 
                 current.setName(show.getName());
@@ -159,19 +159,19 @@ public class TicketSellerServiceImpl implements TicketSellerService
             throws InputValidationException
     {
         if (keywords == null)
-            throw new InputValidationException("keywords can not be null");
+            throw new InputValidationException("Keywords cannot be null.");
 
 	    if (start == null && end != null)
-	        throw new InputValidationException("end must be null if start is null");
+	        throw new InputValidationException("End must be null if start is null.");
 
 	    if (start != null && end == null)
-            throw new InputValidationException("end can not be null if start is not null");
+            throw new InputValidationException("End cannot be null if start is not null.");
 
 	    if (start != null)
         {
             if (!start.equals(end))
                 if (start.after(end))
-                    throw new InputValidationException("end date must be greater than or equals to start date");
+                    throw new InputValidationException("End date must be greater or equals to the start date.");
         }
 
 		try (Connection connection = dataSource.getConnection()) {
@@ -206,12 +206,12 @@ public class TicketSellerServiceImpl implements TicketSellerService
 
 				if (show.getTickets() <= 0) {
                     connection.commit();
-                    throw new NotEnoughAvailableTicketsException("There is not resting tickets");
+                    throw new NotEnoughAvailableTicketsException("There aren't any tickets left.");
                 }
 
 				if (show.getTickets() < count) {
 				    connection.commit();
-                    throw new NotEnoughAvailableTicketsException("There is not enough tickets");
+                    throw new NotEnoughAvailableTicketsException("There are not enough tickets.");
                 }
 
                 show.setTickets(show.getTickets() - count);
@@ -276,7 +276,7 @@ public class TicketSellerServiceImpl implements TicketSellerService
                 Reservation reservation = reservationDao.findByCode(connection, code);
 
                 if (!reservation.getCreditCard().equals(cardNumber))
-                    throw new CreditCardNotCoincidentException("Reservation credit card number not coincides with the given number");
+                    throw new CreditCardNotCoincidentException("Reservation credit card number does not match the given number.");
 
                if (!reservation.isValid())
                    throw new ReservationAlreadyCheckedException();
