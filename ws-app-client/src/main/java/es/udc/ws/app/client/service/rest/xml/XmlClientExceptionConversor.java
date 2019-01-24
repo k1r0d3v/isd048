@@ -50,9 +50,9 @@ public class XmlClientExceptionConversor {
                 throw new ClientReservationAlreadyChecked(message.getText());
             case "ShowHasReservationsException":
                 throw new ClientShowHasReservations(message.getText());
-            case "InputValidationExceptionException":
+            case "InputValidationException":
                 throw new InputValidationException(message.getText());
-            case "InstanceNotFoundExceptionException":
+            case "InstanceNotFoundException":
                 throw XmlClientExceptionConversor.fromInstanceNotFoundExceptionXml(root);
             default:
                 throw new RuntimeException("HTTP error; status code = " + statusCode + ";\n" + message.getText());

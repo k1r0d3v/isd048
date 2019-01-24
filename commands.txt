@@ -1,32 +1,32 @@
 1. Añadir espectáculo (AdminTicketSellerServiceClient)
 
-//OK.
+//OK
 
 mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerServiceClient" -Dexec.args=" -a  'Fútbol' 'Partido de liga UDC' 2019-02-10T12:00:00+01:00 120 2019-02-06T00:00:00+01:00 100 30 25 3" 							 
 
-//OK.
+//OK
 
 mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerServiceClient" -Dexec.args=" -a 'Concierto' 'Concierto benéfico UDC' 2019-02-08T12:00:00+01:00 90 2019-02-05T20:00:00+01:00 20 15 12 2"
 
 
-//OK.
+//OK
 
 mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerServiceClient" -Dexec.args=" -a 'Fiesta' 'Fiesta de Carnaval UDC' 2019-04-05T12:00:00+01:00 240 2019-04-01T12:00:00+01:00 200 10 8 1"							
 
 
-//Invalid limit date value.
+//FALLA
 
 mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerServiceClient" -Dexec.args=" -a 'Fiesta' 'Fiesta de Carnaval UDC' 2019-04-05T12:00:00+01:00 240 2019-06-05T12:00:00+01:00 200 10 8 1" 			
 
 
 2. Buscar espectáculo (AdminTicketSellerServiceClient)
 
-//OK.
+//OK
 
 mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerServiceClient" -Dexec.args="-g  1"
 
 
-//Instance not found.
+//FALLA
 
 mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerServiceClient" -Dexec.args="-g  85379"
 
@@ -34,41 +34,41 @@ mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerService
 
 3. Reservar entradas (UserTicketSellerServiceClient)
 
-//<reservId1> se crea.
+//OK
 
 mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.UserTicketSellerServiceClient" -Dexec.args="-b  1 'user1@udc.es' 0123456789012345 10"
 
 
-//<reservId2> se crea.
+//OK
 
 mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.UserTicketSellerServiceClient" -Dexec.args="-b  2 'user1@udc.es' 0123456789012345 9"
 
 
-//<reservId3> se crea.
+//OK
 
 mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.UserTicketSellerServiceClient" -Dexec.args="-b  2 'user2@udc.es' 9876543210987654 10"
 
 
-//Instance not found.
+//FALLA
 
 mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.UserTicketSellerServiceClient" -Dexec.args="-b  0 'user2@udc.es' 9876543210987654 10"
 
-//InputValidationException.
+//FALLA
 
 mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.UserTicketSellerServiceClient" -Dexec.args="-b  1 'user2' 9876543210987654 10"
 
-//InputValidationException.
+//FALLA
 
 mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.UserTicketSellerServiceClient" -Dexec.args="-b  1 'user2@udc.es' 123456 10"
 
-//ClientNotEnoughAvailableTickets.
+//FALLA
 
 mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.UserTicketSellerServiceClient" -Dexec.args="-b  2 'user3@udc.es' 1111222233334444 2"
 
 
 
 4. Buscar reservas (UserTicketSellerServiceClient)
-//Ok, reservId1 y reservId2.
+//OK
 
 mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.UserTicketSellerServiceClient" -Dexec.args="-g 'user1@udc.es'"
 
@@ -76,27 +76,27 @@ mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.UserTicketSellerServiceC
 
 5. Marcar reserva como utilizada (AdminTicketSellerServiceClient)
 
-//OK.¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?
+//OK
 
-mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerServiceClient" -Dexec.args="-c 71cea5fe-6e62-4553-9760-3e83ffd0fb87  0123456789012345"
-
-
-//Falla (ya usada)
-
-mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerServiceClient" -Dexec.args="-c 71cea5fe-6e62-4553-9760-3e83ffd0fb87  0123456789012345"
+mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerServiceClient" -Dexec.args="-c <reservation code 1>  0123456789012345"
 
 
-//Falla (tarjeta no coincide)
+//FALLA
 
-mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerServiceClient" -Dexec.args="-c cf932eae-9460-4d4b-b954-77fcc9cf2cff  0000111122223333"
-
-
-//Falla (tarjeta no válida)
-
-mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerServiceClient" -Dexec.args="-c cf932eae-9460-4d4b-b954-77fcc9cf2cff 012345"
+mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerServiceClient" -Dexec.args="-c <reservation code 1>  0123456789012345"
 
 
-// Falla (reserva no existe)
+//FALLA
+
+mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerServiceClient" -Dexec.args="-c <reservation code 2>  0000111122223333"
+
+
+//FALLA
+
+mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerServiceClient" -Dexec.args="-c <reservation code 2> 012345"
+
+
+//FALLA
 
 mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerServiceClient" -Dexec.args="-c 57924  0123456789012345"
 
@@ -104,27 +104,27 @@ mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerService
 
 6. Actualizar espectáculo (AdminTicketSellerServiceClient)
 
-//OK.
+//OK
 
 mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerServiceClient" -Dexec.args="-u  1 'Fútbol' 'Partido de copa UDC' 2019-02-10T12:00:00+01:00 120 2019-02-09T00:00:00+01:00 80 30 25 3"
 
 
-//Falla (no se puede reducir precio descontado)
+//FALLA
 
 mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerServiceClient" -Dexec.args="-u  1 'Fútbol' 'Partido de copa UDC' 2019-02-10T12:00:00+01:00 120 2019-02-09T00:00:00+01:00 80 25 10 3"
 
 
-//Falla (discountedPrice > realPrice).
+//FALLA
 
 mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerServiceClient" -Dexec.args="-u  2 'Concierto' 'Concierto UDC' 2019-02-08T12:00:00+01:00 90 2019-02-05T20:00:00+01:00 20 15 25 2"
 
 
-//Falla (número no válido de entradas; hay 10 vendidas)
+//FALLA
 
 mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerServiceClient" -Dexec.args="-u  1 'Fútbol' 'Partido de copa UDC' 2019-02-10T12:00:00+01:00 120 2019-02-08T00:00:00+01:00 5 30 25 3"
 
 
-// Falla (no encontrado)
+//FALLA
 
 mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerServiceClient" -Dexec.args="-u  57938 'Fútbol' 'Partido de copa UDC' 2019-02-10T12:00:00+01:00 120 2019-02-08T00:00:00+01:00 80 30 25 3"
 
@@ -132,12 +132,12 @@ mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerService
 
 7. Buscar espectáculos (UserTicketSellerServiceClient)
 
-//Devuelve <showId1> (70 entradas restantes).
+//OK <showId1> (70 entradas restantes).
 
 mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.UserTicketSellerServiceClient" -Dexec.args="-f 'udc De'"
 
 
-//Devuelve <showId1> (70 entradas restantes) y <showId2> (1 entrada restante).
+//OK <showId1> (70 entradas restantes) <showId2> (1 entrada restante).
 
 mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.UserTicketSellerServiceClient" -Dexec.args="-f ' '"
 
