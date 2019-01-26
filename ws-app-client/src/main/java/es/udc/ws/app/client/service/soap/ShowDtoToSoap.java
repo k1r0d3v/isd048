@@ -28,6 +28,12 @@ public class ShowDtoToSoap {
         return new ClientShowDto(serviceShow.getId(), serviceShow.getName(), serviceShow.getDescription(), start, end, serviceShow.getLimitDate().toGregorianCalendar(), serviceShow.getTickets(), serviceShow.getPrice(), serviceShow.getDiscountedPrice());
     }
 
+    public static ClientAdminShowDto toClientAdminShowDto(ServiceShowAdminDto serviceShow) {
+        return new ClientAdminShowDto(serviceShow.getId(), serviceShow.getName(), serviceShow.getDescription(), serviceShow.getStartDate().toGregorianCalendar(),
+                serviceShow.getDuration(), serviceShow.getLimitDate().toGregorianCalendar(), serviceShow.getMaxTickets(), serviceShow.getTickets(), serviceShow.getPrice(),
+                serviceShow.getDiscountedPrice(), serviceShow.getCommission(), serviceShow.getLikes());
+    }
+
     public static ServiceShowAdminDto toSoapShowDto(ClientAdminShowDto show) {
         DatatypeFactory df;
         try {

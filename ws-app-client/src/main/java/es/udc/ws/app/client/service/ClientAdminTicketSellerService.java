@@ -9,14 +9,14 @@ import es.udc.ws.util.exceptions.InstanceNotFoundException;
 
 public interface ClientAdminTicketSellerService
 {
-    ClientShowDto createShow(ClientAdminShowDto show)
+    ClientAdminShowDto createShow(ClientAdminShowDto show)
             throws InputValidationException;
 
     void updateShow(ClientAdminShowDto show)
             throws InstanceNotFoundException, InputValidationException,
             ClientShowHasReservations, ClientNotEnoughAvailableTickets;
 
-    ClientShowDto findShow(long id)
+    ClientAdminShowDto findShow(long id)
             throws InstanceNotFoundException;
 
     void checkReservation(String code, String creditCard)

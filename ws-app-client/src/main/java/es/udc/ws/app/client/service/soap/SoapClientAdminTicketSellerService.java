@@ -42,11 +42,11 @@ public class SoapClientAdminTicketSellerService implements ClientAdminTicketSell
     }
 
     @Override
-    public ClientShowDto createShow(ClientAdminShowDto show)
+    public ClientAdminShowDto createShow(ClientAdminShowDto show)
             throws InputValidationException
     {
         try {
-            return ShowDtoToSoap.toClientShowDto(provider.createShow(
+            return ShowDtoToSoap.toClientAdminShowDto(provider.createShow(
                     ShowDtoToSoap.toSoapShowDto(show) ));
         } catch (SoapInputValidationException e) {
             throw new InputValidationException(e.getFaultInfo());
@@ -73,11 +73,11 @@ public class SoapClientAdminTicketSellerService implements ClientAdminTicketSell
     }
 
     @Override
-    public ClientShowDto findShow(long id)
+    public ClientAdminShowDto findShow(long id)
             throws InstanceNotFoundException
     {
         try {
-            return ShowDtoToSoap.toClientShowDto(provider.findShow(id));
+            return ShowDtoToSoap.toClientAdminShowDto(provider.findShow(id));
         } catch (SoapInstanceNotFoundException e) {
             throw new InstanceNotFoundException(e.getFaultInfo().getInstanceId(), e.getFaultInfo().getInstanceType());
         }

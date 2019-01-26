@@ -12,14 +12,16 @@ public class ServiceShowAdminDto
     private long duration;
     private Calendar limitDate;
     private long maxTickets;
-    private Long tickets;
+    private long tickets;
     private float price;
     private float discountedPrice;
     private float commission;
 
+    private Long likes;
+
     public ServiceShowAdminDto() { }
 
-    public ServiceShowAdminDto(Long id, String name, String description, Calendar startDate, long duration, Calendar limitDate, long maxTickets, Long tickets, float price, float discountedPrice, float commission) {
+    public ServiceShowAdminDto(Long id, String name, String description, Calendar startDate, long duration, Calendar limitDate, long maxTickets, long tickets, float price, float discountedPrice, float commission, Long likes) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -31,6 +33,8 @@ public class ServiceShowAdminDto
         this.price = price;
         this.discountedPrice = discountedPrice;
         this.commission = commission;
+
+        this.likes = likes;
     }
 
     public Long getId() {
@@ -89,11 +93,11 @@ public class ServiceShowAdminDto
         this.maxTickets = maxTickets;
     }
 
-    public Long getTickets() {
+    public long getTickets() {
         return tickets;
     }
 
-    public void setTickets(Long tickets) {
+    public void setTickets(long tickets) {
         this.tickets = tickets;
     }
 
@@ -121,6 +125,14 @@ public class ServiceShowAdminDto
         this.commission = commission;
     }
 
+    public Long getLikes() {
+        return likes;
+    }
+
+    public void setLikes(Long likes) {
+        this.likes = likes;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -136,12 +148,13 @@ public class ServiceShowAdminDto
                 Objects.equals(description, that.description) &&
                 Objects.equals(startDate, that.startDate) &&
                 Objects.equals(limitDate, that.limitDate) &&
-                Objects.equals(tickets, that.tickets);
+                Objects.equals(tickets, that.tickets) &&
+                Objects.equals(likes, that.likes);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, startDate, duration, limitDate, maxTickets, tickets, price, discountedPrice, commission);
+        return Objects.hash(id, name, description, startDate, duration, limitDate, maxTickets, tickets, price, discountedPrice, commission, likes);
     }
 
     @Override
@@ -158,6 +171,7 @@ public class ServiceShowAdminDto
                 ", price=" + price +
                 ", discountedPrice=" + discountedPrice +
                 ", commission=" + commission +
+                ", likes=" + likes +
                 '}';
     }
 }

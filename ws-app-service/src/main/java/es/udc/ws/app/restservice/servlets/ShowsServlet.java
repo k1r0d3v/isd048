@@ -2,10 +2,10 @@ package es.udc.ws.app.restservice.servlets;
 
 import es.udc.ws.app.dto.ServiceShowAdminDto;
 import es.udc.ws.app.dto.ServiceShowDto;
-import es.udc.ws.app.model.service.TicketSellerServiceFactory;
 import es.udc.ws.app.model.service.exceptions.NotEnoughAvailableTicketsException;
 import es.udc.ws.app.model.service.exceptions.ShowHasReservationsException;
 import es.udc.ws.app.model.show.Show;
+import es.udc.ws.app.service.TicketSellerProxyServiceFactory;
 import es.udc.ws.app.serviceutil.ShowToDto;
 import es.udc.ws.app.restservice.xml.XmlServiceExceptionConversor;
 import es.udc.ws.app.restservice.xml.XmlServiceShowAdminDtoConversor;
@@ -43,14 +43,9 @@ public class ShowsServlet extends HttpServlet {
             }
 
 
-            Calendar start = Calendar.getInstance();
-            Calendar end = (Calendar)start.clone();
-            end.add(Calendar.DAY_OF_YEAR, 30);
-
-
-            List<Show> shows;
+            List<ServiceShowDto> shows;
             try {
-                shows = TicketSellerServiceFactory.getService().findShows(keywordsParam, start, end);
+                shows = TicketSellerProxyServiceFactory.getService().findShows(keywordsParam);
             } catch (InputValidationException ex) {
                 ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                         XmlServiceExceptionConversor.toExceptionXml(ex), null);
@@ -58,7 +53,7 @@ public class ShowsServlet extends HttpServlet {
             }
 
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK,
-                    XmlServiceShowDtoConversor.toXml(ShowToDto.toShowDtos(shows)), null);
+                    XmlServiceShowDtoConversor.toXml(shows), null);
         }
         else
         {
@@ -82,9 +77,9 @@ public class ShowsServlet extends HttpServlet {
                 return;
             }
 
-            Show show;
+            ServiceShowAdminDto show;
             try {
-                show = TicketSellerServiceFactory.getService().findShow(showId);
+                show = TicketSellerProxyServiceFactory.getService().findShow(showId);
             } catch (InstanceNotFoundException ex) {
                 ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
                         XmlServiceExceptionConversor.toInstanceNotFoundExceptionXml(ex), null);
@@ -92,7 +87,7 @@ public class ShowsServlet extends HttpServlet {
             }
 
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK,
-                    XmlServiceShowDtoConversor.toXml(ShowToDto.toShowDto(show)), null);
+                    XmlServiceShowAdminDtoConversor.toXml(show), null);
         }
     }
 
@@ -106,9 +101,9 @@ public class ShowsServlet extends HttpServlet {
                     null);
             return;
         }
-        ServiceShowAdminDto xmlshow;
+        ServiceShowAdminDto showAdminDto;
         try {
-            xmlshow = XmlServiceShowAdminDtoConversor.toServiceShowAdminDto(req.getInputStream());
+            showAdminDto = XmlServiceShowAdminDtoConversor.toServiceShowAdminDto(req.getInputStream());
         } catch (ParsingException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST, XmlServiceExceptionConversor
                     .toExceptionXml(new InputValidationException(ex.getMessage())), null);
@@ -116,23 +111,21 @@ public class ShowsServlet extends HttpServlet {
             return;
         }
 
-        Show show = ShowToDto.toShow(xmlshow);
         try {
-            show = TicketSellerServiceFactory.getService().createShow(show);
+            showAdminDto = TicketSellerProxyServiceFactory.getService().createShow(showAdminDto);
         } catch (InputValidationException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                     XmlServiceExceptionConversor.toExceptionXml(ex), null);
             return;
         }
-        ServiceShowDto showDto = ShowToDto.toShowDto(show);
 
-        String showLocation = ServletUtils.normalizePath(req.getRequestURL().toString()) + "/" + show.getId().toString();
+        String showLocation = ServletUtils.normalizePath(req.getRequestURL().toString()) + "/" + showAdminDto.getId().toString();
 
         Map<String, String> headers = new HashMap<>(1);
         headers.put("Location", showLocation);
 
         ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_CREATED,
-                XmlServiceShowDtoConversor.toXml(showDto), headers);
+                XmlServiceShowAdminDtoConversor.toXml(showAdminDto), headers);
     }
 
     @Override
@@ -159,16 +152,16 @@ public class ShowsServlet extends HttpServlet {
             return;
         }
 
-        ServiceShowAdminDto showDto;
+        ServiceShowAdminDto showAdminDto;
         try {
-            showDto = XmlServiceShowAdminDtoConversor.toServiceShowAdminDto(req.getInputStream());
+            showAdminDto = XmlServiceShowAdminDtoConversor.toServiceShowAdminDto(req.getInputStream());
         } catch (ParsingException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST, XmlServiceExceptionConversor
                     .toExceptionXml(new InputValidationException(ex.getMessage())), null);
             return;
 
         }
-        if (!showId.equals(showDto.getId())) {
+        if (!showId.equals(showAdminDto.getId())) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                     XmlServiceExceptionConversor.toExceptionXml(
                             new InputValidationException("Invalid Request: " + "invalid show id")),
@@ -176,9 +169,10 @@ public class ShowsServlet extends HttpServlet {
             return;
         }
 
-        Show show = ShowToDto.toShow(showDto);
         try {
-            TicketSellerServiceFactory.getService().updateShow(show);
+            // Notes: The model only updates the necessary fields
+            TicketSellerProxyServiceFactory.getService().updateShow(showAdminDto);
+            showAdminDto = TicketSellerProxyServiceFactory.getService().findShow(showAdminDto.getId());
         } catch (InputValidationException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                     XmlServiceExceptionConversor.toExceptionXml(ex), null);
@@ -197,6 +191,7 @@ public class ShowsServlet extends HttpServlet {
                     XmlServiceExceptionConversor.toInstanceNotFoundExceptionXml(ex), null);
             return;
         }
+
         ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NO_CONTENT, null, null);
     }
 }

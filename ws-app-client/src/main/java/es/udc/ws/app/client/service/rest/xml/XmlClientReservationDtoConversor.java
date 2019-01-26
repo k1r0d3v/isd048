@@ -19,65 +19,6 @@ public class XmlClientReservationDtoConversor
 {
     public final static Namespace XML_NS = Namespace.getNamespace("http://ws.udc.es/reservations/xml");
 
-    public static Document toXml(ClientReservationDto reservation) throws IOException {
-        Element movieElement = toJDOMElement(reservation);
-        return new Document(movieElement);
-    }
-
-    public static Document toXml(List<ClientReservationDto> reservations) throws IOException {
-
-        Element showElements = new Element("reservations", XML_NS);
-        for (ClientReservationDto i : reservations)
-            showElements.addContent(toJDOMElement(i));
-
-        return new Document(showElements);
-    }
-
-    public static Element toJDOMElement(ClientReservationDto reservation) {
-
-        Element showElement = new Element("reservation", XML_NS);
-
-        if (reservation.getId() != null) {
-            Element identifierElement = new Element("id", XML_NS);
-            identifierElement.setText(reservation.getId().toString());
-            showElement.addContent(identifierElement);
-        }
-
-        Element runtimeElement = new Element("show", XML_NS);
-        runtimeElement.setText(Long.toString(reservation.getShowId()));
-        showElement.addContent(runtimeElement);
-
-        Element descriptionElement = new Element("email", XML_NS);
-        descriptionElement.setText(reservation.getEmail());
-        showElement.addContent(descriptionElement);
-
-        Element startDateElement = new Element("creditCard", XML_NS);
-        startDateElement.setText(reservation.getCreditCard());
-        showElement.addContent(startDateElement);
-
-        Element priceElement = new Element("tickets", XML_NS);
-        priceElement.setText(Integer.toString(reservation.getTickets()));
-        showElement.addContent(priceElement);
-
-        Element limitDateElement = new Element("valid", XML_NS);
-        limitDateElement.setText(Boolean.toString(reservation.isValid()));
-        showElement.addContent(limitDateElement);
-
-        Element avalilableTicketsElement = new Element("code", XML_NS);
-        avalilableTicketsElement.setText(reservation.getCode());
-        showElement.addContent(avalilableTicketsElement);
-
-        Element realPriceElement = new Element("reservationDate", XML_NS);
-        realPriceElement.setText(DatatypeConverter.printDateTime(reservation.getReservationDate()));
-        showElement.addContent(realPriceElement);
-
-        Element discountedPriceElement = new Element("price", XML_NS);
-        discountedPriceElement.setText(Float.toString(reservation.getPrice()));
-        showElement.addContent(discountedPriceElement);
-
-        return showElement;
-    }
-
     public static List<ClientReservationDto> toClientReservationDtos(InputStream movieXml)
             throws ParsingException {
         try {

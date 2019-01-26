@@ -16,9 +16,11 @@ public class ClientAdminShowDto {
     private float discountedPrice;
     private float commission;
 
+    private Long likes;
+
     public ClientAdminShowDto() { }
 
-    public ClientAdminShowDto(Long id, String name, String description, Calendar startDate, long duration, Calendar limitDate, long maxTickets, long tickets, float price, float discountedPrice, float commission) {
+    public ClientAdminShowDto(Long id, String name, String description, Calendar startDate, long duration, Calendar limitDate, long maxTickets, long tickets, float price, float discountedPrice, float commission, Long likes) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -30,6 +32,8 @@ public class ClientAdminShowDto {
         this.price = price;
         this.discountedPrice = discountedPrice;
         this.commission = commission;
+
+        this.likes = likes;
     }
 
 
@@ -121,6 +125,14 @@ public class ClientAdminShowDto {
         this.commission = commission;
     }
 
+    public Long getLikes() {
+        return likes;
+    }
+
+    public void setLikes(Long likes) {
+        this.likes = likes;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -136,12 +148,13 @@ public class ClientAdminShowDto {
                 Objects.equals(name, that.name) &&
                 Objects.equals(description, that.description) &&
                 Objects.equals(startDate, that.startDate) &&
-                Objects.equals(limitDate, that.limitDate);
+                Objects.equals(limitDate, that.limitDate) &&
+                Objects.equals(likes, that.likes);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, startDate, duration, limitDate, maxTickets, tickets, price, discountedPrice, commission);
+        return Objects.hash(id, name, description, startDate, duration, limitDate, maxTickets, tickets, price, discountedPrice, commission, likes);
     }
 
     @Override
@@ -158,6 +171,7 @@ public class ClientAdminShowDto {
                 ", price=" + price +
                 ", discountedPrice=" + discountedPrice +
                 ", commission=" + commission +
+                ", likes=" + likes +
                 '}';
     }
 }

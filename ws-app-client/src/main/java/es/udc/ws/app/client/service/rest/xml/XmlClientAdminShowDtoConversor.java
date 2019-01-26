@@ -24,15 +24,6 @@ public class XmlClientAdminShowDtoConversor {
         return new Document(movieElement);
     }
 
-    public static Document toXml(List<ClientAdminShowDto> shows) throws IOException {
-
-        Element showElements = new Element("shows", XML_NS);
-        for (ClientAdminShowDto i : shows)
-            showElements.addContent(toJDOMElement(i));
-
-        return new Document(showElements);
-    }
-
     public static Element toJDOMElement(ClientAdminShowDto show) {
 
         Element showElement = new Element("show", XML_NS);
@@ -86,31 +77,6 @@ public class XmlClientAdminShowDtoConversor {
         return showElement;
     }
 
-    public static List<ClientAdminShowDto> toClientAdminShowDtos(InputStream movieXml)
-            throws ParsingException {
-        try {
-
-            SAXBuilder builder = new SAXBuilder();
-            Document document = builder.build(movieXml);
-            Element rootElement = document.getRootElement();
-
-            if (!"shows".equalsIgnoreCase(rootElement.getName())) {
-                throw new ParsingException("Unrecognized element '"
-                        + rootElement.getName() + "' ('shows' expected)");
-            }
-            List<Element> children = rootElement.getChildren();
-            List<ClientAdminShowDto> movieDtos = new ArrayList<>(children.size());
-            for (Element element : children)
-                movieDtos.add(toClientAdminShowDto(element));
-
-            return movieDtos;
-        } catch (ParsingException ex) {
-            throw ex;
-        } catch (Exception e) {
-            throw new ParsingException(e);
-        }
-    }
-
     public static ClientAdminShowDto toClientAdminShowDto(InputStream movieXml) throws ParsingException {
         try {
 
@@ -158,11 +124,11 @@ public class XmlClientAdminShowDtoConversor {
 
         String commission = showElement.getChildTextNormalize("commission", XML_NS);
 
+        String likesStr = showElement.getChildTextNormalize("likes", XML_NS);
 
         Calendar startCalendar = DatatypeConverter.parseDateTime(startDate);
         Calendar limitCalendar = DatatypeConverter.parseDateTime(limitDate);
 
-
-        return new ClientAdminShowDto(identifier, name, description, startCalendar, Long.parseLong(duration), limitCalendar, Integer.parseInt(maxTickets), Integer.parseInt(availableTickets), Float.parseFloat(realPrice), Float.parseFloat(discountedPrice), Float.parseFloat(commission));
+        return new ClientAdminShowDto(identifier, name, description, startCalendar, Long.parseLong(duration), limitCalendar, Integer.parseInt(maxTickets), Integer.parseInt(availableTickets), Float.parseFloat(realPrice), Float.parseFloat(discountedPrice), Float.parseFloat(commission), likesStr != null ? Long.parseLong(likesStr) : null);
     }
 }

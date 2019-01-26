@@ -4,11 +4,16 @@ import es.udc.ws.app.dto.ServiceReservationDto;
 import es.udc.ws.app.dto.ServiceShowAdminDto;
 import es.udc.ws.app.dto.ServiceShowDto;
 import es.udc.ws.app.model.reservation.Reservation;
-import es.udc.ws.app.model.service.TicketSellerServiceFactory;
 import es.udc.ws.app.model.service.exceptions.*;
 import es.udc.ws.app.model.show.Show;
+import es.udc.ws.app.service.TicketSellerProxyServiceFactory;
 import es.udc.ws.app.serviceutil.ReservationToDto;
 import es.udc.ws.app.serviceutil.ShowToDto;
+import es.udc.ws.app.socialnetwork.SocialNetworkServiceFactory;
+import es.udc.ws.app.socialnetwork.SocialNetworkShowPost;
+import es.udc.ws.app.socialnetwork.exceptions.AuthenticationException;
+import es.udc.ws.app.socialnetwork.exceptions.DuplicatedPostException;
+import es.udc.ws.app.socialnetwork.exceptions.PostNotFountException;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 
@@ -23,97 +28,91 @@ import java.util.List;
 )
 public class SoapTicketSellerService
 {
-    public ServiceShowDto createShow(ServiceShowAdminDto showAdminDto)
+    public ServiceShowAdminDto createShow(ServiceShowAdminDto show)
             throws SoapInputValidationException
     {
-        Show show = ShowToDto.toShow(showAdminDto);
         try {
-            show = TicketSellerServiceFactory.getService().createShow(show);
-        } catch (InputValidationException ex) {
-            throw new SoapInputValidationException(ex.getMessage());
+            show = TicketSellerProxyServiceFactory.getService().createShow(show);
+        } catch (InputValidationException e) {
+            throw new SoapInputValidationException(e.getMessage());
         }
 
-        return ShowToDto.toShowDto(show);
+        return show;
     }
 
-    public void updateShow(ServiceShowAdminDto showAdminDto)
+    public void updateShow(ServiceShowAdminDto show)
             throws SoapInputValidationException, SoapShowHasReservationsException,
             SoapInstanceNotFoundException, SoapNotEnoughAvailableTicketsException
     {
-        Show show = ShowToDto.toShow(showAdminDto);
         try {
-            TicketSellerServiceFactory.getService().updateShow(show);
-        } catch (InputValidationException ex) {
-            throw new SoapInputValidationException(ex.getMessage());
-        } catch (NotEnoughAvailableTicketsException ex) {
-            throw new SoapNotEnoughAvailableTicketsException(ex.getMessage());
-        } catch (ShowHasReservationsException ex) {
-            throw new SoapShowHasReservationsException(ex.getMessage());
-        } catch (InstanceNotFoundException ex) {
-            throw new SoapInstanceNotFoundException(new SoapInstanceNotFoundExceptionInfo(ex.getInstanceId(), ex.getInstanceType()));
+            TicketSellerProxyServiceFactory.getService().updateShow(show);
+        } catch (InputValidationException e) {
+            throw new SoapInputValidationException(e.getMessage());
+        } catch (NotEnoughAvailableTicketsException e) {
+            throw new SoapNotEnoughAvailableTicketsException(e.getMessage());
+        } catch (ShowHasReservationsException e) {
+            throw new SoapShowHasReservationsException(e.getMessage());
+        } catch (InstanceNotFoundException e) {
+            throw new SoapInstanceNotFoundException(new SoapInstanceNotFoundExceptionInfo(e.getInstanceId(), e.getInstanceType()));
         }
     }
 
-    public ServiceShowDto findShow(long id)
+    public ServiceShowAdminDto findShow(long id)
             throws SoapInstanceNotFoundException
     {
-        Show show;
+        ServiceShowAdminDto show;
         try {
-            show = TicketSellerServiceFactory.getService().findShow(id);
-        } catch (InstanceNotFoundException ex) {
-            throw new SoapInstanceNotFoundException(new SoapInstanceNotFoundExceptionInfo(ex.getInstanceId(), ex.getInstanceType()));
+            show = TicketSellerProxyServiceFactory.getService().findShow(id);
+        } catch (InstanceNotFoundException e) {
+            throw new SoapInstanceNotFoundException(new SoapInstanceNotFoundExceptionInfo(e.getInstanceId(), e.getInstanceType()));
         }
-        return ShowToDto.toShowDto(show);
+        return show;
     }
 
     public List<ServiceShowDto> findShows(String keywords)
             throws SoapInputValidationException
     {
-        Calendar start = Calendar.getInstance();
-        Calendar end = (Calendar)start.clone();
-        end.add(Calendar.DAY_OF_YEAR, 30);
-
-        List<Show> shows;
+        List<ServiceShowDto> shows;
         try {
-            shows = TicketSellerServiceFactory.getService().findShows(keywords, start, end);
-        } catch (InputValidationException ex) {
-            throw new SoapInputValidationException(ex.getMessage());
+            shows = TicketSellerProxyServiceFactory.getService().findShows(keywords);
+        } catch (InputValidationException e) {
+            throw new SoapInputValidationException(e.getMessage());
         }
 
-        return ShowToDto.toShowDtos(shows);
+        return shows;
     }
 
     public ServiceReservationDto buyTickets(long showId, String email, String creditCard, int count)
             throws SoapInputValidationException, SoapInstanceNotFoundException,
             SoapLimitDateExceededException, SoapNotEnoughAvailableTicketsException
     {
-        Reservation reservation;
+        ServiceReservationDto reservation;
         try {
-            reservation = TicketSellerServiceFactory.getService().buyTickets(showId, email, creditCard, count);
-        } catch (InputValidationException | NumberFormatException ex) {
-            throw new SoapInputValidationException(ex.getMessage());
-        } catch (NotEnoughAvailableTicketsException ex) {
-            throw new SoapNotEnoughAvailableTicketsException(ex.getMessage());
-        } catch (LimitDateExceededException ex) {
-            throw new SoapLimitDateExceededException(new SoapLimitDateExceededExceptionInfo(ex.getLimitDate()));
-        } catch (InstanceNotFoundException ex) {
-            throw new SoapInstanceNotFoundException(new SoapInstanceNotFoundExceptionInfo(ex.getInstanceId(), ex.getInstanceType()));
+            reservation = TicketSellerProxyServiceFactory.getService().buyTickets(showId, email, creditCard, count);
+        } catch (InputValidationException | NumberFormatException e) {
+            throw new SoapInputValidationException(e.getMessage());
+        } catch (NotEnoughAvailableTicketsException e) {
+            throw new SoapNotEnoughAvailableTicketsException(e.getMessage());
+        } catch (LimitDateExceededException e) {
+            throw new SoapLimitDateExceededException(new SoapLimitDateExceededExceptionInfo(e.getLimitDate()));
+        } catch (InstanceNotFoundException e) {
+            throw new SoapInstanceNotFoundException(new SoapInstanceNotFoundExceptionInfo(e.getInstanceId(), e.getInstanceType()));
         }
 
-        return ReservationToDto.toReservationDto(reservation);
+        return reservation;
     }
 
     public List<ServiceReservationDto> getUserReservations(String email)
             throws SoapInputValidationException
     {
-        List<Reservation> reservations;
+        List<ServiceReservationDto> reservations;
         try {
-            reservations = TicketSellerServiceFactory.getService().getUserReservations(email);
-        } catch (InputValidationException ex) {
-            throw new SoapInputValidationException(ex.getMessage());
+            reservations = TicketSellerProxyServiceFactory.getService().getUserReservations(email);
+        } catch (InputValidationException e) {
+            throw new SoapInputValidationException(e.getMessage());
         }
 
-        return ReservationToDto.toReservationDtos(reservations);
+        return reservations;
     }
 
     public void checkReservation(String code, String creditCard)
@@ -121,15 +120,15 @@ public class SoapTicketSellerService
             SoapCreditCardNotCoincidentException, SoapReservationAlreadyCheckedException
     {
         try {
-            TicketSellerServiceFactory.getService().checkReservation(code, creditCard);
-        } catch (InputValidationException ex) {
-            throw new SoapInputValidationException(ex.getMessage());
-        } catch (CreditCardNotCoincidentException ex) {
-            throw new SoapCreditCardNotCoincidentException(ex.getMessage());
-        } catch (ReservationAlreadyCheckedException ex) {
-            throw new SoapReservationAlreadyCheckedException(ex.getMessage());
-        } catch (InstanceNotFoundException ex) {
-            throw new SoapInstanceNotFoundException(new SoapInstanceNotFoundExceptionInfo(ex.getInstanceId(), ex.getInstanceType()));
+            TicketSellerProxyServiceFactory.getService().checkReservation(code, creditCard);
+        } catch (InputValidationException e) {
+            throw new SoapInputValidationException(e.getMessage());
+        } catch (CreditCardNotCoincidentException e) {
+            throw new SoapCreditCardNotCoincidentException(e.getMessage());
+        } catch (ReservationAlreadyCheckedException e) {
+            throw new SoapReservationAlreadyCheckedException(e.getMessage());
+        } catch (InstanceNotFoundException e) {
+            throw new SoapInstanceNotFoundException(new SoapInstanceNotFoundExceptionInfo(e.getInstanceId(), e.getInstanceType()));
         }
     }
 }

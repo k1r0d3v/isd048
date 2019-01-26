@@ -2,7 +2,7 @@
 
 //OK
 
-mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerServiceClient" -Dexec.args=" -a  'Fútbol' 'Partido de liga UDC' 2019-02-10T12:00:00+01:00 120 2019-02-06T00:00:00+01:00 100 30 25 3" 							 
+mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerServiceClient" -Dexec.args=" -a  'Fútbol' 'Partido de liga UDC' 2019-02-10T12:00:00+01:00 120 2019-02-06T00:00:00+01:00 100 30 25 3"
 
 //OK
 
@@ -11,12 +11,12 @@ mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerService
 
 //OK
 
-mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerServiceClient" -Dexec.args=" -a 'Fiesta' 'Fiesta de Carnaval UDC' 2019-04-05T12:00:00+01:00 240 2019-04-01T12:00:00+01:00 200 10 8 1"							
+mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerServiceClient" -Dexec.args=" -a 'Fiesta' 'Fiesta de Carnaval UDC' 2019-04-05T12:00:00+01:00 240 2019-04-01T12:00:00+01:00 200 10 8 1"
 
 
 //FALLA
 
-mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerServiceClient" -Dexec.args=" -a 'Fiesta' 'Fiesta de Carnaval UDC' 2019-04-05T12:00:00+01:00 240 2019-06-05T12:00:00+01:00 200 10 8 1" 			
+mvn exec:java -Dexec.mainClass="es.udc.ws.app.client.ui.AdminTicketSellerServiceClient" -Dexec.args=" -a 'Fiesta' 'Fiesta de Carnaval UDC' 2019-04-05T12:00:00+01:00 240 2019-06-05T12:00:00+01:00 200 10 8 1"
 
 
 2. Buscar espectáculo (AdminTicketSellerServiceClient)

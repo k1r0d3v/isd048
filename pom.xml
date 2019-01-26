@@ -10,6 +10,7 @@
     <name>WS App Project</name>
 
     <modules>
+        <module>ws-app-util</module>
         <module>ws-app-model</module>
         <module>ws-app-service</module>
         <module>ws-app-client</module>
@@ -140,6 +141,12 @@
                 <artifactId>ws-util</artifactId>
                 <version>${ws-util.version}</version>
             </dependency>
+            <!-- WS App Util -->
+            <dependency>
+                <groupId>es.udc.ws.app</groupId>
+                <artifactId>ws-app-util</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 			<!-- Commons HttpClient -->
 			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>
@@ -158,12 +165,12 @@
                 <artifactId>ws-app-model</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <!-- Project XML Util -->
-            <dependency>
+            <!-- ¿¿¿¿¿¿¿¿¿ Project XML Util ????????? -->
+            <!-- <dependency>
                 <groupId>es.udc.ws.app</groupId>
                 <artifactId>ws-app-util</artifactId>
                 <version>${project.version}</version>
-            </dependency>
+            </dependency> -->
 
         </dependencies>
     </dependencyManagement>

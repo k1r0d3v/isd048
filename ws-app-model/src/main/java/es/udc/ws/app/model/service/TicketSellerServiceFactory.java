@@ -1,6 +1,6 @@
 package es.udc.ws.app.model.service;
 
-import es.udc.ws.util.configuration.ConfigurationParametersManager;
+import es.udc.ws.app.util.configuration.ConfigurationParametersManager;
 
 public class TicketSellerServiceFactory {
 

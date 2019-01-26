@@ -2,11 +2,12 @@ package es.udc.ws.app.restservice.servlets;
 
 import es.udc.ws.app.dto.ServiceReservationDto;
 import es.udc.ws.app.model.reservation.Reservation;
-import es.udc.ws.app.model.service.TicketSellerServiceFactory;
 import es.udc.ws.app.model.service.exceptions.CreditCardNotCoincidentException;
 import es.udc.ws.app.model.service.exceptions.LimitDateExceededException;
 import es.udc.ws.app.model.service.exceptions.NotEnoughAvailableTicketsException;
 import es.udc.ws.app.model.service.exceptions.ReservationAlreadyCheckedException;
+import es.udc.ws.app.model.show.Show;
+import es.udc.ws.app.service.TicketSellerProxyServiceFactory;
 import es.udc.ws.app.serviceutil.ReservationToDto;
 import es.udc.ws.app.restservice.xml.XmlServiceExceptionConversor;
 import es.udc.ws.app.restservice.xml.XmlServiceReservationDtoConversor;
@@ -24,7 +25,8 @@ import java.util.List;
 
 public class ReservationsServlet extends HttpServlet {
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException 
+    {
         String path = ServletUtils.normalizePath(req.getPathInfo());
 
         if (path != null && path.length() != 0) {
@@ -44,9 +46,9 @@ public class ReservationsServlet extends HttpServlet {
             return;
         }
 
-        List<Reservation> reservations;
+        List<ServiceReservationDto> reservations;
         try {
-            reservations = TicketSellerServiceFactory.getService().getUserReservations(emailParam);
+            reservations = TicketSellerProxyServiceFactory.getService().getUserReservations(emailParam);
         } catch (InputValidationException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                     XmlServiceExceptionConversor.toExceptionXml(ex), null);
@@ -54,7 +56,7 @@ public class ReservationsServlet extends HttpServlet {
         }
 
         ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK,
-                XmlServiceReservationDtoConversor.toXml(ReservationToDto.toReservationDtos(reservations)), null);
+                XmlServiceReservationDtoConversor.toXml(reservations), null);
     }
 
     @Override
@@ -86,7 +88,7 @@ public class ReservationsServlet extends HttpServlet {
                 }
 
                 try {
-                    TicketSellerServiceFactory.getService().checkReservation(code, creditCard);
+                    TicketSellerProxyServiceFactory.getService().checkReservation(code, creditCard);
                 } catch (InputValidationException ex) {
                     ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                             XmlServiceExceptionConversor.toExceptionXml(ex), null);
@@ -148,9 +150,9 @@ public class ReservationsServlet extends HttpServlet {
             return;
         }
 
-        Reservation reservation;
+        ServiceReservationDto reservationDto;
         try {
-            reservation = TicketSellerServiceFactory.getService().buyTickets(Long.parseLong(showId), email, creditCard, Integer.parseInt(count));
+            reservationDto = TicketSellerProxyServiceFactory.getService().buyTickets(Long.parseLong(showId), email, creditCard, Integer.parseInt(count));
         } catch (InputValidationException | NumberFormatException ex) {
             ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_BAD_REQUEST,
                     XmlServiceExceptionConversor.toExceptionXml(ex), null);
@@ -180,7 +182,6 @@ public class ReservationsServlet extends HttpServlet {
         headers.put("Location", reservationLocation);
         */
 
-        ServiceReservationDto reservationDto = ReservationToDto.toReservationDto(reservation);
         ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_CREATED,
                 XmlServiceReservationDtoConversor.toXml(reservationDto), null/*headers*/);
     }

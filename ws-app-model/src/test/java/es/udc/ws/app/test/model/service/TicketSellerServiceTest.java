@@ -165,7 +165,7 @@ public class TicketSellerServiceTest
 		otherCalendar.add(Calendar.YEAR, 1);
 		otherCalendar.add(Calendar.DAY_OF_WEEK, -1);
 
-		return new Show(754883452L, name, description, calendar, 120, otherCalendar, 10000, 10000L,
+		return new Show(754883452L, name, description, calendar, 120, otherCalendar, 10000, 10000,
 				60.0f, 50.0f, 20.0f);
 	}
 

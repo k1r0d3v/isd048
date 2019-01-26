@@ -15,7 +15,6 @@ public class ServiceShowDto
     private float price;
     private float discountedPrice;
 
-
     public ServiceShowDto() { }
 
     public ServiceShowDto(Long id, String name, String description, Calendar startDate, long duration, Calendar limitDate, Long tickets, float price, float discountedPrice) {
@@ -106,16 +105,16 @@ public class ServiceShowDto
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ServiceShowDto that = (ServiceShowDto) o;
-        return duration == that.duration &&
-                Float.compare(that.price, price) == 0 &&
-                Float.compare(that.discountedPrice, discountedPrice) == 0 &&
-                Objects.equals(id, that.id) &&
-                Objects.equals(name, that.name) &&
-                Objects.equals(description, that.description) &&
-                Objects.equals(startDate, that.startDate) &&
-                Objects.equals(limitDate, that.limitDate) &&
-                Objects.equals(tickets, that.tickets);
+        ServiceShowDto showDto = (ServiceShowDto) o;
+        return duration == showDto.duration &&
+                Float.compare(showDto.price, price) == 0 &&
+                Float.compare(showDto.discountedPrice, discountedPrice) == 0 &&
+                Objects.equals(id, showDto.id) &&
+                Objects.equals(name, showDto.name) &&
+                Objects.equals(description, showDto.description) &&
+                Objects.equals(startDate, showDto.startDate) &&
+                Objects.equals(limitDate, showDto.limitDate) &&
+                Objects.equals(tickets, showDto.tickets);
     }
 
     @Override

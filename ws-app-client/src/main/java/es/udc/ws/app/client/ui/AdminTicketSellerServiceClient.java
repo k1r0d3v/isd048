@@ -37,7 +37,7 @@ public class AdminTicketSellerServiceClient
 
             try
             {
-                ClientShowDto show = service.createShow(new ClientAdminShowDto(
+                ClientAdminShowDto show = service.createShow(new ClientAdminShowDto(
                         null,
                         args[1],
                         args[2],
@@ -48,7 +48,8 @@ public class AdminTicketSellerServiceClient
                         Long.parseLong(args[6]),
                         Float.parseFloat(args[7]),
                         Float.parseFloat(args[8]),
-                        Float.parseFloat(args[9])
+                        Float.parseFloat(args[9]),
+                        null
                 ));
 
                 System.out.println("{" +
@@ -56,7 +57,7 @@ public class AdminTicketSellerServiceClient
                         ", name='" + show.getName() + '\'' +
                         ", description='" + show.getDescription() + '\'' +
                         ", startDate=" + show.getStartDate().toInstant() +
-                        ", endDate=" + show.getEndDate().toInstant() +
+                        ", duration=" + show.getDuration() +
                         ", limitDate=" + show.getLimitDate().toInstant() +
                         ", tickets=" + show.getTickets() +
                         ", price=" + show.getPrice() +
@@ -84,21 +85,12 @@ public class AdminTicketSellerServiceClient
                         Long.parseLong(args[7]),
                         Float.parseFloat(args[8]),
                         Float.parseFloat(args[9]),
-                        Float.parseFloat(args[10])
+                        Float.parseFloat(args[10]),
+                        null
                 ));
 
-                ClientShowDto show = service.findShow(Long.parseLong(args[1]));
-                System.out.println("{" +
-                        "id=" + show.getId() +
-                        ", name='" + show.getName() + '\'' +
-                        ", description='" + show.getDescription() + '\'' +
-                        ", startDate=" + show.getStartDate().toInstant() +
-                        ", endDate=" + show.getEndDate().toInstant() +
-                        ", limitDate=" + show.getLimitDate().toInstant() +
-                        ", tickets=" + show.getTickets() +
-                        ", price=" + show.getPrice() +
-                        ", discountedPrice=" + show.getDiscountedPrice() +
-                        "}");
+                ClientAdminShowDto show = service.findShow(Long.parseLong(args[1]));
+                System.out.println("Show " + show.getId() + " updated correctly");
             } catch (Exception ex) {
                 ex.printStackTrace(System.err);
             }
@@ -109,17 +101,18 @@ public class AdminTicketSellerServiceClient
 
             try
             {
-                ClientShowDto show = service.findShow(Long.parseLong(args[1]));
+                ClientAdminShowDto show = service.findShow(Long.parseLong(args[1]));
                 System.out.println("{" +
                         "id=" + show.getId() +
                         ", name='" + show.getName() + '\'' +
                         ", description='" + show.getDescription() + '\'' +
                         ", startDate=" + show.getStartDate().toInstant() +
-                        ", endDate=" + show.getEndDate().toInstant() +
+                        ", duration=" + show.getDuration() +
                         ", limitDate=" + show.getLimitDate().toInstant() +
                         ", tickets=" + show.getTickets() +
                         ", price=" + show.getPrice() +
                         ", discountedPrice=" + show.getDiscountedPrice() +
+                        ", likes=" + (show.getLikes() != null ? show.getLikes() : "?") +
                         "}");
             } catch (Exception ex) {
                 ex.printStackTrace(System.err);

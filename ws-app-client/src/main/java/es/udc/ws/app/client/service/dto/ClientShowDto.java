@@ -15,7 +15,6 @@ public class ClientShowDto
     private float price;
     private float discountedPrice;
 
-
     public ClientShowDto() { }
 
     public ClientShowDto(Long id, String name, String description, Calendar startDate, Calendar endDate, Calendar limitDate, long tickets, float price, float discountedPrice) {

@@ -12,7 +12,7 @@ public class Show
 	private long duration;
 	private Calendar limitDate;
 	private long maxTickets;
-	private Long tickets;
+	private long tickets;
 	private float price;
 	private float discountedPrice;
 	private float commission;
@@ -20,7 +20,7 @@ public class Show
 	public Show() { }
 
 	public Show(Long id, String name, String description, Calendar startDate,
-				long duration, Calendar limitDate, long maxTickets, Long tickets,
+				long duration, Calendar limitDate, long maxTickets, long tickets,
 				float price, float discountedPrice, float commission) {
 		this.id = id;
 		this.name = name;
@@ -93,11 +93,11 @@ public class Show
 		this.maxTickets = maxTickets;
 	}
 
-	public Long getTickets() {
+	public long getTickets() {
 		return tickets;
 	}
 
-	public void setTickets(Long tickets) {
+	public void setTickets(long tickets) {
 		this.tickets = tickets;
 	}
 

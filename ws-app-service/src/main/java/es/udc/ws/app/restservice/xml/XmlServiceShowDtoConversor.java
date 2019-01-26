@@ -74,22 +74,8 @@ public class XmlServiceShowDtoConversor {
         discountedPriceElement.setText(Float.toString(show.getDiscountedPrice()));
         showElement.addContent(discountedPriceElement);
 
+
         return showElement;
-    }
-
-    public static ServiceShowDto toServiceShowDto(InputStream movieXml) throws ParsingException {
-        try {
-
-            SAXBuilder builder = new SAXBuilder();
-            Document document = builder.build(movieXml);
-            Element rootElement = document.getRootElement();
-
-            return toServiceShowDto(rootElement);
-        } catch (ParsingException ex) {
-            throw ex;
-        } catch (Exception e) {
-            throw new ParsingException(e);
-        }
     }
 
     private static ServiceShowDto toServiceShowDto(Element showElement)
@@ -117,7 +103,6 @@ public class XmlServiceShowDtoConversor {
         String realPrice = showElement.getChildTextNormalize("price", XML_NS);
 
         String discountedPrice = showElement.getChildTextNormalize("discountedPrice", XML_NS);
-
 
         Calendar startCalendar = DatatypeConverter.parseDateTime(startDate);
         Calendar limitCalendar = DatatypeConverter.parseDateTime(limitDate);

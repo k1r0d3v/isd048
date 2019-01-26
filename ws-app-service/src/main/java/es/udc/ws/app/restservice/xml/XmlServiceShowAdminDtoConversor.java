@@ -1,6 +1,7 @@
 package es.udc.ws.app.restservice.xml;
 
 import es.udc.ws.app.dto.ServiceShowAdminDto;
+import es.udc.ws.app.dto.ServiceShowDto;
 import es.udc.ws.util.xml.exceptions.ParsingException;
 import javax.xml.bind.DatatypeConverter;
 
@@ -20,17 +21,17 @@ public class XmlServiceShowAdminDtoConversor {
     public final static Namespace XML_NS = Namespace.getNamespace("http://ws.udc.es/shows/xml");
 
     public static Document toXml(ServiceShowAdminDto show) throws IOException {
-        Element movieElement = toJDOMElement(show);
-        return new Document(movieElement);
+        Element element = toJDOMElement(show);
+        return new Document(element);
     }
 
     public static Document toXml(List<ServiceShowAdminDto> shows) throws IOException {
 
-        Element showElements = new Element("shows", XML_NS);
+        Element elements = new Element("shows", XML_NS);
         for (ServiceShowAdminDto i : shows)
-            showElements.addContent(toJDOMElement(i));
+            elements.addContent(toJDOMElement(i));
 
-        return new Document(showElements);
+        return new Document(elements);
     }
 
     public static Element toJDOMElement(ServiceShowAdminDto show) {
@@ -83,8 +84,15 @@ public class XmlServiceShowAdminDtoConversor {
         commissionElement.setText(Float.toString(show.getCommission()));
         showElement.addContent(commissionElement);
 
+        if (show.getLikes() != null) {
+            Element likesElement = new Element("likes", XML_NS);
+            likesElement.setText(Long.toString(show.getLikes()));
+            showElement.addContent(likesElement);
+        }
+
         return showElement;
     }
+
 
     public static ServiceShowAdminDto toServiceShowAdminDto(InputStream movieXml) throws ParsingException {
         try {
@@ -125,15 +133,20 @@ public class XmlServiceShowAdminDtoConversor {
 
         String maxTickets = showElement.getChildTextNormalize("maxTickets", XML_NS);
 
+        // Note: The model ignores this field
+        String tickets = showElement.getChildTextNormalize("tickets", XML_NS);
+
         String realPrice = showElement.getChildTextNormalize("price", XML_NS);
 
         String discountedPrice = showElement.getChildTextNormalize("discountedPrice", XML_NS);
 
         String commission = showElement.getChildTextNormalize("commission", XML_NS);
 
+        String likesStr = showElement.getChildTextNormalize("likes", XML_NS);
+
         Calendar startCalendar = DatatypeConverter.parseDateTime(startDate);
         Calendar limitCalendar = DatatypeConverter.parseDateTime(limitDate);
 
-        return new ServiceShowAdminDto(identifier, name, description, startCalendar, Long.parseLong(duration), limitCalendar, Long.parseLong(maxTickets), null, Float.parseFloat(realPrice), Float.parseFloat(discountedPrice), Float.parseFloat(commission));
+        return new ServiceShowAdminDto(identifier, name, description, startCalendar, Long.parseLong(duration), limitCalendar, Long.parseLong(maxTickets), Long.parseLong(tickets), Float.parseFloat(realPrice), Float.parseFloat(discountedPrice), Float.parseFloat(commission), likesStr != null ? Long.parseLong(likesStr) : null);
     }
 }

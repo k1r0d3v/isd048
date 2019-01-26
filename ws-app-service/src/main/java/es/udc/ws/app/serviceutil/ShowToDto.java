@@ -20,8 +20,12 @@ public class ShowToDto {
         return new ServiceShowDto(show.getId(), show.getName(), show.getDescription(), (Calendar)show.getStartDate().clone(), show.getDuration(), (Calendar)show.getLimitDate().clone(), show.getTickets(), show.getPrice(), show.getDiscountedPrice());
     }
 
+    public static ServiceShowDto toShowDto(ServiceShowAdminDto show) {
+        return new ServiceShowDto(show.getId(), show.getName(), show.getDescription(), (Calendar)show.getStartDate().clone(), show.getDuration(), (Calendar)show.getLimitDate().clone(), show.getTickets(), show.getPrice(), show.getDiscountedPrice());
+    }
+
     public static ServiceShowAdminDto toShowAdminDto(Show show) {
-        return new ServiceShowAdminDto(show.getId(), show.getName(), show.getDescription(), (Calendar)show.getStartDate().clone(), show.getDuration(), (Calendar)show.getLimitDate().clone(), show.getMaxTickets(), show.getTickets(), show.getPrice(), show.getDiscountedPrice(), show.getCommission());
+        return new ServiceShowAdminDto(show.getId(), show.getName(), show.getDescription(), (Calendar)show.getStartDate().clone(), show.getDuration(), (Calendar)show.getLimitDate().clone(), show.getMaxTickets(), show.getTickets(), show.getPrice(), show.getDiscountedPrice(), show.getCommission(), null);
     }
 
     public static Show toShow(ServiceShowAdminDto show) {

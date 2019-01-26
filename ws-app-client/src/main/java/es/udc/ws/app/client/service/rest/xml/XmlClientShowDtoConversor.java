@@ -20,66 +20,6 @@ public class XmlClientShowDtoConversor {
 
     public final static Namespace XML_NS = Namespace.getNamespace("http://ws.udc.es/shows/xml");
 
-    public static Document toXml(ClientShowDto show) throws IOException {
-        Element movieElement = toJDOMElement(show);
-        return new Document(movieElement);
-    }
-
-    public static Document toXml(List<ClientShowDto> shows) throws IOException {
-
-        Element showElements = new Element("shows", XML_NS);
-        for (ClientShowDto i : shows)
-            showElements.addContent(toJDOMElement(i));
-
-        return new Document(showElements);
-    }
-
-    public static Element toJDOMElement(ClientShowDto show) {
-
-        Element showElement = new Element("show", XML_NS);
-
-        if (show.getId() != null) {
-            Element identifierElement = new Element("id", XML_NS);
-            identifierElement.setText(show.getId().toString());
-            showElement.addContent(identifierElement);
-        }
-
-        Element runtimeElement = new Element("name", XML_NS);
-        runtimeElement.setText(show.getName());
-        showElement.addContent(runtimeElement);
-
-        Element descriptionElement = new Element("description", XML_NS);
-        descriptionElement.setText(show.getDescription());
-        showElement.addContent(descriptionElement);
-
-        Element startDateElement = new Element("startDate", XML_NS);
-        startDateElement.setText(DatatypeConverter.printDateTime(show.getStartDate()));
-        showElement.addContent(startDateElement);
-
-        Element priceElement = new Element("duration", XML_NS);
-        long diffInMillis = show.getEndDate().getTime().getTime() - show.getStartDate().getTime().getTime();
-        priceElement.setText(Long.toString(TimeUnit.MINUTES.convert(diffInMillis, TimeUnit.MILLISECONDS)));
-        showElement.addContent(priceElement);
-
-        Element limitDateElement = new Element("limitDate", XML_NS);
-        limitDateElement.setText(DatatypeConverter.printDateTime(show.getLimitDate()));
-        showElement.addContent(limitDateElement);
-
-        Element avalilableTicketsElement = new Element("tickets", XML_NS);
-        avalilableTicketsElement.setText(Long.toString(show.getTickets()));
-        showElement.addContent(avalilableTicketsElement);
-
-        Element realPriceElement = new Element("price", XML_NS);
-        realPriceElement.setText(Float.toString(show.getPrice()));
-        showElement.addContent(realPriceElement);
-
-        Element discountedPriceElement = new Element("discountedPrice", XML_NS);
-        discountedPriceElement.setText(Float.toString(show.getDiscountedPrice()));
-        showElement.addContent(discountedPriceElement);
-
-        return showElement;
-    }
-
     public static List<ClientShowDto> toClientShowDtos(InputStream movieXml)
             throws ParsingException {
         try {
@@ -98,21 +38,6 @@ public class XmlClientShowDtoConversor {
                 movieDtos.add(toClientShowDto(element));
 
             return movieDtos;
-        } catch (ParsingException ex) {
-            throw ex;
-        } catch (Exception e) {
-            throw new ParsingException(e);
-        }
-    }
-
-    public static ClientShowDto toClientShowDto(InputStream movieXml) throws ParsingException {
-        try {
-
-            SAXBuilder builder = new SAXBuilder();
-            Document document = builder.build(movieXml);
-            Element rootElement = document.getRootElement();
-
-            return toClientShowDto(rootElement);
         } catch (ParsingException ex) {
             throw ex;
         } catch (Exception e) {
@@ -147,7 +72,6 @@ public class XmlClientShowDtoConversor {
         String realPrice = showElement.getChildTextNormalize("price", XML_NS);
 
         String discountedPrice = showElement.getChildTextNormalize("discountedPrice", XML_NS);
-
 
         Calendar startCalendar = DatatypeConverter.parseDateTime(startDate);
         Calendar limitCalendar = DatatypeConverter.parseDateTime(limitDate);
