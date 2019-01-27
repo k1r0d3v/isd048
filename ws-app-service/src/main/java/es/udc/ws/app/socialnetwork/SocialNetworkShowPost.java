@@ -4,7 +4,7 @@ import java.util.Calendar;
 
 public class SocialNetworkShowPost
 {
-    private long postId;
+    private Long postId;
     private long likes; // Required by user
 
     private Long showId;
@@ -21,26 +21,11 @@ public class SocialNetworkShowPost
 
     public SocialNetworkShowPost() { }
 
-    public SocialNetworkShowPost(long postId, long likes, Long showId, String showName, String showDescription, Calendar showStartDate, long showDuration, Calendar showLimitDate, long showMaxTickets, Long showTickets, float showPrice, float showDiscountedPrice) {
-        this.postId = postId;
-        this.likes = likes;
-        this.showId = showId;
-        this.showName = showName;
-        this.showDescription = showDescription;
-        this.showStartDate = showStartDate;
-        this.showDuration = showDuration;
-        this.showLimitDate = showLimitDate;
-        this.showMaxTickets = showMaxTickets;
-        this.showTickets = showTickets;
-        this.showPrice = showPrice;
-        this.showDiscountedPrice = showDiscountedPrice;
-    }
-
-    public long getPostId() {
+    public Long getPostId() {
         return postId;
     }
 
-    public void setPostId(long postId) {
+    public void setPostId(Long postId) {
         this.postId = postId;
     }
 
