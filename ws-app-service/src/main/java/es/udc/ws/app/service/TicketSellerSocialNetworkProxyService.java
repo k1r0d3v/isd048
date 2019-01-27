@@ -24,8 +24,6 @@ public class TicketSellerSocialNetworkProxyService implements TicketSellerProxyS
 
         try {
             SocialNetworkServiceFactory.getService().publishShow(modelShow);
-        } catch (InputValidationException e) {
-            throw e;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -84,8 +82,6 @@ public class TicketSellerSocialNetworkProxyService implements TicketSellerProxyS
             else if (show.getTickets() <= 10)
                 SocialNetworkServiceFactory.getService().commentShow(show, "There are only " + show.getTickets() + " resting tickets, run for them!!");
 
-        } catch (InstanceNotFoundException | InputValidationException e) {
-            throw e;
         } catch (Exception e) {
             e.printStackTrace();
         }

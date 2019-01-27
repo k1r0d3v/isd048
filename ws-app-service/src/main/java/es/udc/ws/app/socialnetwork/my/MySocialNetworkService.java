@@ -26,14 +26,34 @@ import java.util.*;
 public class MySocialNetworkService implements SocialNetworkService {
     private final static String ENDPOINT_ADDRESS_PARAMETER = "SocialNetworkService.endpointAddress";
 
-    String endpointAddress = null;
-    String token = null;
+    private String endpointAddress = null;
+    private String token = null;
+    private final Object tokenMutex = new Object();
 
 
-    private synchronized String getEndpointAddress() {
+    private synchronized String getEndpointAddress()
+    {
         if (endpointAddress == null)
             endpointAddress = ConfigurationParametersManager.getParameter(ENDPOINT_ADDRESS_PARAMETER);
         return endpointAddress;
+    }
+
+    private String getToken()
+            throws AuthenticationException
+    {
+        synchronized (tokenMutex) {
+            if (token == null)
+                token = login(ConfigurationParametersManager.getParameter("MySocialNetworkService.username"),
+                        ConfigurationParametersManager.getParameter("MySocialNetworkService.password"));
+        }
+        return token;
+    }
+
+    private void resetToken()
+    {
+        synchronized (tokenMutex) {
+            token = null;
+        }
     }
 
     private String responseContentToString(HttpResponse response) {
@@ -102,8 +122,8 @@ public class MySocialNetworkService implements SocialNetworkService {
                 show.getDiscountedPrice());
     }
 
-    private SocialNetworkShowPost jsonToShowPost(JSONObject json)
-    {
+    private SocialNetworkShowPost jsonToShowPost(JSONObject json) {
+
         MessageFormat format = new MessageFormat(getShowTextFormat());
         Object[] objects;
         try {
@@ -136,8 +156,7 @@ public class MySocialNetworkService implements SocialNetworkService {
         return show;
     }
 
-
-    private JSONObject findPostByShow(Show show)
+    private JSONObject findPostByShowId(Show show)
             throws PostNotFountException
     {
         HttpResponse response;
@@ -195,17 +214,10 @@ public class MySocialNetworkService implements SocialNetworkService {
         }
     }
 
-    private synchronized String getToken()
-            throws AuthenticationException
-    {
-        if (token == null)
-            token = login(ConfigurationParametersManager.getParameter("MySocialNetworkService.username"),
-                    ConfigurationParametersManager.getParameter("MySocialNetworkService.password"));
-        return token;
-    }
 
-    @Override
-    public SocialNetworkShowPost publishShow(Show show) throws InputValidationException, AuthenticationException, DuplicatedPostException {
+    private SocialNetworkShowPost _publishShow(Show show)
+            throws InputValidationException, AuthenticationException, DuplicatedPostException
+    {
         String token = getToken();
 
         try
@@ -246,10 +258,11 @@ public class MySocialNetworkService implements SocialNetworkService {
         }
     }
 
-    @Override
-    public SocialNetworkShowPost updateShow(Show show) throws PostNotFountException, AuthenticationException {
+    private SocialNetworkShowPost _updateShow(Show show)
+            throws PostNotFountException, AuthenticationException
+    {
         String token = getToken();
-        JSONObject json = findPostByShow(show);
+        JSONObject json = findPostByShowId(show);
         long postId = json.getLong("postId");
 
         try
@@ -286,21 +299,21 @@ public class MySocialNetworkService implements SocialNetworkService {
         }
     }
 
-    @Override
-    public SocialNetworkShowPost getShow(Show show)
+    private SocialNetworkShowPost _getShow(Show show)
             throws PostNotFountException, AuthenticationException
     {
-        //String token = getToken(); // Do nothing
-        JSONObject json = findPostByShow(show);
+        String token = getToken(); // Do nothing
+
+        JSONObject json = findPostByShowId(show);
         return jsonToShowPost(json);
     }
 
-    @Override
-    public void commentShow(Show show, String comment)
+    private void _commentShow(Show show, String comment)
             throws InputValidationException, AuthenticationException, PostNotFountException
     {
         String token = getToken(); // Do nothing
-        JSONObject json = findPostByShow(show);
+
+        JSONObject json = findPostByShowId(show);
         long postId = json.getLong("postId");
 
         try
@@ -338,6 +351,55 @@ public class MySocialNetworkService implements SocialNetworkService {
             }
         } catch (IOException | JSONException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+
+    @Override
+    public SocialNetworkShowPost publishShow(Show show)
+            throws InputValidationException, AuthenticationException, DuplicatedPostException
+    {
+        try {
+            return _publishShow(show);
+        } catch (AuthenticationException e) {
+            resetToken(); // Retry, token can be expired
+            return _publishShow(show);
+        }
+    }
+
+    @Override
+    public SocialNetworkShowPost updateShow(Show show)
+            throws PostNotFountException, AuthenticationException
+    {
+        try {
+            return _updateShow(show);
+        } catch (AuthenticationException e) {
+            resetToken(); // Retry, token can be expired
+            return _updateShow(show);
+        }
+    }
+
+    @Override
+    public SocialNetworkShowPost getShow(Show show)
+            throws PostNotFountException, AuthenticationException
+    {
+        try {
+            return _getShow(show);
+        } catch (AuthenticationException e) {
+            resetToken(); // Retry, token can be expired
+            return _getShow(show);
+        }
+    }
+
+    @Override
+    public void commentShow(Show show, String comment)
+            throws InputValidationException, AuthenticationException, PostNotFountException
+    {
+        try {
+            _commentShow(show, comment);
+        } catch (AuthenticationException e) {
+            resetToken(); // Retry, token can be expired
+            _commentShow(show, comment);
         }
     }
 }
