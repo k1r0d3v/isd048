@@ -1,4 +1,4 @@
-# Running the project example
+# Running the project
 ---------------------------------------------------------------------
 
 ## Running the ws-app service with Maven/Jetty.
